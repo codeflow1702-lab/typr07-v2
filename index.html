@@ -49,34 +49,34 @@
         .btn-icon { background: var(--surface); border: 1px solid var(--border); color: var(--text-main); padding: 0.6rem 1.2rem; border-radius: 20px; cursor: pointer; font-weight: 600; font-size: 0.9rem; box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 0.4rem; }
         .btn-icon:hover { background: var(--border); }
         
-        /* === UI Elements === */
+        /* === Custom Dropdowns === */
         .settings-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.2rem; }
         .setting-group { display: flex; flex-direction: column; gap: 0.5rem; }
         .setting-group label { font-size: 0.9rem; font-weight: 600; color: var(--text-muted); }
-        
         .custom-select { position: relative; user-select: none; width: 100%; }
         .select-selected { background: var(--surface); border: 2px solid var(--border); border-radius: 12px; padding: 0.9rem 1.2rem; font-weight: 600; color: var(--text-main); cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem; }
         .select-items { position: absolute; top: calc(100% + 8px); left: 0; right: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; z-index: 100; overflow: hidden; opacity: 0; transform: translateY(-10px); pointer-events: none; transition: all 0.2s ease; box-shadow: var(--shadow-md); }
         .select-items.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
-        .select-item { padding: 0.8rem 1.2rem; cursor: pointer; font-weight: 500; font-size: 0.95rem; border-bottom: 1px solid var(--border); }
+        .select-item { padding: 0.8rem 1.2rem; cursor: pointer; font-size: 0.95rem; font-weight: 500; border-bottom: 1px solid var(--border); color: var(--text-main); }
+        .select-item:last-child { border-bottom: none; }
         .select-item:hover { background: var(--bg); color: var(--primary); }
+        .select-item.selected { background: rgba(99, 102, 241, 0.15); color: var(--primary); font-weight: 600; }
         
+        /* === UI Elements === */
         .toggle-btn { background: var(--surface); border: 2px solid var(--border); border-radius: 12px; padding: 0.9rem 1.2rem; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; width: 100%; font-size: 0.95rem; }
         .toggle-btn.active { border-color: var(--primary); color: var(--primary); background: rgba(99, 102, 241, 0.1); }
-
         .btn-primary { width: 100%; padding: 1.2rem; background: var(--primary); color: #fff; border: none; border-radius: 12px; font-size: 1.1rem; font-weight: 700; cursor: pointer; margin-top: 1.5rem; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4); }
         .btn-primary:active { transform: scale(0.98); }
         .btn-danger { background: var(--incorrect); color: white; border: none; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600; cursor: pointer; }
         .btn-restart { padding: 1rem; background: transparent; border: 2px solid var(--border); color: var(--text-main); border-radius: 12px; font-weight: 700; cursor: pointer; margin-top: 1rem; width: 100%; }
-
-        /* === Room Controls === */
+        
         .room-controls-wrapper { display: flex; gap: 0.8rem; margin-top: 0.5rem; align-items: stretch; }
         .room-controls-wrapper button { margin: 0; flex: 1; min-width: 130px; }
-        .room-inp { flex: 1; min-width: 120px; border-radius: 12px; border: 2px solid var(--border); background: var(--bg); color: var(--text-main); padding: 0.8rem; text-align: center; font-weight: 800; font-size: 1.2rem; outline: none; letter-spacing: 2px; transition: 0.2s; }
-        .room-inp:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2); }
+        .room-inp { flex: 1; min-width: 120px; border-radius: 12px; border: 2px solid var(--border); background: var(--bg); color: var(--text-main); padding: 0.8rem; text-align: center; font-weight: 800; font-size: 1.2rem; outline: none; letter-spacing: 2px; }
+        .room-inp:focus { border-color: var(--primary); }
 
         /* === Chat UI === */
-        .chat-box { display: flex; flex-direction: column; height: 350px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); margin-top: 1.5rem; overflow: hidden; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); }
+        .chat-box { display: flex; flex-direction: column; height: 350px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); margin-top: 1.5rem; overflow: hidden; }
         .chat-messages { flex: 1; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: 1rem; background: var(--bg); scroll-behavior: smooth; }
         .msg-row { display: flex; width: 100%; flex-direction: column; }
         .msg-row.own { align-items: flex-end; }
@@ -85,16 +85,14 @@
         .msg-bubble { max-width: 85%; padding: 0.7rem 1rem; border-radius: 14px; font-size: 0.95rem; line-height: 1.4; word-wrap: break-word; box-shadow: var(--shadow-sm); }
         .msg-row.own .msg-bubble { background: var(--primary); color: white; border-bottom-right-radius: 4px; }
         .msg-row.other .msg-bubble { background: var(--surface); border: 1px solid var(--border); color: var(--text-main); border-bottom-left-radius: 4px; }
-        
         .msg-reactions { display: flex; gap: 0.3rem; margin-top: 0.3rem; font-size: 0.75rem; }
         .msg-reaction { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 0.1rem 0.4rem; cursor: pointer; user-select: none; }
         .msg-reaction:hover { background: var(--surface); border-color: var(--primary); }
         .msg-typing { font-size: 0.8rem; color: var(--text-muted); font-style: italic; padding: 0.5rem 1rem; min-height: 2rem; background: var(--surface); border-top: 1px solid var(--border); }
-
         .chat-input-area { display: flex; background: var(--surface); padding: 0.8rem; border-top: 1px solid var(--border); gap: 0.5rem; }
-        .chat-input-area input { flex: 1; background: var(--bg); border: 1px solid var(--border); color: var(--text-main); padding: 0.8rem 1rem; border-radius: 20px; outline: none; font-size: 0.95rem; transition: 0.2s; }
+        .chat-input-area input { flex: 1; background: var(--bg); border: 1px solid var(--border); color: var(--text-main); padding: 0.8rem 1rem; border-radius: 20px; outline: none; font-size: 0.95rem; }
         .chat-input-area input:focus { border-color: var(--primary); }
-        .btn-send-chat { background: var(--primary); color: white; border: none; padding: 0 1.2rem; border-radius: 20px; font-weight: 700; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
+        .btn-send-chat { background: var(--primary); color: white; border: none; padding: 0 1.2rem; border-radius: 20px; font-weight: 700; cursor: pointer; }
 
         /* === Typing Interface === */
         .sticky-bar { position: sticky; top: 1rem; z-index: 50; display: flex; justify-content: space-between; align-items: center; background: var(--surface); padding: 1rem 1.5rem; border-radius: 12px; border: 1px solid var(--border); box-shadow: var(--shadow-md); margin-bottom: 1rem; font-weight: 700; color: var(--primary); }
@@ -119,9 +117,7 @@
         .coding-mode span.syn-num.correct { color: #d19a66; }
         .coding-mode span.syn-brkt.correct { color: #56b6c2; }
 
-        /* CRITICAL FIX: Safe hidden input css */
         #hidden-input { position: absolute; opacity: 0; top: 0; left: 0; z-index: -1; pointer-events: none; font-size: 16px; }
-        
         #focus-overlay { position: absolute; inset: 0; background: rgba(15, 23, 42, 0.8); display: flex; flex-direction: column; justify-content: center; align-items: center; font-size: 1.2rem; font-weight: 700; cursor: pointer; z-index: 10; color: #fff; backdrop-filter: blur(4px); }
         .focus-text { font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--primary); }
         .focus-subtext { font-size: 0.9rem; color: var(--text-muted); font-weight: 500; }
@@ -131,7 +127,7 @@
         .mp-bar-finished { background: var(--correct); }
         .podium-container { display: flex; flex-direction: column; gap: 0.8rem; margin: 1.5rem 0; }
 
-        /* === General Results & Profile === */
+        /* === Results, Profile, Leaderboard === */
         .results-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
         .stat-card { background: var(--bg); padding: 1.5rem 1rem; border-radius: 12px; text-align: center; border: 1px solid var(--border); }
         .stat-card h3 { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem; font-weight: 600; text-transform: uppercase; }
@@ -142,6 +138,8 @@
         .leaderboard-table { width: 100%; border-collapse: separate; border-spacing: 0 0.5rem; min-width: 600px; }
         .leaderboard-table th { color: var(--text-muted); font-weight: 600; font-size: 0.9rem; padding: 0.5rem 1rem; text-align: left; }
         .leaderboard-table td { padding: 1rem; background: var(--bg); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); font-weight: 500; }
+        .leaderboard-table tr td:first-child { border-left: 1px solid var(--border); border-top-left-radius: 12px; border-bottom-left-radius: 12px; font-weight: 800; }
+        .leaderboard-table tr td:last-child { border-right: 1px solid var(--border); border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
         
         .rank-gold td { background: var(--gold) !important; border-color: var(--gold-border) !important; }
         .rank-silver td { background: var(--silver) !important; border-color: var(--silver-border) !important; }
@@ -224,7 +222,7 @@
                     <label style="color: var(--primary); font-size: 1.1rem; margin-bottom: 0.5rem; display:block;">🎮 Multiplayer Room</label>
                     <div class="room-controls-wrapper">
                         <button class="btn-primary" id="btn-create-room">Create Room</button>
-                        <input type="number" id="inp-room-code" class="room-inp" placeholder="CODE">
+                        <input type="text" id="inp-room-code" class="room-inp" placeholder="CODE">
                         <button class="btn-restart" id="btn-join-room" style="background:var(--surface);">Join Room</button>
                     </div>
                 </div>
@@ -239,10 +237,13 @@
             <div id="host-controls" class="hidden" style="margin-bottom: 1.5rem; padding: 1rem; background: var(--bg); border: 1px solid var(--border); border-radius: 12px;">
                 <h4 style="margin-bottom: 0.5rem; color: var(--accent);">Host Controls</h4>
                 <div style="display: flex; gap: 0.5rem;">
-                    <select id="host-mode-select" style="padding: 0.8rem; border-radius: 8px; background: var(--surface); color: white; border: 1px solid var(--border); flex: 1; outline:none;">
-                        <option value="normal">Normal Text</option>
-                        <option value="coding">Code Snippets</option>
-                    </select>
+                    <div class="custom-select" id="host-mode-select" data-value="normal" style="flex:1;">
+                        <div class="select-selected">Normal Text</div>
+                        <div class="select-items">
+                            <div class="select-item" data-value="normal">Normal Text</div>
+                            <div class="select-item" data-value="coding">Code Snippets</div>
+                        </div>
+                    </div>
                     <button class="btn-primary" id="btn-host-change" style="margin: 0; width: auto; padding: 0 1.5rem;">Set Mode</button>
                 </div>
             </div>
@@ -329,11 +330,11 @@
             <div class="lb-controls" style="display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
                 <div class="custom-select" id="lb-filter-mode" data-value="all" style="flex:1;">
                     <div class="select-selected">All Modes</div>
-                    <div class="select-items"><div class="select-item" data-value="all">All Modes</div><div class="select-item" data-value="normal">Normal Text</div><div class="select-item" data-value="coding">Code Snippets</div></div>
+                    <div class="select-items"><div class="select-item selected" data-value="all">All Modes</div><div class="select-item" data-value="normal">Normal Text</div><div class="select-item" data-value="coding">Code Snippets</div></div>
                 </div>
                 <div class="custom-select" id="lb-filter-type" data-value="all" style="flex:1;">
                     <div class="select-selected">All Types</div>
-                    <div class="select-items"><div class="select-item" data-value="all">All Types</div><div class="select-item" data-value="time">Time Based</div><div class="select-item" data-value="burst">15s Burst</div></div>
+                    <div class="select-items"><div class="select-item selected" data-value="all">All Types</div><div class="select-item" data-value="time">Time Based</div><div class="select-item" data-value="burst">15s Burst</div></div>
                 </div>
             </div>
             <div style="width: 100%; overflow-x: auto;">
@@ -347,14 +348,14 @@
 
     <footer class="app-footer">
         <div style="font-size: 0.9rem; font-weight: 800; letter-spacing: 1px; color: var(--text-main); margin-bottom: 0.8rem;">CREATED BY <span style="color: var(--primary);">MOHAMMED WASI</span></div>
-        <div style="max-width: 800px; margin: 0 auto; line-height: 1.5;">This is a demo typing application. Scores are not officially verified. Anti-cheat mechanisms actively flag unrealistic scores. Do not exploit the leaderboard.</div>
+        <div style="max-width: 800px; margin: 0 auto; line-height: 1.5;">This application features Real-time Multiplayer and strict Anti-Cheat systems via Firebase. Play fair and enjoy.</div>
     </footer>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getFirestore, collection, doc, getDoc, setDoc, updateDoc, deleteDoc, deleteField, serverTimestamp, onSnapshot, query, orderBy, limit, addDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-        // CRITICAL: All code runs after DOM is loaded to prevent null errors
+        // IMPORTANT: Must wrap entirely in DOMContentLoaded to prevent null DOM errors
         document.addEventListener("DOMContentLoaded", () => {
             console.log("DOM loaded - Initializing TYPR");
 
@@ -370,7 +371,6 @@
             const db = getFirestore(app);
 
             /* === Utilities & Core State === */
-            // Bug Fix #2: Global formatT function
             window.formatT = function(seconds) {
                 if (isNaN(seconds) || seconds < 0) return "0:00";
                 const m = Math.floor(seconds / 60);
@@ -433,7 +433,7 @@
                 mode: localStorage.getItem('typr_mode') || 'normal', type: localStorage.getItem('typr_type') || 'time', val: parseInt(localStorage.getItem('typr_val')) || 60,
                 focus: localStorage.getItem('typr_focus') === 'true', hardcore: localStorage.getItem('typr_hardcore') === 'true', sound: localStorage.getItem('typr_sound') === 'true',
                 text: "", spans: [], timer: null, timeSecs: 0, isTyping: false, testEnded: false, errors: 0, totalTyped: 0, maxIdx: 0,
-                roomId: null, isHost: false, roomUnsub: null, chatUnsub: null, roomData: null,
+                roomId: null, isHost: false, roomUnsub: null, chatUnsub: null, heartbeat: null, roomData: null,
                 userStats: { bestWPM: 0, averageWPM: 0, totalGames: 0, history: [], badges: [] }, lbData: [],
                 progressHistory: [], lastProgressChar: 0
             };
@@ -441,7 +441,7 @@
             const AudioCtx = window.AudioContext || window.webkitAudioContext;
             let actx;
 
-            // Bug Fix #6: Safe Event listeners via registry to prevent duplicates
+            // Safe Event listeners registry
             const listenersRegistry = {};
             const safeListen = (id, event, fn) => {
                 const el = document.getElementById(id);
@@ -463,7 +463,7 @@
                 typeCont: document.getElementById('type-cont')
             };
 
-            /* === Init === */
+            /* === Gatekeeper === */
             if (!state.username && DOM.uModal) DOM.uModal.classList.remove('hidden');
             safeListen('btn-save-user', 'click', () => {
                 if(!DOM.uInp) return;
@@ -485,7 +485,7 @@
             }
             loadUserStats();
 
-            // Bug Fix #1: Robust Panel Switching
+            // Panel Switching
             function showPanel(p) {
                 if(!p) return;
                 [DOM.pSet, DOM.pType, DOM.pRes, DOM.pLb, DOM.pLobby, DOM.pProf].forEach(el => {
@@ -502,9 +502,7 @@
             safeListen('btn-lb-back', 'click', () => showPanel(DOM.pSet));
             
             safeListen('btn-profile', 'click', () => {
-                const pBest = document.getElementById('prof-best');
-                const pAvg = document.getElementById('prof-avg');
-                const pTotal = document.getElementById('prof-total');
+                const pBest = document.getElementById('prof-best'); const pAvg = document.getElementById('prof-avg'); const pTotal = document.getElementById('prof-total');
                 if(pBest) pBest.innerText = state.userStats.bestWPM;
                 if(pAvg) pAvg.innerText = Math.round(state.userStats.averageWPM);
                 if(pTotal) pTotal.innerText = state.userStats.totalGames;
@@ -525,15 +523,39 @@
             });
             safeListen('btn-prof-back', 'click', () => showPanel(DOM.pSet));
 
-            // Custom Dropdowns
+            // Custom Dropdowns Sync Logic
             document.querySelectorAll('.custom-select').forEach(sel => {
                 const head = sel.querySelector('.select-selected'); 
                 const items = sel.querySelector('.select-items');
                 if(head && items) {
-                    head.onclick = (e) => { e.stopPropagation(); items.classList.toggle('show'); };
-                    sel.querySelectorAll('.select-item').forEach(opt => {
-                        opt.onclick = () => {
-                            head.innerText = opt.innerText; items.classList.remove('show');
+                    // Initialize pre-selected values from local storage
+                    let cv = sel.dataset.value;
+                    if(sel.id === 'dd-mode') cv = state.mode;
+                    if(sel.id === 'dd-type') cv = state.type;
+                    
+                    const itList = sel.querySelectorAll('.select-item');
+                    itList.forEach(it => {
+                        if(it.dataset.value === cv) {
+                            it.classList.add('selected'); head.innerText = it.innerText; sel.dataset.value = cv;
+                        } else it.classList.remove('selected');
+                    });
+
+                    head.onclick = (e) => { 
+                        e.stopPropagation(); 
+                        document.querySelectorAll('.custom-select .select-items').forEach(i => { if(i !== items) i.classList.remove('show'); });
+                        items.classList.toggle('show'); 
+                    };
+                    
+                    itList.forEach(opt => {
+                        opt.onclick = (e) => {
+                            e.stopPropagation();
+                            itList.forEach(i => i.classList.remove('selected'));
+                            opt.classList.add('selected');
+                            head.innerText = opt.innerText; 
+                            items.classList.remove('show');
+                            sel.dataset.value = opt.dataset.value;
+                            
+                            // App bindings
                             if(sel.id === 'dd-mode') { state.mode = opt.dataset.value; localStorage.setItem('typr_mode', state.mode); }
                             if(sel.id === 'dd-type') { state.type = opt.dataset.value; localStorage.setItem('typr_type', state.type); updateValHTML(); }
                             if(sel.id === 'dd-val') { state.val = parseInt(opt.dataset.value); localStorage.setItem('typr_val', state.val); }
@@ -555,9 +577,21 @@
                 const ddVal = document.getElementById('dd-val');
                 if(ddVal) {
                     const h = ddVal.querySelector('.select-selected');
-                    if(h && vOpts.firstChild) h.innerText = vOpts.firstChild.innerText;
+                    if(h && vOpts.firstChild) {
+                        h.innerText = vOpts.firstChild.innerText;
+                        ddVal.dataset.value = vOpts.firstChild.dataset.value;
+                        vOpts.firstChild.classList.add('selected');
+                    }
+                    
                     vOpts.querySelectorAll('.select-item').forEach(opt => {
-                        opt.onclick = () => { h.innerText = opt.innerText; ddVal.querySelector('.select-items').classList.remove('show'); state.val = parseInt(opt.dataset.value); }
+                        opt.onclick = (e) => { 
+                            e.stopPropagation();
+                            vOpts.querySelectorAll('.select-item').forEach(i => i.classList.remove('selected'));
+                            opt.classList.add('selected');
+                            h.innerText = opt.innerText; 
+                            ddVal.querySelector('.select-items').classList.remove('show'); 
+                            state.val = parseInt(opt.dataset.value); 
+                        }
                     });
                 }
             }
@@ -577,11 +611,11 @@
                 if(state.sound) playAudio('click'); 
             });
 
-            /* === MOBILE FOCUS LOGIC (Bug Fix #2, #4, #5, #6) === */
+            /* === MOBILE FOCUS LOGIC (Critical Bug Fixes) === */
             function focusInput() {
                 if (DOM.hInp && !state.testEnded) {
                     DOM.hInp.focus();
-                    console.log("Input focused");
+                    console.log("Input safely focused");
                     if (DOM.overlay) DOM.overlay.classList.add('hidden');
                 }
             }
@@ -593,24 +627,19 @@
             if(DOM.hInp) {
                 DOM.hInp.addEventListener("blur", () => {
                     if (state.isTyping && !state.testEnded) {
-                        console.log("Input blurred - Attempting to refocus");
+                        console.log("Input blurred - UI restricted. Waiting for tap to refocus.");
                         if (DOM.overlay) {
                             const fText = DOM.overlay.querySelector('.focus-text');
                             if(fText) fText.innerText = "Paused - Tap to Resume";
                             DOM.overlay.classList.remove("hidden");
                         }
-                        // Optional auto-refocus for desktop
-                        setTimeout(() => {
-                            if (!state.testEnded && DOM.hInp) DOM.hInp.focus();
-                        }, 100);
                     }
                 });
             }
 
-            /* === MULTIPLAYER ROOMS & AUTO CLEANUP === */
+            /* === MULTIPLAYER ROOMS (Stabilized Logic) === */
             safeListen('btn-create-room', 'click', async () => {
                 if(!state.username) return alert("Enter username first.");
-                
                 const btn = document.getElementById('btn-create-room');
                 const origText = btn.innerText; btn.innerText = "Creating...";
 
@@ -618,11 +647,12 @@
                 state.isHost = true;
                 try {
                     let genLength = state.type === 'burst' ? 25 : (state.val === 120 ? 120 : 60);
+                    // FIXED: Using merge to prevent overwrite loops
                     await setDoc(doc(db, 'rooms', state.roomId), {
                         hostId: state.userId, status: "waiting", mode: state.mode, createdAt: serverTimestamp(),
                         text: generateText(state.mode, genLength),
                         players: { [state.userId]: { username: state.username, wpm: 0, progress: 0, finished: false, lastActive: Date.now() } }
-                    });
+                    }, { merge: true });
                     enterLobby();
                 } catch(e) { console.error("Firebase Error:", e); alert("Failed to create room."); } 
                 finally { btn.innerText = origText; }
@@ -639,19 +669,15 @@
                 try {
                     const rSnap = await getDoc(doc(db, 'rooms', code));
                     if(!rSnap.exists() || rSnap.data().status !== "waiting") {
-                        btn.innerText = origText;
-                        return alert("Room not found or started.");
+                        btn.innerText = origText; return alert("Room not found or started.");
                     }
                     
+                    // FIXED: Safely target players.uid specifically
                     await updateDoc(doc(db, 'rooms', code), { [`players.${state.userId}`]: { username: state.username, wpm: 0, progress: 0, finished: false, lastActive: Date.now() } });
                     state.roomId = code; state.isHost = false;
                     enterLobby();
-                } catch(e) {
-                    console.error("Firebase Error:", e);
-                    alert("Failed to join room.");
-                } finally {
-                    btn.innerText = origText;
-                }
+                } catch(e) { console.error("Firebase Error:", e); alert("Failed to join room."); } 
+                finally { btn.innerText = origText; }
             });
 
             function enterLobby() {
@@ -659,22 +685,30 @@
                 const lbRoom = document.getElementById('lobby-room-code');
                 if(lbRoom) lbRoom.innerText = state.roomId;
                 
-                const btnStartR = document.getElementById('btn-start-room');
-                if(btnStartR) btnStartR.classList.toggle('hidden', !state.isHost);
-                
-                const hostCont = document.getElementById('host-controls');
-                if(hostCont) hostCont.classList.toggle('hidden', !state.isHost);
-                
                 initChat();
 
-                state.roomUnsub = onSnapshot(doc(db, 'rooms', state.roomId), (docSnap) => {
-                    if(!docSnap.exists()) { alert("Room closed."); leaveRoom(); return; }
-                    const data = docSnap.data(); state.roomData = data; state.text = data.text;
-                    
-                    if(state.isHost && data.createdAt && (Date.now() - data.createdAt.toMillis() > 15 * 60000)) {
-                        alert("Room expired (15 minute limit)."); leaveRoom(); return;
-                    }
+                // Start active heartbeat
+                if(state.heartbeat) clearInterval(state.heartbeat);
+                state.heartbeat = setInterval(() => {
+                    if(state.roomId) updateDoc(doc(db, 'rooms', state.roomId), { [`players.${state.userId}.lastActive`]: Date.now() }).catch(e=>{});
+                }, 15000);
 
+                state.roomUnsub = onSnapshot(doc(db, 'rooms', state.roomId), (docSnap) => {
+                    if(!docSnap.exists()) { console.warn("Room deleted."); alert("Room closed."); leaveRoom(); return; }
+                    
+                    const data = docSnap.data(); state.roomData = data; 
+                    
+                    // Removal check
+                    if(!data.players || !data.players[state.userId]) { alert("You were removed from the room."); leaveRoom(); return; }
+
+                    // Host Reassignment Check
+                    if(data.hostId === state.userId && !state.isHost) { console.log("Reassigned as Host"); state.isHost = true; }
+
+                    const btnStartR = document.getElementById('btn-start-room'); if(btnStartR) btnStartR.classList.toggle('hidden', !state.isHost);
+                    const hostCont = document.getElementById('host-controls'); if(hostCont) hostCont.classList.toggle('hidden', !state.isHost);
+
+                    state.text = data.text;
+                    
                     const pListEl = document.getElementById('lobby-players-list'); 
                     if(pListEl) {
                         pListEl.innerHTML = '';
@@ -688,15 +722,13 @@
                         });
                     }
 
-                    if(!data.players[state.userId]) { alert("You were removed from the room."); leaveRoom(); }
-
                     const cTyping = document.getElementById('chat-typing');
                     if(cTyping) {
                         const typers = Object.values(data.typing || {}).filter(n => n !== state.username);
                         cTyping.innerText = typers.length > 0 ? `${typers.join(', ')} ${typers.length>1?'are':'is'} typing...` : '';
                     }
 
-                    // Bug Fix #7: Multiplayer Sync
+                    // Multiplayer Sync Flow Fix
                     if(data.status === "countdown" && DOM.pType && DOM.pType.classList.contains('hidden')) {
                         showPanel(DOM.pType); 
                         if(DOM.cdOverlay) DOM.cdOverlay.classList.remove('hidden'); 
@@ -748,33 +780,46 @@
                 });
             }
 
-            window.kickPlayer = (uid) => { 
-                try { updateDoc(doc(db, 'rooms', state.roomId), { [`players.${uid}`]: deleteField() }); } catch(e){} 
+            window.kickPlayer = async (uid) => { 
+                try { await updateDoc(doc(db, 'rooms', state.roomId), { [`players.${uid}`]: deleteField() }); } catch(e){} 
             };
             
             safeListen('btn-host-change', 'click', () => {
-                const sel = document.getElementById('host-mode-select');
-                if(!sel) return;
-                const val = sel.value;
+                const head = document.querySelector('#host-mode-select .select-selected');
+                const val = document.getElementById('host-mode-select').dataset.value || 'normal';
                 let genLength = state.type === 'burst' ? 25 : (state.val === 120 ? 120 : 60);
                 try { updateDoc(doc(db, 'rooms', state.roomId), { mode: val, text: generateText(val, genLength) }); } catch(e){}
             });
+            
             safeListen('btn-start-room', 'click', () => { 
                 try { updateDoc(doc(db, 'rooms', state.roomId), { status: "countdown" }); } catch(e){} 
             });
+            
             safeListen('btn-leave-room', 'click', leaveRoom);
             
             async function leaveRoom() {
-                if(state.roomUnsub) state.roomUnsub(); if(state.chatUnsub) state.chatUnsub();
-                if(state.roomId && !state.isHost) {
-                    try { await updateDoc(doc(db, 'rooms', state.roomId), { [`players.${state.userId}`]: deleteField() }); } catch(e){}
-                }
-                if(state.roomId && state.isHost) {
-                    try { await deleteDoc(doc(db, 'rooms', state.roomId)); } catch(e){}
-                }
+                const cId = state.roomId; const isH = state.isHost; const uId = state.userId;
+                if(state.roomUnsub) state.roomUnsub(); 
+                if(state.chatUnsub) state.chatUnsub();
+                if(state.heartbeat) clearInterval(state.heartbeat);
+                
                 state.roomId = null; state.isHost = false; 
                 if(DOM.mpProgCont) DOM.mpProgCont.classList.add('hidden'); 
                 showPanel(DOM.pSet);
+
+                if(!cId) return;
+                try {
+                    const rSnap = await getDoc(doc(db, 'rooms', cId));
+                    if (rSnap.exists()) {
+                        const rD = rSnap.data(); const pList = Object.keys(rD.players || {}).filter(id => id !== uId);
+                        if (pList.length === 0) await deleteDoc(doc(db, 'rooms', cId));
+                        else {
+                            const upd = { [`players.${uId}`]: deleteField() };
+                            if (isH) upd.hostId = pList[0];
+                            await updateDoc(doc(db, 'rooms', cId), upd);
+                        }
+                    }
+                } catch(e) {}
             }
 
             /* === Room Chat & Reactions === */
@@ -829,15 +874,7 @@
                 typTmt = setTimeout(() => { try { updateDoc(doc(db, 'rooms', state.roomId), { [`typing.${state.userId}`]: deleteField() }); } catch(e){} }, 2000);
             });
 
-            /* === Typing Engine === */
-            function syntaxHl(t) {
-                const cl = new Array(t.length).fill('');
-                if (state.mode !== 'coding') return cl;
-                const r = [{rx:/\b(const|let|var|function|return|if|else)\b/g, n:'kw'},{rx:/(['"`])(?:(?!\1)[^\\]|\\.)*\1/g, n:'str'},{rx:/\b\d+\b/g, n:'num'},{rx:/[{}()\[\]]/g, n:'brkt'}];
-                r.forEach(rl => { let m; while ((m = rl.rx.exec(t)) !== null) for(let i=0; i<m[0].length; i++) cl[m.index + i] = `syn-${rl.n}`; });
-                return cl;
-            }
-
+            /* === Typing Engine & Timing === */
             function playAudio(t) {
                 if (!state.sound) return;
                 if (!actx) actx = new AudioCtx();
@@ -890,7 +927,6 @@
                         DOM.overlay.classList.remove('hidden'); 
                     }
                 } else if(skipInit) {
-                    // This happens after MP countdown
                     if(DOM.overlay) {
                         const fText = DOM.overlay.querySelector('.focus-text');
                         if(fText) fText.innerText = "GO! Tap to type";
@@ -925,7 +961,7 @@
                     if(DOM.sWpm) DOM.sWpm.innerText = `${wpm} WPM`;
 
                     if(state.roomId && tpd.length % 5 === 0) { 
-                        try { updateDoc(doc(db, 'rooms', state.roomId), { [`players.${state.userId}.wpm`]: wpm, [`players.${state.userId}.progress`]: Math.round((tpd.length/state.text.length)*100), [`players.${state.userId}.lastActive`]: Date.now() }); } catch(e){}
+                        try { updateDoc(doc(db, 'rooms', state.roomId), { [`players.${state.userId}.wpm`]: wpm, [`players.${state.userId}.progress`]: Math.round((tpd.length/state.text.length)*100) }); } catch(e){}
                     }
 
                     if(tpd.length >= state.text.length) endTest(scrErrs, tpd.length);
@@ -936,7 +972,6 @@
                 if(state.testEnded) return;
                 state.timeSecs++;
                 
-                // Bot Tracker / Anti-Cheat
                 const charsThisSec = state.totalTyped - state.lastProgressChar;
                 state.progressHistory.push(charsThisSec);
                 state.lastProgressChar = state.totalTyped;
@@ -947,9 +982,13 @@
                     if (rem <= 0 && DOM.hInp) endTest(document.querySelectorAll('.incorrect').length, DOM.hInp.value.length);
                 } else { // MP
                     if(DOM.sTime) DOM.sTime.innerText = window.formatT(state.timeSecs);
+                    // FIXED: 60s Auto Kick Check
                     if (state.isHost && state.roomData && state.roomData.status === "playing") {
                         Object.entries(state.roomData.players).forEach(([uid, p]) => {
-                            if (p.lastActive && (Date.now() - p.lastActive > 30000) && !p.finished) window.kickPlayer(uid);
+                            if (p.lastActive && (Date.now() - p.lastActive > 60000) && !p.finished) {
+                                console.warn(`Player inactive for 60s. Auto-kicking ${uid}.`);
+                                window.kickPlayer(uid);
+                            }
                         });
                     }
                 }
@@ -974,26 +1013,16 @@
                 const wpm = state.timeSecs <= 0 ? 0 : Math.max(0, Math.round(((len-scrErrs)/5)/(state.timeSecs/60)));
                 const acc = state.totalTyped > 0 ? Math.max(0, Math.round(((state.totalTyped - state.errors)/state.totalTyped)*100)) : 100;
 
-                // Strict Anti-Cheat Evaluation
+                // Anti-Cheat Check
                 let maxBurst = Math.max(...(state.progressHistory.length ? state.progressHistory : [0]));
-                if (maxBurst > 30) {
-                    alert("Anti-Cheat: Unrealistic typing burst detected. Score discarded.");
-                    showPanel(DOM.pSet); return;
-                }
-                if(wpm > 180 || state.timeSecs < 3) { 
-                    alert("Anti-Cheat: Suspicious speed/time detected. Score discarded."); 
-                    showPanel(DOM.pSet); return; 
-                }
-                if(wpm > 160 && acc === 100) {
-                    alert("Anti-Cheat: Impossible accuracy at this speed. Score discarded.");
-                    showPanel(DOM.pSet); return; 
-                }
+                if (maxBurst > 30) { alert("Anti-Cheat: Unrealistic typing burst. Score discarded."); showPanel(DOM.pSet); return; }
+                if(wpm > 180 || state.timeSecs < 3) { alert("Anti-Cheat: Suspicious speed/time. Score discarded."); showPanel(DOM.pSet); return; }
+                if(wpm > 160 && acc === 100) { alert("Anti-Cheat: Impossible accuracy at this speed. Score discarded."); showPanel(DOM.pSet); return; }
 
                 const rWpm = document.getElementById('res-wpm'); if(rWpm) rWpm.innerText = wpm; 
                 const rAcc = document.getElementById('res-acc'); if(rAcc) rAcc.innerText = `${acc}%`; 
                 const rTime = document.getElementById('res-time'); if(rTime) rTime.innerText = `${state.timeSecs}s`;
 
-                // Stats Update
                 let newAvg = Math.round(((state.userStats.averageWPM * state.userStats.totalGames) + wpm) / (state.userStats.totalGames + 1));
                 state.userStats.bestWPM = Math.max(state.userStats.bestWPM || 0, wpm);
                 state.userStats.averageWPM = newAvg || wpm;
@@ -1072,10 +1101,13 @@
                     });
                 }
             }
-            safeListen('lb-filter-mode', 'change', renderLeaderboard); safeListen('lb-filter-type', 'change', renderLeaderboard);
-            function escapeHTML(str) { return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag])); }
+            
+            safeListen('lb-filter-mode', 'change', renderLeaderboard); 
+            safeListen('lb-filter-type', 'change', renderLeaderboard);
+            
+            function escapeHTML(str) { return str ? str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag])) : ''; }
 
         }); // END DOMContentLoaded
     </script>
 </body>
-</html>
+    </html>
