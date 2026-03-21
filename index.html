@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TYPR - Premium Multiplayer Typing Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* === CSS Variables === */
+        :root {
+            --bg: #0f172a; --surface: #1e293b; --border: #334155; --border-hover: #475569;
+            --text-main: #f8fafc; --text-muted: #94a3b8; --text-faint: #475569;
+            --primary: #6366f1; --primary-hover: #4f46e5; --accent: #8b5cf6;
+            --correct: #10b981; --incorrect: #ef4444; --incorrect-bg: rgba(239, 68, 68, 0.2); --warning: #f59e0b;
+            --cursor: #6366f1; --radius: 16px;
+            --shadow-sm: 0 4px 6px -1px rgb(0 0 0 / 0.3); --shadow-md: 0 10px 15px -3px rgb(0 0 0 / 0.5);
+            --font-sans: 'Inter', sans-serif; --font-mono: 'Fira Code', monospace;
+            --gold: rgba(250, 204, 21, 0.15); --gold-border: #facc15;
+            --silver: rgba(148, 163, 184, 0.15); --silver-border: #94a3b8;
+            --bronze: rgba(180, 83, 9, 0.15); --bronze-border: #b45309;
+        }
+
+        /* === Reset & Base === */
+        * { margin: 0; padding: 0; box-sizing: border-box; transition: background-color 0.2s, border-color 0.2s, color 0.2s; }
+        body { font-family: var(--font-sans); background: var(--bg); color: var(--text-main); min-height: 100dvh; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; }
+        .hidden { display: none !important; }
+
+        /* === Modals === */
+        #username-modal { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(8px); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: var(--surface); padding: 2.5rem 2rem; border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow-md); width: 90%; max-width: 400px; text-align: center; }
+        .modal-content h2 { font-size: 1.8rem; margin-bottom: 0.5rem; font-weight: 800; background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .modal-input { width: 100%; padding: 1rem; border-radius: 12px; border: 2px solid var(--border); background: var(--bg); color: var(--text-main); font-size: 1.2rem; outline: none; margin-bottom: 1rem; text-align: center; font-weight: 600; }
+        .modal-input:focus { border-color: var(--primary); }
+
+        #countdown-overlay { position: absolute; inset: 0; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(4px); z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        #countdown-text { font-size: 6rem; font-weight: 800; color: var(--primary); text-shadow: 0 0 20px var(--primary); animation: pulse 1s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+
+        /* === Layout === */
+        .container { width: 100%; max-width: 1000px; padding: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem; flex: 1; }
+        .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; box-shadow: var(--shadow-sm); animation: fadeIn 0.3s ease; position: relative; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* === Header === */
+        header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-top: 0.5rem; }
+        h1 { font-size: 2.2rem; font-weight: 800; letter-spacing: -1px; }
+        .brand { background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .header-stats { display: flex; gap: 0.8rem; flex-wrap: wrap; }
+        .btn-icon { background: var(--surface); border: 1px solid var(--border); color: var(--text-main); padding: 0.6rem 1.2rem; border-radius: 20px; cursor: pointer; font-weight: 600; font-size: 0.9rem; box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 0.4rem; }
+        .btn-icon:hover { background: var(--border); }
+        
+        /* === UI Elements === */
+        .settings-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.2rem; }
+        .setting-group { display: flex; flex-direction: column; gap: 0.5rem; }
+        .setting-group label { font-size: 0.9rem; font-weight: 600; color: var(--text-muted); }
+        
+        .custom-select { position: relative; user-select: none; width: 100%; }
+        .select-selected { background: var(--surface); border: 2px solid var(--border); border-radius: 12px; padding: 0.9rem 1.2rem; font-weight: 600; color: var(--text-main); cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem; }
+        .select-items { position: absolute; top: calc(100% + 8px); left: 0; right: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; z-index: 100; overflow: hidden; opacity: 0; transform: translateY(-10px); pointer-events: none; transition: all 0.2s ease; box-shadow: var(--shadow-md); }
+        .select-items.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
+        .select-item { padding: 0.8rem 1.2rem; cursor: pointer; font-weight: 500; font-size: 0.95rem; border-bottom: 1px solid var(--border); }
+        .select-item:hover { background: var(--bg); color: var(--primary); }
+        
+        .toggle-btn { background: var(--surface); border: 2px solid var(--border); border-radius: 12px; padding: 0.9rem 1.2rem; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; width: 100%; font-size: 0.95rem; }
+        .toggle-btn.active { border-color: var(--primary); color: var(--primary); background: rgba(99, 102, 241, 0.1); }
+
+        .btn-primary { width: 100%; padding: 1.2rem; background: var(--primary); color: #fff; border: none; border-radius: 12px; font-size: 1.1rem; font-weight: 700; cursor: pointer; margin-top: 1.5rem; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4); }
+        .btn-primary:active { transform: scale(0.98); }
+        .btn-danger { background: var(--incorrect); color: white; border: none; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600; cursor: pointer; }
+        .btn-restart { padding: 1rem; background: transparent; border: 2px solid var(--border); color: var(--text-main); border-radius: 12px; font-weight: 700; cursor: pointer; margin-top: 1rem; width: 100%; }
+
+        /* === Room Controls === */
+        .room-controls-wrapper { display: flex; gap: 0.8rem; margin-top: 0.5rem; align-items: stretch; }
+        .room-controls-wrapper button { margin: 0; flex: 1; min-width: 130px; }
+        .room-inp { flex: 1; min-width: 120px; border-radius: 12px; border: 2px solid var(--border); background: var(--bg); color: var(--text-main); padding: 0.8rem; text-align: center; font-weight: 800; font-size: 1.2rem; outline: none; letter-spacing: 2px; transition: 0.2s; }
+        .room-inp:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2); }
+
+        /* === Chat UI === */
+        .chat-box { display: flex; flex-direction: column; height: 350px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); margin-top: 1.5rem; overflow: hidden; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); }
+        .chat-messages { flex: 1; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: 1rem; background: var(--bg); scroll-behavior: smooth; }
+        .msg-row { display: flex; width: 100%; flex-direction: column; }
+        .msg-row.own { align-items: flex-end; }
+        .msg-row.other { align-items: flex-start; }
+        .msg-sender { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.3rem; font-weight: 600; padding: 0 0.2rem; }
+        .msg-bubble { max-width: 85%; padding: 0.7rem 1rem; border-radius: 14px; font-size: 0.95rem; line-height: 1.4; word-wrap: break-word; box-shadow: var(--shadow-sm); }
+        .msg-row.own .msg-bubble { background: var(--primary); color: white; border-bottom-right-radius: 4px; }
+        .msg-row.other .msg-bubble { background: var(--surface); border: 1px solid var(--border); color: var(--text-main); border-bottom-left-radius: 4px; }
+        
+        .msg-reactions { display: flex; gap: 0.3rem; margin-top: 0.3rem; font-size: 0.75rem; }
+        .msg-reaction { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 0.1rem 0.4rem; cursor: pointer; user-select: none; }
+        .msg-reaction:hover { background: var(--surface); border-color: var(--primary); }
+        .msg-typing { font-size: 0.8rem; color: var(--text-muted); font-style: italic; padding: 0.5rem 1rem; min-height: 2rem; background: var(--surface); border-top: 1px solid var(--border); }
+
+        .chat-input-area { display: flex; background: var(--surface); padding: 0.8rem; border-top: 1px solid var(--border); gap: 0.5rem; }
+        .chat-input-area input { flex: 1; background: var(--bg); border: 1px solid var(--border); color: var(--text-main); padding: 0.8rem 1rem; border-radius: 20px; outline: none; font-size: 0.95rem; transition: 0.2s; }
+        .chat-input-area input:focus { border-color: var(--primary); }
+        .btn-send-chat { background: var(--primary); color: white; border: none; padding: 0 1.2rem; border-radius: 20px; font-weight: 700; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
+
+        /* === Typing Interface === */
+        .sticky-bar { position: sticky; top: 1rem; z-index: 50; display: flex; justify-content: space-between; align-items: center; background: var(--surface); padding: 1rem 1.5rem; border-radius: 12px; border: 1px solid var(--border); box-shadow: var(--shadow-md); margin-bottom: 1rem; font-weight: 700; color: var(--primary); }
+        .typing-wrapper { display: flex; height: 45vh; min-height: 250px; border-radius: 12px; border: 2px solid var(--border); background: var(--bg); overflow: hidden; position: relative; transition: transform 0.3s ease; }
+        
+        .focus-mode { transform: scale(1.02); box-shadow: var(--shadow-md); border-color: var(--primary); }
+        .focus-mode #text-display span.correct { color: var(--text-faint); }
+        .hardcore-mode #text-display span.correct, .hardcore-mode #text-display span.incorrect { color: var(--text-muted); background: transparent; }
+        .hardcore-mode #text-display span.active::before { display: none; }
+
+        #text-display { flex-grow: 1; padding: 1.5rem; font-size: 1.5rem; line-height: 1.6; overflow-y: hidden; white-space: pre-wrap; color: var(--text-muted); cursor: text; }
+        .coding-mode #text-display { font-family: var(--font-mono); font-size: 1.25rem; tab-size: 4; }
+        
+        #text-display span { position: relative; }
+        #text-display span.correct { color: var(--text-main); }
+        #text-display span.incorrect { color: var(--incorrect); background: var(--incorrect-bg); border-radius: 2px; }
+        #text-display span.active::before { content: ''; position: absolute; left: -1px; top: 10%; bottom: 10%; width: 2px; background-color: var(--cursor); animation: blink 1s step-end infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        .coding-mode span.syn-kw.correct { color: #c678dd; font-weight: 600; }
+        .coding-mode span.syn-str.correct { color: #98c379; }
+        .coding-mode span.syn-num.correct { color: #d19a66; }
+        .coding-mode span.syn-brkt.correct { color: #56b6c2; }
+
+        /* CRITICAL FIX: Safe hidden input css */
+        #hidden-input { position: absolute; opacity: 0; top: 0; left: 0; z-index: -1; pointer-events: none; font-size: 16px; }
+        
+        #focus-overlay { position: absolute; inset: 0; background: rgba(15, 23, 42, 0.8); display: flex; flex-direction: column; justify-content: center; align-items: center; font-size: 1.2rem; font-weight: 700; cursor: pointer; z-index: 10; color: #fff; backdrop-filter: blur(4px); }
+        .focus-text { font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--primary); }
+        .focus-subtext { font-size: 0.9rem; color: var(--text-muted); font-weight: 500; }
+
+        .mp-bar-bg { width: 100%; height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; margin-bottom: 0.8rem; }
+        .mp-bar-fill { height: 100%; background: var(--primary); transition: width 0.3s ease; }
+        .mp-bar-finished { background: var(--correct); }
+        .podium-container { display: flex; flex-direction: column; gap: 0.8rem; margin: 1.5rem 0; }
+
+        /* === General Results & Profile === */
+        .results-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+        .stat-card { background: var(--bg); padding: 1.5rem 1rem; border-radius: 12px; text-align: center; border: 1px solid var(--border); }
+        .stat-card h3 { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem; font-weight: 600; text-transform: uppercase; }
+        .stat-card p { font-size: 2rem; font-weight: 800; color: var(--primary); }
+
+        .badge-tag { display: inline-block; padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: 700; background: rgba(99,102,241,0.1); color: var(--primary); border: 1px solid var(--primary); margin: 0.2rem; }
+        
+        .leaderboard-table { width: 100%; border-collapse: separate; border-spacing: 0 0.5rem; min-width: 600px; }
+        .leaderboard-table th { color: var(--text-muted); font-weight: 600; font-size: 0.9rem; padding: 0.5rem 1rem; text-align: left; }
+        .leaderboard-table td { padding: 1rem; background: var(--bg); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); font-weight: 500; }
+        
+        .rank-gold td { background: var(--gold) !important; border-color: var(--gold-border) !important; }
+        .rank-silver td { background: var(--silver) !important; border-color: var(--silver-border) !important; }
+        .rank-bronze td { background: var(--bronze) !important; border-color: var(--bronze-border) !important; }
+
+        .app-footer { width: 100%; padding: 2rem 1.5rem; text-align: center; border-top: 1px solid var(--border); margin-top: auto; background: var(--surface); font-size: 0.8rem; color: var(--text-muted); }
+
+        @media (max-width: 600px) {
+            .container { padding: 1rem; }
+            .panel { padding: 1.5rem 1rem; }
+            .room-controls-wrapper { flex-direction: column; }
+            .room-controls-wrapper button, .room-controls-wrapper input { width: 100%; flex: none; margin: 0; }
+            #text-display { font-size: 1.25rem; padding: 1rem; }
+            .sticky-bar { padding: 0.8rem 1rem; flex-wrap: wrap; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="username-modal" class="hidden">
+        <div class="modal-content">
+            <h2>Welcome to TYPR.</h2>
+            <p>Enter your username to join the global leaderboard.</p>
+            <input type="text" id="inp-username" class="modal-input" placeholder="Username" maxlength="15" autocomplete="off">
+            <button class="btn-primary" id="btn-save-user" style="margin-top:0;">Start Typing</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1><span class="brand">TYPR.</span></h1>
+            <div class="header-stats">
+                <button class="btn-icon" id="btn-sound">🔊 Sound</button>
+                <button class="btn-icon" id="btn-profile">👤 Profile</button>
+                <button class="btn-icon" id="btn-nav-lb">🏆 Leaderboard</button>
+            </div>
+        </header>
+
+        <main id="panel-settings" class="panel">
+            <div class="settings-grid">
+                <div class="setting-group">
+                    <label>Mode</label>
+                    <div class="custom-select" id="dd-mode" data-value="normal">
+                        <div class="select-selected">Normal Text</div>
+                        <div class="select-items">
+                            <div class="select-item" data-value="normal">Normal Text</div>
+                            <div class="select-item" data-value="coding">Code Snippets</div>
+                            <div class="select-item" data-value="daily" style="color:var(--warning);">📅 Daily Challenge</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="setting-group">
+                    <label>Test Type</label>
+                    <div class="custom-select" id="dd-type" data-value="time">
+                        <div class="select-selected">Time Based</div>
+                        <div class="select-items">
+                            <div class="select-item" data-value="time">Time Based</div>
+                            <div class="select-item" data-value="burst">15s Burst</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="setting-group" id="grp-val">
+                    <label>Duration</label>
+                    <div class="custom-select" id="dd-val" data-value="60">
+                        <div class="select-selected">1 Minute</div>
+                        <div class="select-items" id="val-options"></div>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <label>Caret Focus</label>
+                    <button class="toggle-btn" id="btn-focus">Focus Lens <span>Off</span></button>
+                </div>
+                <div class="setting-group">
+                    <label>Hardcore</label>
+                    <button class="toggle-btn" id="btn-hardcore">No UI/Backspace <span>Off</span></button>
+                </div>
+                
+                <div class="setting-group" style="grid-column: 1 / -1; background: var(--bg); padding: 1.5rem; border-radius: 12px; border: 1px dashed var(--primary); margin-top: 0.5rem;">
+                    <label style="color: var(--primary); font-size: 1.1rem; margin-bottom: 0.5rem; display:block;">🎮 Multiplayer Room</label>
+                    <div class="room-controls-wrapper">
+                        <button class="btn-primary" id="btn-create-room">Create Room</button>
+                        <input type="number" id="inp-room-code" class="room-inp" placeholder="CODE">
+                        <button class="btn-restart" id="btn-join-room" style="background:var(--surface);">Join Room</button>
+                    </div>
+                </div>
+            </div>
+            <button class="btn-primary" id="btn-start">Play Solo Mode</button>
+        </main>
+
+        <main id="panel-lobby" class="panel hidden">
+            <h2 style="text-align: center; margin-bottom: 0.5rem; color: var(--primary);">Room: <span id="lobby-room-code" style="letter-spacing: 2px;">-----</span></h2>
+            <p style="text-align: center; color: var(--text-muted); margin-bottom: 1.5rem;" id="lobby-status">Waiting for players...</p>
+            
+            <div id="host-controls" class="hidden" style="margin-bottom: 1.5rem; padding: 1rem; background: var(--bg); border: 1px solid var(--border); border-radius: 12px;">
+                <h4 style="margin-bottom: 0.5rem; color: var(--accent);">Host Controls</h4>
+                <div style="display: flex; gap: 0.5rem;">
+                    <select id="host-mode-select" style="padding: 0.8rem; border-radius: 8px; background: var(--surface); color: white; border: 1px solid var(--border); flex: 1; outline:none;">
+                        <option value="normal">Normal Text</option>
+                        <option value="coding">Code Snippets</option>
+                    </select>
+                    <button class="btn-primary" id="btn-host-change" style="margin: 0; width: auto; padding: 0 1.5rem;">Set Mode</button>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <h3 style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase;">Players in Room</h3>
+                <ul id="lobby-players-list" style="list-style: none; display: flex; flex-direction: column; gap: 0.5rem;"></ul>
+            </div>
+
+            <div class="chat-box">
+                <div class="chat-messages" id="chat-messages"></div>
+                <div class="msg-typing" id="chat-typing"></div>
+                <div class="chat-input-area">
+                    <input type="text" id="chat-input" placeholder="Type a message..." autocomplete="off">
+                    <button class="btn-send-chat" id="btn-send-chat">Send</button>
+                </div>
+            </div>
+
+            <button class="btn-primary hidden" id="btn-start-room" style="margin-top:1.5rem;">Start Match</button>
+            <button class="btn-restart" id="btn-leave-room">Leave Room</button>
+        </main>
+
+        <main id="panel-typing" class="panel hidden" style="padding: 1rem;">
+            <div class="sticky-bar">
+                <div style="display:flex; gap: 1.2rem;"><span id="stat-time">01:00</span><span id="stat-wpm">0 WPM</span></div>
+                <div id="stat-acc" style="color: var(--text-muted); font-size: 1rem;">100% Acc</div>
+            </div>
+
+            <div id="mp-progress-container" class="hidden" style="margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 0.5rem; background: var(--surface); padding: 1rem; border-radius: 12px; border: 1px solid var(--border);"></div>
+            
+            <div class="typing-wrapper" id="type-cont">
+                <div id="focus-overlay" class="hidden">
+                    <div class="focus-text" id="focus-main-text">Tap to Initialize</div>
+                    <div class="focus-subtext">Clicking anywhere activates the keyboard</div>
+                </div>
+
+                <div id="countdown-overlay" class="hidden"><div id="countdown-text">3</div></div>
+                <div id="text-display"></div>
+                <textarea id="hidden-input" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"></textarea>
+            </div>
+            
+            <button class="btn-restart" id="btn-abort">Abort Match (Esc)</button>
+        </main>
+
+        <main id="panel-results" class="panel hidden">
+            <h2 id="res-title" style="text-align: center; margin-bottom: 1.5rem; font-size: 1.8rem; font-weight:800;">Analysis Complete</h2>
+            <div id="mp-podium" class="podium-container hidden"></div>
+            <div class="results-grid">
+                <div class="stat-card"><h3>WPM</h3><p id="res-wpm">0</p></div>
+                <div class="stat-card"><h3>Accuracy</h3><p id="res-acc">0%</p></div>
+                <div class="stat-card"><h3>Time</h3><p id="res-time">0s</p></div>
+            </div>
+            <div style="display:flex; gap:1rem; margin-top: 1.5rem; flex-wrap: wrap;">
+                <button class="btn-restart" id="btn-new-test" style="margin-top:0;">Back to Setup</button>
+                <button class="btn-primary hidden" id="btn-host-restart" style="margin-top:0;">Restart Match</button>
+            </div>
+        </main>
+
+        <main id="panel-profile" class="panel hidden">
+            <h2 style="margin-bottom: 1.5rem; font-weight:800;">User Profile</h2>
+            <div id="prof-badges" style="margin-bottom:1.5rem; display:flex; flex-wrap:wrap; gap:0.5rem;"></div>
+            
+            <div class="results-grid" style="margin-bottom: 2rem;">
+                <div class="stat-card"><h3>Best WPM</h3><p id="prof-best">0</p></div>
+                <div class="stat-card"><h3>Average WPM</h3><p id="prof-avg">0</p></div>
+                <div class="stat-card"><h3>Total Games</h3><p id="prof-total">0</p></div>
+            </div>
+
+            <h3 style="margin-bottom: 1rem; color:var(--text-muted); font-size:1rem;">Recent Matches (Last 20)</h3>
+            <div style="width:100%; overflow-x:auto; max-height:250px; border-radius:12px; border:1px solid var(--border);">
+                <table class="leaderboard-table" style="margin:0;">
+                    <thead style="position:sticky; top:0; background:var(--surface);"><tr><th>WPM</th><th>Acc</th><th>Mode</th></tr></thead>
+                    <tbody id="prof-history"></tbody>
+                </table>
+            </div>
+            <button class="btn-restart" id="btn-prof-back">Back</button>
+        </main>
+
+        <main id="panel-leaderboard" class="panel hidden">
+            <h2 style="margin-bottom: 1.5rem; font-size: 1.6rem; font-weight:800; display:flex; justify-content:space-between; align-items:center;">
+                Global Rankings 🏆
+                <button class="btn-icon" id="btn-lb-back" style="font-size: 0.8rem;">← Back</button>
+            </h2>
+            <div class="lb-controls" style="display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+                <div class="custom-select" id="lb-filter-mode" data-value="all" style="flex:1;">
+                    <div class="select-selected">All Modes</div>
+                    <div class="select-items"><div class="select-item" data-value="all">All Modes</div><div class="select-item" data-value="normal">Normal Text</div><div class="select-item" data-value="coding">Code Snippets</div></div>
+                </div>
+                <div class="custom-select" id="lb-filter-type" data-value="all" style="flex:1;">
+                    <div class="select-selected">All Types</div>
+                    <div class="select-items"><div class="select-item" data-value="all">All Types</div><div class="select-item" data-value="time">Time Based</div><div class="select-item" data-value="burst">15s Burst</div></div>
+                </div>
+            </div>
+            <div style="width: 100%; overflow-x: auto;">
+                <table class="leaderboard-table">
+                    <thead><tr><th>#</th><th>Player</th><th>WPM</th><th>Acc</th><th>Mode</th></tr></thead>
+                    <tbody id="lb-body"><tr><td colspan="5" style="text-align:center;">Loading...</td></tr></tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <footer class="app-footer">
+        <div style="font-size: 0.9rem; font-weight: 800; letter-spacing: 1px; color: var(--text-main); margin-bottom: 0.8rem;">CREATED BY <span style="color: var(--primary);">MOHAMMED WASI</span></div>
+        <div style="max-width: 800px; margin: 0 auto; line-height: 1.5;">This is a demo typing application. Scores are not officially verified. Anti-cheat mechanisms actively flag unrealistic scores. Do not exploit the leaderboard.</div>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getFirestore, collection, doc, getDoc, setDoc, updateDoc, deleteDoc, deleteField, serverTimestamp, onSnapshot, query, orderBy, limit, addDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+        // CRITICAL: All code runs after DOM is loaded to prevent null errors
+        document.addEventListener("DOMContentLoaded", () => {
+            console.log("DOM loaded - Initializing TYPR");
+
+            const firebaseConfig = {
+                apiKey: "AIzaSyCziskazrd-3vFia04uvkqWF8bFVGeqXPk",
+                authDomain: "fast-typing-app-aecdc.firebaseapp.com",
+                projectId: "fast-typing-app-aecdc",
+                storageBucket: "fast-typing-app-aecdc.firebasestorage.app",
+                messagingSenderId: "1059306504411",
+                appId: "1:1059306504411:web:ea56c43e5fd0a8a2c5ccfe"
+            };
+            const app = initializeApp(firebaseConfig);
+            const db = getFirestore(app);
+
+            /* === Utilities & Core State === */
+            // Bug Fix #2: Global formatT function
+            window.formatT = function(seconds) {
+                if (isNaN(seconds) || seconds < 0) return "0:00";
+                const m = Math.floor(seconds / 60);
+                const s = seconds % 60;
+                return `${m}:${s.toString().padStart(2, '0')}`;
+            };
+
+            /* === Dynamic Random Text Engine === */
+            const wordPool = {
+                common: ["the", "be", "to", "of", "and", "a", "in", "that", "have", "it", "for", "not", "on", "with", "he", "as", "you", "do", "at", "this", "but", "his", "by", "from", "they", "we", "say", "her", "she", "or", "will", "my", "one", "all", "would", "there", "their", "what", "so", "up", "out", "if", "about", "who", "get", "which", "go", "when", "make", "can", "like", "time", "no", "just", "know", "take", "people", "into", "year", "your", "good", "some", "could", "them", "see", "other", "than", "then", "now", "look", "only", "come", "its", "over", "think", "also", "back", "after", "use", "two", "how", "our", "work", "first", "well", "way", "even", "new", "want", "because", "any", "these", "give", "day", "most", "us"]
+            };
+
+            function generateText(mode, length = 60) {
+                if (mode === 'normal') {
+                    let words = [];
+                    for(let i=0; i<length; i++) {
+                        let w = wordPool.common[Math.floor(Math.random() * wordPool.common.length)];
+                        if(Math.random() < 0.15) w = w.charAt(0).toUpperCase() + w.slice(1);
+                        if(Math.random() < 0.15 && i !== length-1) w += [",", ".", ";", "?"][Math.floor(Math.random() * 4)];
+                        words.push(w);
+                    }
+                    if(words.length > 0) {
+                        words[0] = words[0].charAt(0).toUpperCase() + words[0].slice(1);
+                        words[words.length-1] += ".";
+                    }
+                    return words.join(" ");
+                } else if (mode === 'coding') {
+                    const vars = ["data", "index", "count", "result", "user", "config", "item", "node", "element"];
+                    const methods = ["map", "filter", "reduce", "sort", "find"];
+                    let v1 = vars[Math.floor(Math.random()*vars.length)];
+                    let v2 = vars[Math.floor(Math.random()*vars.length)];
+                    let m = methods[Math.floor(Math.random()*methods.length)];
+                    let snippets = [
+                        `const ${v1} = ${v2}.${m}(x => x !== null);\nconsole.log(${v1});`,
+                        `function process(${v1}) {\n    let total = 0;\n    for(let i=0; i<${v1}.length; i++) {\n        total += ${v1}[i];\n    }\n    return total;\n}`,
+                        `if (${v1} === ${v2}) {\n    return true;\n} else {\n    return false;\n}`
+                    ];
+                    return snippets[Math.floor(Math.random()*snippets.length)] + "\n\n" + snippets[Math.floor(Math.random()*snippets.length)];
+                }
+                return "Fallback text generation.";
+            }
+
+            function generateDailyText() {
+                const seedStr = new Date().toDateString();
+                let seed = seedStr.split('').reduce((a,b)=>a+b.charCodeAt(0),0);
+                function sRand() { var x = Math.sin(seed++) * 10000; return x - Math.floor(x); }
+                let words = [];
+                for(let i=0; i<50; i++) words.push(wordPool.common[Math.floor(sRand() * wordPool.common.length)]);
+                return words.join(" ") + ".";
+            }
+
+            function getUid() {
+                let uid = localStorage.getItem('typr_userId');
+                if (!uid) { uid = 'user_' + Math.random().toString(36).substr(2, 9); localStorage.setItem('typr_userId', uid); }
+                return uid;
+            }
+
+            let state = {
+                userId: getUid(), username: localStorage.getItem('typr_username') || '',
+                mode: localStorage.getItem('typr_mode') || 'normal', type: localStorage.getItem('typr_type') || 'time', val: parseInt(localStorage.getItem('typr_val')) || 60,
+                focus: localStorage.getItem('typr_focus') === 'true', hardcore: localStorage.getItem('typr_hardcore') === 'true', sound: localStorage.getItem('typr_sound') === 'true',
+                text: "", spans: [], timer: null, timeSecs: 0, isTyping: false, testEnded: false, errors: 0, totalTyped: 0, maxIdx: 0,
+                roomId: null, isHost: false, roomUnsub: null, chatUnsub: null, roomData: null,
+                userStats: { bestWPM: 0, averageWPM: 0, totalGames: 0, history: [], badges: [] }, lbData: [],
+                progressHistory: [], lastProgressChar: 0
+            };
+
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            let actx;
+
+            // Bug Fix #6: Safe Event listeners via registry to prevent duplicates
+            const listenersRegistry = {};
+            const safeListen = (id, event, fn) => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                if(listenersRegistry[`${id}_${event}`]) el.removeEventListener(event, listenersRegistry[`${id}_${event}`]);
+                listenersRegistry[`${id}_${event}`] = fn;
+                el.addEventListener(event, fn);
+            };
+
+            // Safely fetch all DOM nodes
+            const DOM = {
+                uModal: document.getElementById('username-modal'), uInp: document.getElementById('inp-username'), uBtn: document.getElementById('btn-save-user'),
+                pSet: document.getElementById('panel-settings'), pType: document.getElementById('panel-typing'), pRes: document.getElementById('panel-results'), 
+                pLb: document.getElementById('panel-leaderboard'), pLobby: document.getElementById('panel-lobby'), pProf: document.getElementById('panel-profile'),
+                tDisp: document.getElementById('text-display'), hInp: document.getElementById('hidden-input'), overlay: document.getElementById('focus-overlay'),
+                sTime: document.getElementById('stat-time'), sWpm: document.getElementById('stat-wpm'), sAcc: document.getElementById('stat-acc'),
+                mpProgCont: document.getElementById('mp-progress-container'), chatMsgs: document.getElementById('chat-messages'), 
+                cdOverlay: document.getElementById('countdown-overlay'), cdText: document.getElementById('countdown-text'), mpPodium: document.getElementById('mp-podium'),
+                typeCont: document.getElementById('type-cont')
+            };
+
+            /* === Init === */
+            if (!state.username && DOM.uModal) DOM.uModal.classList.remove('hidden');
+            safeListen('btn-save-user', 'click', () => {
+                if(!DOM.uInp) return;
+                const v = DOM.uInp.value.trim();
+                if (v.length >= 3) { 
+                    state.username = v; 
+                    localStorage.setItem('typr_username', v); 
+                    if(DOM.uModal) DOM.uModal.classList.add('hidden'); 
+                    loadUserStats(); 
+                }
+            });
+
+            async function loadUserStats() {
+                if(!state.username) return;
+                try {
+                    const docSnap = await getDoc(doc(db, 'users', state.userId));
+                    if(docSnap.exists()) state.userStats = { ...state.userStats, ...docSnap.data() };
+                } catch(e) { console.error("Firebase Error:", e); }
+            }
+            loadUserStats();
+
+            // Bug Fix #1: Robust Panel Switching
+            function showPanel(p) {
+                if(!p) return;
+                [DOM.pSet, DOM.pType, DOM.pRes, DOM.pLb, DOM.pLobby, DOM.pProf].forEach(el => {
+                    if(el) el.classList.add('hidden');
+                });
+                p.classList.remove('hidden'); 
+                window.scrollTo(0,0);
+            }
+
+            safeListen('btn-start', 'click', () => startTest(false));
+            safeListen('btn-abort', 'click', () => state.roomId ? leaveRoom() : startTest(false));
+            safeListen('btn-new-test', 'click', () => state.roomId ? showPanel(DOM.pLobby) : showPanel(DOM.pSet));
+            safeListen('btn-nav-lb', 'click', () => showPanel(DOM.pLb));
+            safeListen('btn-lb-back', 'click', () => showPanel(DOM.pSet));
+            
+            safeListen('btn-profile', 'click', () => {
+                const pBest = document.getElementById('prof-best');
+                const pAvg = document.getElementById('prof-avg');
+                const pTotal = document.getElementById('prof-total');
+                if(pBest) pBest.innerText = state.userStats.bestWPM;
+                if(pAvg) pAvg.innerText = Math.round(state.userStats.averageWPM);
+                if(pTotal) pTotal.innerText = state.userStats.totalGames;
+                
+                const bCont = document.getElementById('prof-badges'); 
+                if(bCont) {
+                    bCont.innerHTML = '';
+                    (state.userStats.badges||[]).forEach(b => bCont.innerHTML += `<span class="badge-tag">${b}</span>`);
+                }
+                
+                const hCont = document.getElementById('prof-history');
+                if(hCont) {
+                    hCont.innerHTML = '';
+                    (state.userStats.history||[]).forEach(h => hCont.innerHTML += `<tr><td style="color:var(--primary); font-weight:bold;">${h.wpm}</td><td>${h.acc}%</td><td>${h.mode}</td></tr>`);
+                }
+                
+                showPanel(DOM.pProf);
+            });
+            safeListen('btn-prof-back', 'click', () => showPanel(DOM.pSet));
+
+            // Custom Dropdowns
+            document.querySelectorAll('.custom-select').forEach(sel => {
+                const head = sel.querySelector('.select-selected'); 
+                const items = sel.querySelector('.select-items');
+                if(head && items) {
+                    head.onclick = (e) => { e.stopPropagation(); items.classList.toggle('show'); };
+                    sel.querySelectorAll('.select-item').forEach(opt => {
+                        opt.onclick = () => {
+                            head.innerText = opt.innerText; items.classList.remove('show');
+                            if(sel.id === 'dd-mode') { state.mode = opt.dataset.value; localStorage.setItem('typr_mode', state.mode); }
+                            if(sel.id === 'dd-type') { state.type = opt.dataset.value; localStorage.setItem('typr_type', state.type); updateValHTML(); }
+                            if(sel.id === 'dd-val') { state.val = parseInt(opt.dataset.value); localStorage.setItem('typr_val', state.val); }
+                            if(sel.id === 'lb-filter-mode' || sel.id === 'lb-filter-type') renderLeaderboard();
+                        }
+                    });
+                }
+            });
+            document.addEventListener('click', () => { document.querySelectorAll('.select-items').forEach(i => i.classList.remove('show')); });
+
+            function updateValHTML() {
+                const vOpts = document.getElementById('val-options'); if(!vOpts) return;
+                if(state.type === 'time') { vOpts.innerHTML = `<div class="select-item" data-value="60">1 Minute</div><div class="select-item" data-value="120">2 Minutes</div>`; state.val = 60; }
+                else if(state.type === 'burst') { vOpts.innerHTML = `<div class="select-item" data-value="15">15 Seconds</div>`; state.val = 15; }
+                
+                const grpVal = document.getElementById('grp-val');
+                if(grpVal) grpVal.classList.toggle('hidden', state.type === 'battle');
+                
+                const ddVal = document.getElementById('dd-val');
+                if(ddVal) {
+                    const h = ddVal.querySelector('.select-selected');
+                    if(h && vOpts.firstChild) h.innerText = vOpts.firstChild.innerText;
+                    vOpts.querySelectorAll('.select-item').forEach(opt => {
+                        opt.onclick = () => { h.innerText = opt.innerText; ddVal.querySelector('.select-items').classList.remove('show'); state.val = parseInt(opt.dataset.value); }
+                    });
+                }
+            }
+            updateValHTML(); 
+
+            const toggleBtn = (id, key) => {
+                const btn = document.getElementById(id); if(!btn) return;
+                state[key] = !state[key]; localStorage.setItem(`typr_${key}`, state[key]);
+                btn.classList.toggle('active', state[key]); btn.querySelector('span').innerText = state[key] ? 'On' : 'Off';
+            };
+            safeListen('btn-focus', 'click', () => toggleBtn('btn-focus', 'focus'));
+            safeListen('btn-hardcore', 'click', () => toggleBtn('btn-hardcore', 'hardcore'));
+            safeListen('btn-sound', 'click', () => { 
+                state.sound = !state.sound; 
+                const btnSound = document.getElementById('btn-sound');
+                if(btnSound) btnSound.classList.toggle('active', state.sound); 
+                if(state.sound) playAudio('click'); 
+            });
+
+            /* === MOBILE FOCUS LOGIC (Bug Fix #2, #4, #5, #6) === */
+            function focusInput() {
+                if (DOM.hInp && !state.testEnded) {
+                    DOM.hInp.focus();
+                    console.log("Input focused");
+                    if (DOM.overlay) DOM.overlay.classList.add('hidden');
+                }
+            }
+
+            if(DOM.overlay) DOM.overlay.addEventListener("click", focusInput);
+            if(DOM.tDisp) DOM.tDisp.addEventListener("click", focusInput);
+            if(DOM.typeCont) DOM.typeCont.addEventListener("click", focusInput);
+
+            if(DOM.hInp) {
+                DOM.hInp.addEventListener("blur", () => {
+                    if (state.isTyping && !state.testEnded) {
+                        console.log("Input blurred - Attempting to refocus");
+                        if (DOM.overlay) {
+                            const fText = DOM.overlay.querySelector('.focus-text');
+                            if(fText) fText.innerText = "Paused - Tap to Resume";
+                            DOM.overlay.classList.remove("hidden");
+                        }
+                        // Optional auto-refocus for desktop
+                        setTimeout(() => {
+                            if (!state.testEnded && DOM.hInp) DOM.hInp.focus();
+                        }, 100);
+                    }
+                });
+            }
+
+            /* === MULTIPLAYER ROOMS & AUTO CLEANUP === */
+            safeListen('btn-create-room', 'click', async () => {
+                if(!state.username) return alert("Enter username first.");
+                
+                const btn = document.getElementById('btn-create-room');
+                const origText = btn.innerText; btn.innerText = "Creating...";
+
+                state.roomId = Math.floor(10000 + Math.random() * 90000).toString();
+                state.isHost = true;
+                try {
+                    let genLength = state.type === 'burst' ? 25 : (state.val === 120 ? 120 : 60);
+                    await setDoc(doc(db, 'rooms', state.roomId), {
+                        hostId: state.userId, status: "waiting", mode: state.mode, createdAt: serverTimestamp(),
+                        text: generateText(state.mode, genLength),
+                        players: { [state.userId]: { username: state.username, wpm: 0, progress: 0, finished: false, lastActive: Date.now() } }
+                    });
+                    enterLobby();
+                } catch(e) { console.error("Firebase Error:", e); alert("Failed to create room."); } 
+                finally { btn.innerText = origText; }
+            });
+
+            safeListen('btn-join-room', 'click', async () => {
+                const codeInp = document.getElementById('inp-room-code');
+                if(!codeInp) return;
+                const code = codeInp.value.trim();
+                if(code.length !== 5) return alert("Invalid code.");
+                
+                const btn = document.getElementById('btn-join-room'); const origText = btn.innerText; btn.innerText = "Joining...";
+
+                try {
+                    const rSnap = await getDoc(doc(db, 'rooms', code));
+                    if(!rSnap.exists() || rSnap.data().status !== "waiting") {
+                        btn.innerText = origText;
+                        return alert("Room not found or started.");
+                    }
+                    
+                    await updateDoc(doc(db, 'rooms', code), { [`players.${state.userId}`]: { username: state.username, wpm: 0, progress: 0, finished: false, lastActive: Date.now() } });
+                    state.roomId = code; state.isHost = false;
+                    enterLobby();
+                } catch(e) {
+                    console.error("Firebase Error:", e);
+                    alert("Failed to join room.");
+                } finally {
+                    btn.innerText = origText;
+                }
+            });
+
+            function enterLobby() {
+                showPanel(DOM.pLobby); 
+                const lbRoom = document.getElementById('lobby-room-code');
+                if(lbRoom) lbRoom.innerText = state.roomId;
+                
+                const btnStartR = document.getElementById('btn-start-room');
+                if(btnStartR) btnStartR.classList.toggle('hidden', !state.isHost);
+                
+                const hostCont = document.getElementById('host-controls');
+                if(hostCont) hostCont.classList.toggle('hidden', !state.isHost);
+                
+                initChat();
+
+                state.roomUnsub = onSnapshot(doc(db, 'rooms', state.roomId), (docSnap) => {
+                    if(!docSnap.exists()) { alert("Room closed."); leaveRoom(); return; }
+                    const data = docSnap.data(); state.roomData = data; state.text = data.text;
+                    
+                    if(state.isHost && data.createdAt && (Date.now() - data.createdAt.toMillis() > 15 * 60000)) {
+                        alert("Room expired (15 minute limit)."); leaveRoom(); return;
+                    }
+
+                    const pListEl = document.getElementById('lobby-players-list'); 
+                    if(pListEl) {
+                        pListEl.innerHTML = '';
+                        Object.entries(data.players).forEach(([uid, p]) => {
+                            const isMe = uid === state.userId;
+                            let kickBtn = (state.isHost && !isMe) ? `<button class="btn-danger" style="padding:0.3rem 0.6rem; font-size:0.8rem;" onclick="kickPlayer('${uid}')">Kick</button>` : '';
+                            pListEl.innerHTML += `<li style="padding:0.8rem; background:var(--surface); border:1px solid var(--border); border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+                                <span style="font-weight:${isMe?'bold':'normal'}; color:${isMe?'var(--primary)':'inherit'};">${escapeHTML(p.username)} ${uid===data.hostId?'👑':''}</span>
+                                ${kickBtn}
+                            </li>`;
+                        });
+                    }
+
+                    if(!data.players[state.userId]) { alert("You were removed from the room."); leaveRoom(); }
+
+                    const cTyping = document.getElementById('chat-typing');
+                    if(cTyping) {
+                        const typers = Object.values(data.typing || {}).filter(n => n !== state.username);
+                        cTyping.innerText = typers.length > 0 ? `${typers.join(', ')} ${typers.length>1?'are':'is'} typing...` : '';
+                    }
+
+                    // Bug Fix #7: Multiplayer Sync
+                    if(data.status === "countdown" && DOM.pType && DOM.pType.classList.contains('hidden')) {
+                        showPanel(DOM.pType); 
+                        if(DOM.cdOverlay) DOM.cdOverlay.classList.remove('hidden'); 
+                        if(DOM.mpProgCont) DOM.mpProgCont.classList.remove('hidden'); 
+                        
+                        if(DOM.tDisp) {
+                            DOM.tDisp.innerHTML = '';
+                            for (let i=0; i<state.text.length; i++) {
+                                const sp = document.createElement('span'); sp.textContent = state.text[i];
+                                DOM.tDisp.appendChild(sp);
+                            }
+                            state.spans = Array.from(DOM.tDisp.children);
+                            if(state.spans.length>0) state.spans[0].classList.add('active');
+                        }
+
+                        if(DOM.hInp) { DOM.hInp.disabled = true; DOM.hInp.value = ''; }
+                        
+                        let count = 3; 
+                        if(DOM.cdText) DOM.cdText.innerText = count;
+                        const cdInt = setInterval(() => {
+                            count--;
+                            if(count > 0) {
+                                if(DOM.cdText) DOM.cdText.innerText = count;
+                            } else if(count === 0) {
+                                if(DOM.cdText) DOM.cdText.innerText = "GO!";
+                            } else { 
+                                clearInterval(cdInt); 
+                                if(DOM.cdOverlay) DOM.cdOverlay.classList.add('hidden'); 
+                                if(state.isHost) {
+                                    try { updateDoc(doc(db, 'rooms', state.roomId), { status: "playing" }); } catch(e){}
+                                }
+                                startTest(true, true); 
+                            }
+                        }, 1000);
+                    }
+
+                    if(data.status === "playing" || data.status === "finished") {
+                        if(DOM.mpProgCont) {
+                            DOM.mpProgCont.innerHTML = '';
+                            Object.values(data.players).forEach(p => {
+                                DOM.mpProgCont.innerHTML += `<div style="font-size:0.85rem; font-weight:bold; color:var(--text-muted); display:flex; justify-content:space-between; margin-bottom:0.3rem;">
+                                    <span>${escapeHTML(p.username)}</span> <span>${p.wpm} WPM</span>
+                                </div>
+                                <div class="mp-bar-bg"><div class="mp-bar-fill ${p.finished ? 'mp-bar-finished' : ''}" style="width: ${p.progress}%;"></div></div>`;
+                            });
+                        }
+                    }
+                    if(data.status === "finished" && DOM.pRes && DOM.pRes.classList.contains('hidden')) showWinnerScreen(data.players);
+                });
+            }
+
+            window.kickPlayer = (uid) => { 
+                try { updateDoc(doc(db, 'rooms', state.roomId), { [`players.${uid}`]: deleteField() }); } catch(e){} 
+            };
+            
+            safeListen('btn-host-change', 'click', () => {
+                const sel = document.getElementById('host-mode-select');
+                if(!sel) return;
+                const val = sel.value;
+                let genLength = state.type === 'burst' ? 25 : (state.val === 120 ? 120 : 60);
+                try { updateDoc(doc(db, 'rooms', state.roomId), { mode: val, text: generateText(val, genLength) }); } catch(e){}
+            });
+            safeListen('btn-start-room', 'click', () => { 
+                try { updateDoc(doc(db, 'rooms', state.roomId), { status: "countdown" }); } catch(e){} 
+            });
+            safeListen('btn-leave-room', 'click', leaveRoom);
+            
+            async function leaveRoom() {
+                if(state.roomUnsub) state.roomUnsub(); if(state.chatUnsub) state.chatUnsub();
+                if(state.roomId && !state.isHost) {
+                    try { await updateDoc(doc(db, 'rooms', state.roomId), { [`players.${state.userId}`]: deleteField() }); } catch(e){}
+                }
+                if(state.roomId && state.isHost) {
+                    try { await deleteDoc(doc(db, 'rooms', state.roomId)); } catch(e){}
+                }
+                state.roomId = null; state.isHost = false; 
+                if(DOM.mpProgCont) DOM.mpProgCont.classList.add('hidden'); 
+                showPanel(DOM.pSet);
+            }
+
+            /* === Room Chat & Reactions === */
+            window.reactMsg = (msgId, emoji) => { 
+                try { updateDoc(doc(db, 'rooms', state.roomId, 'messages', msgId), { [`reactions.${emoji}`]: increment(1) }); } catch(e){} 
+            };
+
+            function initChat() {
+                if(!DOM.chatMsgs) return;
+                const q = query(collection(db, 'rooms', state.roomId, 'messages'), orderBy('ts', 'asc'));
+                state.chatUnsub = onSnapshot(q, snap => {
+                    DOM.chatMsgs.innerHTML = '';
+                    if(state.isHost && snap.docs.length > 50) {
+                        const toDel = snap.docs.slice(0, snap.docs.length - 50);
+                        toDel.forEach(d => { try { deleteDoc(doc(db, 'rooms', state.roomId, 'messages', d.id)); } catch(e){} });
+                    }
+                    snap.forEach(docSnap => {
+                        const d = docSnap.data(), isOwn = d.u === state.username, r = d.reactions || {};
+                        DOM.chatMsgs.innerHTML += `
+                            <div class="msg-row ${isOwn ? 'own' : 'other'}">
+                                ${!isOwn ? `<div class="msg-sender">${escapeHTML(d.u)}</div>` : ''}
+                                <div class="msg-bubble">${escapeHTML(d.m)}</div>
+                                <div class="msg-reactions">
+                                    <span class="msg-reaction" onclick="reactMsg('${docSnap.id}', '👍')">👍 ${r['👍']||0}</span>
+                                    <span class="msg-reaction" onclick="reactMsg('${docSnap.id}', '❤️')">❤️ ${r['❤️']||0}</span>
+                                    <span class="msg-reaction" onclick="reactMsg('${docSnap.id}', '😂')">😂 ${r['😂']||0}</span>
+                                    <span class="msg-reaction" onclick="reactMsg('${docSnap.id}', '🔥')">🔥 ${r['🔥']||0}</span>
+                                </div>
+                            </div>`;
+                    });
+                    setTimeout(() => { DOM.chatMsgs.scrollTop = DOM.chatMsgs.scrollHeight; }, 10);
+                });
+            }
+            
+            safeListen('btn-send-chat', 'click', async () => {
+                const i = document.getElementById('chat-input'); 
+                if(!i) return;
+                const m = i.value.trim();
+                if(m) { 
+                    i.value = ''; 
+                    try { await addDoc(collection(db, 'rooms', state.roomId, 'messages'), { u: state.username, m: m, ts: serverTimestamp(), reactions: {} }); } catch(e){} 
+                }
+            });
+            const cInp = document.getElementById('chat-input');
+            if(cInp) cInp.addEventListener('keydown', e => { if(e.key === 'Enter') { const btn = document.getElementById('btn-send-chat'); if(btn) btn.click(); }});
+            
+            let typTmt;
+            if(cInp) cInp.addEventListener('input', () => {
+                if(!state.roomId) return;
+                try { updateDoc(doc(db, 'rooms', state.roomId), { [`typing.${state.userId}`]: state.username }); } catch(e){}
+                clearTimeout(typTmt);
+                typTmt = setTimeout(() => { try { updateDoc(doc(db, 'rooms', state.roomId), { [`typing.${state.userId}`]: deleteField() }); } catch(e){} }, 2000);
+            });
+
+            /* === Typing Engine === */
+            function syntaxHl(t) {
+                const cl = new Array(t.length).fill('');
+                if (state.mode !== 'coding') return cl;
+                const r = [{rx:/\b(const|let|var|function|return|if|else)\b/g, n:'kw'},{rx:/(['"`])(?:(?!\1)[^\\]|\\.)*\1/g, n:'str'},{rx:/\b\d+\b/g, n:'num'},{rx:/[{}()\[\]]/g, n:'brkt'}];
+                r.forEach(rl => { let m; while ((m = rl.rx.exec(t)) !== null) for(let i=0; i<m[0].length; i++) cl[m.index + i] = `syn-${rl.n}`; });
+                return cl;
+            }
+
+            function playAudio(t) {
+                if (!state.sound) return;
+                if (!actx) actx = new AudioCtx();
+                if (actx.state === 'suspended') actx.resume();
+                const o = actx.createOscillator(), g = actx.createGain();
+                o.connect(g); g.connect(actx.destination);
+                if(t === 'click'){ o.type='sine'; o.frequency.setValueAtTime(800, actx.currentTime); o.frequency.exponentialRampToValueAtTime(300, actx.currentTime+0.03); g.gain.setValueAtTime(0.05, actx.currentTime); g.gain.exponentialRampToValueAtTime(0.001, actx.currentTime+0.03); o.start(); o.stop(actx.currentTime+0.03); }
+                else { o.type='sawtooth'; o.frequency.setValueAtTime(150, actx.currentTime); g.gain.setValueAtTime(0.1, actx.currentTime); g.gain.exponentialRampToValueAtTime(0.001, actx.currentTime+0.1); o.start(); o.stop(actx.currentTime+0.1); }
+            }
+
+            function startTest(isMP = false, skipInit = false) {
+                state.timeSecs = 0; state.isTyping = false; state.errors = 0; state.totalTyped = 0; state.maxIdx = 0;
+                state.testEnded = false; state.progressHistory = []; state.lastProgressChar = 0;
+                clearInterval(state.timer);
+
+                if(!isMP) {
+                    if(state.mode === 'daily') state.text = generateDailyText(); 
+                    else {
+                        let genLength = state.type === 'burst' ? 25 : (state.val === 120 ? 120 : 60);
+                        state.text = generateText(state.mode, genLength);
+                    }
+                    if(DOM.mpProgCont) DOM.mpProgCont.classList.add('hidden');
+                }
+
+                if(DOM.hInp) { DOM.hInp.value = ''; DOM.hInp.disabled = false; }
+                
+                if (DOM.typeCont) {
+                    let cClasses = 'typing-wrapper';
+                    if(state.mode === 'coding') cClasses += ' coding-mode';
+                    if(state.focus) cClasses += ' focus-mode';
+                    if(state.hardcore) cClasses += ' hardcore-mode';
+                    DOM.typeCont.className = cClasses;
+                }
+
+                if(!skipInit && DOM.tDisp) {
+                    DOM.tDisp.innerHTML = '';
+                    for (let i=0; i<state.text.length; i++) {
+                        const sp = document.createElement('span'); sp.textContent = state.text[i];
+                        DOM.tDisp.appendChild(sp);
+                    }
+                    state.spans = Array.from(DOM.tDisp.children);
+                    if(state.spans.length>0) state.spans[0].classList.add('active');
+                }
+
+                if(!isMP) { 
+                    showPanel(DOM.pType); 
+                    if(DOM.overlay) {
+                        const fText = DOM.overlay.querySelector('.focus-text');
+                        if(fText) fText.innerText = "Tap to Initialize";
+                        DOM.overlay.classList.remove('hidden'); 
+                    }
+                } else if(skipInit) {
+                    // This happens after MP countdown
+                    if(DOM.overlay) {
+                        const fText = DOM.overlay.querySelector('.focus-text');
+                        if(fText) fText.innerText = "GO! Tap to type";
+                        DOM.overlay.classList.remove('hidden');
+                    }
+                }
+            }
+
+            if(DOM.hInp) {
+                DOM.hInp.addEventListener('input', () => {
+                    if(state.testEnded) return;
+                    if(!state.isTyping) { state.isTyping = true; state.timer = setInterval(runTimer, 1000); }
+                    const tpd = DOM.hInp.value; let scrErrs = 0;
+
+                    for (let i=0; i<state.spans.length; i++) {
+                        const sp = state.spans[i]; 
+                        if(sp) sp.className = '';
+                        if(i < tpd.length) {
+                            if(tpd[i] === state.text[i]) { if(sp) sp.classList.add('correct'); }
+                            else { if(sp) sp.classList.add('incorrect'); scrErrs++; }
+                        } else if(i === tpd.length) {
+                            if(sp) sp.classList.add('active');
+                        }
+                    }
+
+                    if(tpd.length > state.maxIdx) { state.totalTyped++; if(tpd[tpd.length-1] !== state.text[tpd.length-1]) state.errors++; state.maxIdx = tpd.length; }
+
+                    const act = state.spans[tpd.length];
+                    if(act && DOM.tDisp) DOM.tDisp.scrollTop = act.offsetTop - (DOM.tDisp.clientHeight/2) + 20;
+
+                    const wpm = state.timeSecs <= 0 ? 0 : Math.max(0, Math.round(((tpd.length-scrErrs)/5)/(state.timeSecs/60)));
+                    if(DOM.sWpm) DOM.sWpm.innerText = `${wpm} WPM`;
+
+                    if(state.roomId && tpd.length % 5 === 0) { 
+                        try { updateDoc(doc(db, 'rooms', state.roomId), { [`players.${state.userId}.wpm`]: wpm, [`players.${state.userId}.progress`]: Math.round((tpd.length/state.text.length)*100), [`players.${state.userId}.lastActive`]: Date.now() }); } catch(e){}
+                    }
+
+                    if(tpd.length >= state.text.length) endTest(scrErrs, tpd.length);
+                });
+            }
+
+            function runTimer() {
+                if(state.testEnded) return;
+                state.timeSecs++;
+                
+                // Bot Tracker / Anti-Cheat
+                const charsThisSec = state.totalTyped - state.lastProgressChar;
+                state.progressHistory.push(charsThisSec);
+                state.lastProgressChar = state.totalTyped;
+
+                if (!state.roomId) { // Solo
+                    const rem = state.val - state.timeSecs;
+                    if(DOM.sTime) DOM.sTime.innerText = window.formatT(rem);
+                    if (rem <= 0 && DOM.hInp) endTest(document.querySelectorAll('.incorrect').length, DOM.hInp.value.length);
+                } else { // MP
+                    if(DOM.sTime) DOM.sTime.innerText = window.formatT(state.timeSecs);
+                    if (state.isHost && state.roomData && state.roomData.status === "playing") {
+                        Object.entries(state.roomData.players).forEach(([uid, p]) => {
+                            if (p.lastActive && (Date.now() - p.lastActive > 30000) && !p.finished) window.kickPlayer(uid);
+                        });
+                    }
+                }
+            }
+
+            /* === Results, Anti-Cheat, Badges & Stats === */
+            function checkBadges(w, a, t) {
+                let b = state.userStats.badges || [];
+                if(w >= 80 && !b.includes('🚀 Speedster')) b.push('🚀 Speedster');
+                if(w >= 100 && !b.includes('⚡ Pro')) b.push('⚡ Pro');
+                if(a >= 95 && !b.includes('🎯 Accuracy King')) b.push('🎯 Accuracy King');
+                if(t >= 50 && !b.includes('🛠️ Grinder')) b.push('🛠️ Grinder');
+                return b;
+            }
+
+            async function endTest(scrErrs, len) {
+                if(state.testEnded) return;
+                state.testEnded = true;
+                clearInterval(state.timer); 
+                if(DOM.hInp) DOM.hInp.disabled = true;
+
+                const wpm = state.timeSecs <= 0 ? 0 : Math.max(0, Math.round(((len-scrErrs)/5)/(state.timeSecs/60)));
+                const acc = state.totalTyped > 0 ? Math.max(0, Math.round(((state.totalTyped - state.errors)/state.totalTyped)*100)) : 100;
+
+                // Strict Anti-Cheat Evaluation
+                let maxBurst = Math.max(...(state.progressHistory.length ? state.progressHistory : [0]));
+                if (maxBurst > 30) {
+                    alert("Anti-Cheat: Unrealistic typing burst detected. Score discarded.");
+                    showPanel(DOM.pSet); return;
+                }
+                if(wpm > 180 || state.timeSecs < 3) { 
+                    alert("Anti-Cheat: Suspicious speed/time detected. Score discarded."); 
+                    showPanel(DOM.pSet); return; 
+                }
+                if(wpm > 160 && acc === 100) {
+                    alert("Anti-Cheat: Impossible accuracy at this speed. Score discarded.");
+                    showPanel(DOM.pSet); return; 
+                }
+
+                const rWpm = document.getElementById('res-wpm'); if(rWpm) rWpm.innerText = wpm; 
+                const rAcc = document.getElementById('res-acc'); if(rAcc) rAcc.innerText = `${acc}%`; 
+                const rTime = document.getElementById('res-time'); if(rTime) rTime.innerText = `${state.timeSecs}s`;
+
+                // Stats Update
+                let newAvg = Math.round(((state.userStats.averageWPM * state.userStats.totalGames) + wpm) / (state.userStats.totalGames + 1));
+                state.userStats.bestWPM = Math.max(state.userStats.bestWPM || 0, wpm);
+                state.userStats.averageWPM = newAvg || wpm;
+                state.userStats.totalGames = (state.userStats.totalGames || 0) + 1;
+                state.userStats.history = state.userStats.history || [];
+                state.userStats.history.unshift({ wpm: wpm, acc: acc, mode: state.mode });
+                if(state.userStats.history.length > 20) state.userStats.history.pop();
+                state.userStats.badges = checkBadges(wpm, acc, state.userStats.totalGames);
+                
+                try { await setDoc(doc(db, 'users', state.userId), state.userStats, { merge: true }); } catch(e){}
+
+                if(!state.roomId) {
+                    showPanel(DOM.pRes); if(DOM.mpPodium) DOM.mpPodium.classList.add('hidden');
+                    try {
+                        const uDoc = await getDoc(doc(db, 'leaderboard', state.userId));
+                        if(!uDoc.exists() || wpm > uDoc.data().wpm) { await setDoc(doc(db, 'leaderboard', state.userId), { username: state.username, wpm: wpm, accuracy: acc, mode: state.mode, timestamp: serverTimestamp() }); }
+                    } catch(e){}
+                } else {
+                    try {
+                        await updateDoc(doc(db, 'rooms', state.roomId), { [`players.${state.userId}.wpm`]: wpm, [`players.${state.userId}.progress`]: 100, [`players.${state.userId}.finished`]: true });
+                        if(state.isHost) {
+                            const rSnap = await getDoc(doc(db, 'rooms', state.roomId));
+                            if(Object.values(rSnap.data().players).every(p => p.finished)) updateDoc(doc(db, 'rooms', state.roomId), { status: "finished" });
+                        }
+                    } catch(e){}
+                }
+            }
+
+            function showWinnerScreen(playersObj) {
+                const btnNewT = document.getElementById('btn-new-test'); if(btnNewT) btnNewT.classList.add('hidden');
+                const btnHRest = document.getElementById('btn-host-restart'); if(btnHRest) btnHRest.classList.toggle('hidden', !state.isHost);
+                let arr = Object.values(playersObj).sort((a,b) => b.wpm - a.wpm || b.accuracy - a.accuracy);
+                
+                if(DOM.mpPodium) {
+                    DOM.mpPodium.innerHTML = '';
+                    arr.forEach((p, idx) => {
+                        let rIcon = ''; let bg = 'var(--bg)';
+                        if(idx===0){ rIcon='🥇 1ST'; bg='var(--gold)'; } else if(idx===1){ rIcon='🥈 2ND'; bg='var(--silver)'; } else if(idx===2){ rIcon='🥉 3RD'; bg='var(--bronze)'; }
+                        DOM.mpPodium.innerHTML += `<div style="display:flex; justify-content:space-between; padding:1.2rem; border-radius:12px; background:${bg}; border:1px solid var(--border); font-weight:bold; font-size:1.1rem; box-shadow:var(--shadow-sm);">
+                            <span>${rIcon} ${escapeHTML(p.username)}</span> <span style="color:var(--primary);">${p.wpm} WPM</span></div>`;
+                    });
+                    DOM.mpPodium.classList.remove('hidden'); 
+                }
+                showPanel(DOM.pRes);
+            }
+
+            safeListen('btn-host-restart', 'click', () => {
+                if(state.isHost) {
+                    let updates = { status: "waiting" };
+                    Object.keys(state.roomData.players).forEach(uid => { updates[`players.${uid}.progress`] = 0; updates[`players.${uid}.wpm`] = 0; updates[`players.${uid}.finished`] = false; });
+                    try { updateDoc(doc(db, 'rooms', state.roomId), updates).then(() => showPanel(DOM.pLobby)); } catch(e){}
+                }
+            });
+
+            // Solo Leaderboard Engine
+            try {
+                onSnapshot(query(collection(db, 'leaderboard'), orderBy('wpm', 'desc'), limit(50)), (snap) => {
+                    state.lbData = []; snap.forEach((doc) => state.lbData.push(doc.data())); renderLeaderboard();
+                });
+            } catch(e){}
+
+            function renderLeaderboard() {
+                const fModeEl = document.getElementById('lb-filter-mode');
+                const fTypeEl = document.getElementById('lb-filter-type');
+                const fM = fModeEl ? fModeEl.dataset.value : 'all'; 
+                const fT = fTypeEl ? fTypeEl.dataset.value : 'all';
+                let filtered = state.lbData.filter(d => (fM==='all' || d.mode===fM) && (fT==='all' || d.testType===fT)).slice(0, 20);
+                
+                const tbody = document.getElementById('lb-body'); 
+                if(tbody) {
+                    tbody.innerHTML = '';
+                    filtered.forEach((row, i) => {
+                        let rankStr = `${i + 1}`; let rCls = '';
+                        if (i===0) { rCls = 'rank-gold'; rankStr = '🥇'; } else if (i===1) { rCls = 'rank-silver'; rankStr = '🥈'; } else if (i===2) { rCls = 'rank-bronze'; rankStr = '🥉'; }
+                        tbody.innerHTML += `<tr class="${rCls}"><td>${rankStr}</td><td>${escapeHTML(row.username)}</td><td style="color:var(--primary); font-weight:bold;">${row.wpm}</td><td>${row.accuracy}%</td><td><span class="tag">${row.mode}</span></td></tr>`;
+                    });
+                }
+            }
+            safeListen('lb-filter-mode', 'change', renderLeaderboard); safeListen('lb-filter-type', 'change', renderLeaderboard);
+            function escapeHTML(str) { return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag])); }
+
+        }); // END DOMContentLoaded
+    </script>
+</body>
+</html>
