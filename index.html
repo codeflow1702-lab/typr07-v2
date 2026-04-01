@@ -3,764 +3,990 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TYPR - Premium Multiplayer Typing Game</title>
+    <title>TYPR V3 - Competitive Multiplayer Typing</title>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* === CSS Variables === */
+        /* === CSS Variables & Clean Modern Theme === */
         :root {
-            --bg: #0f172a; --surface: #1e293b; --border: #334155; --border-hover: #475569;
+            --bg: #0f172a; --surface: #1e293b; --surface-hover: #334155; 
+            --border: #334155; --border-hover: #475569;
             --text-main: #f8fafc; --text-muted: #94a3b8; --text-faint: #475569;
             --primary: #6366f1; --primary-hover: #4f46e5; --accent: #8b5cf6;
-            --correct: #10b981; --incorrect: #ef4444; --incorrect-bg: rgba(239, 68, 68, 0.2); --warning: #f59e0b;
-            --cursor: #6366f1; --radius: 16px;
-            --shadow-sm: 0 4px 6px -1px rgb(0 0 0 / 0.3); --shadow-md: 0 10px 15px -3px rgb(0 0 0 / 0.5);
-            --font-sans: 'Inter', sans-serif; --font-mono: 'Fira Code', monospace;
-            --gold: rgba(250, 204, 21, 0.15); --gold-border: #facc15;
-            --silver: rgba(148, 163, 184, 0.15); --silver-border: #94a3b8;
-            --bronze: rgba(180, 83, 9, 0.15); --bronze-border: #b45309;
+            --correct: #10b981; --incorrect: #ef4444; --incorrect-bg: rgba(239, 68, 68, 0.15); 
+            --warning: #f59e0b; --cursor: #6366f1; 
+            --radius-md: 12px; --radius-lg: 16px; --radius-full: 9999px;
+            --shadow-sm: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --shadow-md: 0 10px 15px -3px rgb(0 0 0 / 0.4);
+            --shadow-lg: 0 20px 25px -5px rgb(0 0 0 / 0.5);
+            --rank-bronze: #cd7f32; --rank-silver: #c0c0c0; --rank-gold: #ffd700; 
+            --rank-master: #ff4500; --rank-legend: #8a2be2;
         }
-
-        /* === Reset & Base === */
-        * { margin: 0; padding: 0; box-sizing: border-box; transition: background-color 0.2s, border-color 0.2s, color 0.2s; }
-        body { font-family: var(--font-sans); background: var(--bg); color: var(--text-main); min-height: 100dvh; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background: var(--bg); color: var(--text-main); min-height: 100dvh; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; scroll-behavior: auto; }
         .hidden { display: none !important; }
 
-        /* === Modals === */
-        #username-modal { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(8px); display: flex; justify-content: center; align-items: center; z-index: 1000; }
-        .modal-content { background: var(--surface); padding: 2.5rem 2rem; border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow-md); width: 90%; max-width: 400px; text-align: center; }
-        .modal-content h2 { font-size: 1.8rem; margin-bottom: 0.5rem; font-weight: 800; background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .modal-input { width: 100%; padding: 1rem; border-radius: 12px; border: 2px solid var(--border); background: var(--bg); color: var(--text-main); font-size: 1.2rem; outline: none; margin-bottom: 1rem; text-align: center; font-weight: 600; }
-        .modal-input:focus { border-color: var(--primary); }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--border-hover); }
 
-        #countdown-overlay { position: absolute; inset: 0; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(4px); z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        #countdown-text { font-size: 6rem; font-weight: 800; color: var(--primary); text-shadow: 0 0 20px var(--primary); animation: pulse 1s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        .text-center { text-align: center; }
+        .mb-1 { margin-bottom: 0.5rem; }
+        .mb-2 { margin-bottom: 1rem; }
+        .mb-3 { margin-bottom: 1.5rem; }
+        .mb-4 { margin-bottom: 2rem; }
+        .mt-1 { margin-top: 0.5rem; }
+        .mt-2 { margin-top: 1rem; }
+        .mt-3 { margin-top: 1.5rem; }
+        .p-2 { padding: 1rem; }
+        .p-3 { padding: 1.5rem; }
+        .p-4 { padding: 2rem; }
+        .flex { display: flex; }
+        .flex-col { display: flex; flex-direction: column; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .justify-center { justify-content: center; }
+        .gap-2 { gap: 0.8rem; }
+        .gap-3 { gap: 1.2rem; }
+        .w-full { width: 100%; }
+        .font-bold { font-weight: 700; }
+        .font-extrabold { font-weight: 800; }
+        .text-muted { color: var(--text-muted); }
+        .text-primary { color: var(--primary); }
+        .text-xl { font-size: 1.25rem; }
+        .text-2xl { font-size: 1.5rem; }
+        .text-3xl { font-size: 2rem; }
+        .uppercase { text-transform: uppercase; letter-spacing: 1px; }
 
-        /* === Layout === */
+        /* === 🔥 PRO / PREMIUM VISUAL SYSTEM === */
+        .pro-name { 
+            background: linear-gradient(135deg, #ffd700, #ffaa00); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+            font-weight: 900 !important; 
+            text-shadow: 0 0 12px rgba(255, 215, 0, 0.4);
+        }
+        .pro-badge { 
+            display: inline-flex; align-items: center; justify-content: center; 
+            background: linear-gradient(135deg, #ffd700, #ffaa00); color: #000; 
+            font-size: 0.65rem; font-weight: 900; padding: 0.15rem 0.5rem; 
+            border-radius: 4px; margin-left: 0.5rem; text-transform: uppercase; 
+            letter-spacing: 1px; box-shadow: 0 0 8px rgba(255,215,0,0.6); vertical-align: middle; 
+        }
+        /* Exclusive Typing Glow for PROs */
+        #text-display.pro-active span.active::before {
+            box-shadow: 0 0 10px var(--primary), 0 0 20px var(--accent);
+            animation: proCursorBlink 0.6s ease-in-out infinite alternate !important;
+            background: #fff;
+            width: 3px;
+        }
+        @keyframes proCursorBlink { 0% { opacity: 0.5; height: 70%; } 100% { opacity: 1; height: 100%; } }
+
+        /* Locked FOMO Shop Items */
+        .locked-overlay {
+            position: absolute; inset: 0; background: rgba(15, 23, 42, 0.75);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            border-radius: var(--radius-md); backdrop-filter: blur(3px); z-index: 10;
+        }
+        .locked-overlay span { font-size: 2.5rem; margin-bottom: 0.5rem; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5)); }
+        
+        /* Layout */
         .container { width: 100%; max-width: 1000px; padding: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem; flex: 1; }
-        .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; box-shadow: var(--shadow-sm); animation: fadeIn 0.3s ease; position: relative; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2.5rem; box-shadow: var(--shadow-md); animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* === Header === */
         header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-top: 0.5rem; }
         h1 { font-size: 2.2rem; font-weight: 800; letter-spacing: -1px; }
         .brand { background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .header-stats { display: flex; gap: 0.8rem; flex-wrap: wrap; }
-        .btn-icon { background: var(--surface); border: 1px solid var(--border); color: var(--text-main); padding: 0.6rem 1.2rem; border-radius: 20px; cursor: pointer; font-weight: 600; font-size: 0.9rem; box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 0.4rem; }
-        .btn-icon:hover { background: var(--border); }
+        .coin-display { color: #facc15; font-weight: 800; }
+
+        button { font-family: 'Inter', sans-serif; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); outline: none; cursor: pointer; border: none; }
+        button:disabled { opacity: 0.6; cursor: not-allowed; }
+        .btn-icon { background: var(--surface); border: 1px solid var(--border); color: var(--text-main); padding: 0.6rem 1.2rem; border-radius: var(--radius-full); font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; gap: 0.4rem; box-shadow: var(--shadow-sm); }
+        .btn-icon:hover:not(:disabled) { background: var(--surface-hover); border-color: var(--border-hover); transform: translateY(-2px); }
+        .btn-icon:active:not(:disabled) { transform: translateY(0); }
+        .btn-primary { width: 100%; padding: 1.2rem; background: var(--primary); color: #fff; border-radius: var(--radius-md); font-size: 1.1rem; font-weight: 700; box-shadow: 0 4px 14px 0 rgba(99, 102, 241, 0.3); }
+        .btn-primary:hover:not(:disabled) { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4); }
+        .btn-primary:active:not(:disabled) { transform: scale(0.98); }
+        .btn-danger { background: var(--incorrect); color: white; padding: 0.6rem 1.2rem; border-radius: var(--radius-md); font-weight: 600; }
+        .btn-danger:hover:not(:disabled) { background: #dc2626; transform: translateY(-2px); }
+        .btn-warning { background: linear-gradient(135deg, #ffd700, #ffaa00); color: #000; padding: 0.6rem 1.2rem; border-radius: var(--radius-md); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3); }
+        .btn-warning:hover { transform: translateY(-2px); filter: brightness(1.1); box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5); }
+        .btn-restart { padding: 1.2rem; background: transparent; border: 1px solid var(--border); color: var(--text-main); border-radius: var(--radius-md); font-weight: 700; width: 100%; }
+        .btn-restart:hover:not(:disabled) { background: var(--surface-hover); border-color: var(--text-muted); }
+
+        .settings-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; }
+        .setting-group { display: flex; flex-direction: column; gap: 0.6rem; }
+        .setting-group label { font-size: 0.9rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
         
-        /* === Custom Dropdowns === */
-        .settings-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.2rem; }
-        .setting-group { display: flex; flex-direction: column; gap: 0.5rem; }
-        .setting-group label { font-size: 0.9rem; font-weight: 600; color: var(--text-muted); }
         .custom-select { position: relative; user-select: none; width: 100%; }
-        .select-selected { background: var(--surface); border: 2px solid var(--border); border-radius: 12px; padding: 0.9rem 1.2rem; font-weight: 600; color: var(--text-main); cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem; }
-        .select-items { position: absolute; top: calc(100% + 8px); left: 0; right: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; z-index: 100; overflow: hidden; opacity: 0; transform: translateY(-10px); pointer-events: none; transition: all 0.2s ease; box-shadow: var(--shadow-md); }
+        .select-selected { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1rem 1.2rem; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: border-color 0.2s; }
+        .select-selected:hover { border-color: var(--primary); }
+        .select-selected::after { content: "▼"; font-size: 0.7rem; color: var(--text-muted); transition: transform 0.3s; }
+        .custom-select.active .select-selected::after { transform: rotate(180deg); }
+        .select-items { position: absolute; top: calc(100% + 8px); left: 0; right: 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); z-index: 100; overflow: hidden; opacity: 0; transform: translateY(-10px); pointer-events: none; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: var(--shadow-lg); }
         .select-items.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
-        .select-item { padding: 0.8rem 1.2rem; cursor: pointer; font-size: 0.95rem; font-weight: 500; border-bottom: 1px solid var(--border); color: var(--text-main); }
+        .select-item { padding: 1rem 1.2rem; cursor: pointer; font-size: 0.95rem; border-bottom: 1px solid var(--border); transition: background 0.2s; }
         .select-item:last-child { border-bottom: none; }
         .select-item:hover { background: var(--bg); color: var(--primary); }
-        .select-item.selected { background: rgba(99, 102, 241, 0.15); color: var(--primary); font-weight: 600; }
-        
-        /* === UI Elements === */
-        .toggle-btn { background: var(--surface); border: 2px solid var(--border); border-radius: 12px; padding: 0.9rem 1.2rem; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; width: 100%; font-size: 0.95rem; }
-        .toggle-btn.active { border-color: var(--primary); color: var(--primary); background: rgba(99, 102, 241, 0.1); }
-        .btn-primary { width: 100%; padding: 1.2rem; background: var(--primary); color: #fff; border: none; border-radius: 12px; font-size: 1.1rem; font-weight: 700; cursor: pointer; margin-top: 1.5rem; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4); }
-        .btn-primary:active { transform: scale(0.98); }
-        .btn-danger { background: var(--incorrect); color: white; border: none; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600; cursor: pointer; }
-        .btn-restart { padding: 1rem; background: transparent; border: 2px solid var(--border); color: var(--text-main); border-radius: 12px; font-weight: 700; cursor: pointer; margin-top: 1rem; width: 100%; }
-        
-        .room-controls-wrapper { display: flex; gap: 0.8rem; margin-top: 0.5rem; align-items: stretch; }
-        .room-controls-wrapper button { margin: 0; flex: 1; min-width: 130px; }
-        .room-inp { flex: 1; min-width: 120px; border-radius: 12px; border: 2px solid var(--border); background: var(--bg); color: var(--text-main); padding: 0.8rem; text-align: center; font-weight: 800; font-size: 1.2rem; outline: none; letter-spacing: 2px; }
-        .room-inp:focus { border-color: var(--primary); }
 
-        /* === Chat UI === */
-        .chat-box { display: flex; flex-direction: column; height: 350px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); margin-top: 1.5rem; overflow: hidden; }
-        .chat-messages { flex: 1; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: 1rem; background: var(--bg); scroll-behavior: smooth; }
-        .msg-row { display: flex; width: 100%; flex-direction: column; }
-        .msg-row.own { align-items: flex-end; }
-        .msg-row.other { align-items: flex-start; }
-        .msg-sender { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.3rem; font-weight: 600; padding: 0 0.2rem; }
-        .msg-bubble { max-width: 85%; padding: 0.7rem 1rem; border-radius: 14px; font-size: 0.95rem; line-height: 1.4; word-wrap: break-word; box-shadow: var(--shadow-sm); }
-        .msg-row.own .msg-bubble { background: var(--primary); color: white; border-bottom-right-radius: 4px; }
-        .msg-row.other .msg-bubble { background: var(--surface); border: 1px solid var(--border); color: var(--text-main); border-bottom-left-radius: 4px; }
-        .msg-reactions { display: flex; gap: 0.3rem; margin-top: 0.3rem; font-size: 0.75rem; }
-        .msg-reaction { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 0.1rem 0.4rem; cursor: pointer; user-select: none; }
-        .msg-reaction:hover { background: var(--surface); border-color: var(--primary); }
-        .msg-typing { font-size: 0.8rem; color: var(--text-muted); font-style: italic; padding: 0.5rem 1rem; min-height: 2rem; background: var(--surface); border-top: 1px solid var(--border); }
-        .chat-input-area { display: flex; background: var(--surface); padding: 0.8rem; border-top: 1px solid var(--border); gap: 0.5rem; }
-        .chat-input-area input { flex: 1; background: var(--bg); border: 1px solid var(--border); color: var(--text-main); padding: 0.8rem 1rem; border-radius: 20px; outline: none; font-size: 0.95rem; }
-        .chat-input-area input:focus { border-color: var(--primary); }
-        .btn-send-chat { background: var(--primary); color: white; border: none; padding: 0 1.2rem; border-radius: 20px; font-weight: 700; cursor: pointer; }
+        .room-controls-wrapper { display: flex; gap: 0.8rem; align-items: stretch; width: 100%; }
+        .room-inp { flex: 1; border-radius: var(--radius-md); border: 1px solid var(--border); background: var(--bg); color: white; padding: 0.8rem; text-align: center; font-weight: 800; font-size: 1.2rem; outline: none; letter-spacing: 2px; width: 100%; transition: border-color 0.2s; text-transform: uppercase; }
+        .room-inp:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2); }
 
-        /* === Typing Interface === */
-        .sticky-bar { position: sticky; top: 1rem; z-index: 50; display: flex; justify-content: space-between; align-items: center; background: var(--surface); padding: 1rem 1.5rem; border-radius: 12px; border: 1px solid var(--border); box-shadow: var(--shadow-md); margin-bottom: 1rem; font-weight: 700; color: var(--primary); }
-        .typing-wrapper { display: flex; height: 45vh; min-height: 250px; border-radius: 12px; border: 2px solid var(--border); background: var(--bg); overflow: hidden; position: relative; transition: transform 0.3s ease; }
+        .sticky-bar { display: flex; justify-content: space-between; align-items: center; background: var(--bg); padding: 1.2rem 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border); margin-bottom: 1.5rem; font-weight: 700; color: var(--primary); }
+        .typing-wrapper { display: flex; height: 40vh; min-height: 250px; border-radius: var(--radius-md); border: 1px solid var(--border); background: var(--bg); overflow: hidden; position: relative; cursor: text; }
         
-        .focus-mode { transform: scale(1.02); box-shadow: var(--shadow-md); border-color: var(--primary); }
-        .focus-mode #text-display span.correct { color: var(--text-faint); }
-        .hardcore-mode #text-display span.correct, .hardcore-mode #text-display span.incorrect { color: var(--text-muted); background: transparent; }
-        .hardcore-mode #text-display span.active::before { display: none; }
-
-        #text-display { flex-grow: 1; padding: 1.5rem; font-size: 1.5rem; line-height: 1.6; overflow-y: hidden; white-space: pre-wrap; color: var(--text-muted); cursor: text; }
-        .coding-mode #text-display { font-family: var(--font-mono); font-size: 1.25rem; tab-size: 4; }
+        #text-display { 
+            flex-grow: 1; padding: 2rem; font-size: 1.6rem; line-height: 1.8; 
+            overflow-y: auto; height: 100%; color: var(--text-muted); 
+            position: relative; z-index: 2; font-family: 'Fira Code', monospace; 
+            scroll-behavior: auto; overflow-anchor: none;
+        }
         
-        #text-display span { position: relative; }
+        .word { display: inline-block; white-space: pre; margin-bottom: 0.4rem; position: static !important; }
+        .space { display: inline-block; white-space: pre; position: static !important; }
+        
+        #text-display span:not(.word):not(.space) { position: relative; border-radius: 4px; padding: 0 1px; }
         #text-display span.correct { color: var(--text-main); }
-        #text-display span.incorrect { color: var(--incorrect); background: var(--incorrect-bg); border-radius: 2px; }
-        #text-display span.active::before { content: ''; position: absolute; left: -1px; top: 10%; bottom: 10%; width: 2px; background-color: var(--cursor); animation: blink 1s step-end infinite; }
-        @keyframes blink { 50% { opacity: 0; } }
+        #text-display span.incorrect { color: var(--incorrect); background: var(--incorrect-bg); }
+        
+        #hidden-input { 
+            position: fixed; top: 10px; left: 10px; width: 1px; height: 1px; padding: 0; margin: 0;
+            z-index: -1; opacity: 0; color: transparent; background: transparent; border: none; 
+            outline: none; resize: none; font-size: 16px; cursor: text; overflow: hidden;
+            pointer-events: none; touch-action: none; 
+        }
+        
+        .overlay-layer { position: absolute; inset: 0; background: rgba(15, 23, 42, 0.85); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 20; color: #fff; backdrop-filter: blur(4px); transition: opacity 0.3s; }
+        .overlay-text { font-size: 2.5rem; font-weight: 800; color: var(--primary); text-shadow: 0 0 20px rgba(99, 102, 241, 0.4); }
 
-        .coding-mode span.syn-kw.correct { color: #c678dd; font-weight: 600; }
-        .coding-mode span.syn-str.correct { color: #98c379; }
-        .coding-mode span.syn-num.correct { color: #d19a66; }
-        .coding-mode span.syn-brkt.correct { color: #56b6c2; }
-
-        #hidden-input { position: absolute; opacity: 0; top: 0; left: 0; z-index: -1; pointer-events: none; font-size: 16px; }
-        #focus-overlay { position: absolute; inset: 0; background: rgba(15, 23, 42, 0.8); display: flex; flex-direction: column; justify-content: center; align-items: center; font-size: 1.2rem; font-weight: 700; cursor: pointer; z-index: 10; color: #fff; backdrop-filter: blur(4px); }
-        .focus-text { font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--primary); }
-        .focus-subtext { font-size: 0.9rem; color: var(--text-muted); font-weight: 500; }
-
-        .mp-bar-bg { width: 100%; height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; margin-bottom: 0.8rem; }
-        .mp-bar-fill { height: 100%; background: var(--primary); transition: width 0.3s ease; }
+        .mp-bar-bg { width: 100%; height: 12px; background: var(--border); border-radius: 6px; overflow: hidden; margin-bottom: 0.8rem; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); }
+        .mp-bar-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .mp-bar-finished { background: var(--correct); }
-        .podium-container { display: flex; flex-direction: column; gap: 0.8rem; margin: 1.5rem 0; }
 
-        /* === Results, Profile, Leaderboard === */
-        .results-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
-        .stat-card { background: var(--bg); padding: 1.5rem 1rem; border-radius: 12px; text-align: center; border: 1px solid var(--border); }
-        .stat-card h3 { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem; font-weight: 600; text-transform: uppercase; }
-        .stat-card p { font-size: 2rem; font-weight: 800; color: var(--primary); }
+        .results-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1.2rem; }
+        .stat-card { background: var(--bg); padding: 1.8rem; border-radius: var(--radius-md); text-align: center; border: 1px solid var(--border); transition: transform 0.2s; }
+        .stat-card:hover { transform: translateY(-5px); border-color: var(--border-hover); }
+        .stat-card p { font-size: 2.2rem; font-weight: 800; color: var(--text-main); margin-top: 0.5rem; }
+        .rating-label { font-size: 1rem; font-weight: 700; margin-top: 0.5rem; display: block; }
 
-        .badge-tag { display: inline-block; padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: 700; background: rgba(99,102,241,0.1); color: var(--primary); border: 1px solid var(--primary); margin: 0.2rem; }
+        .rank-badge { display: inline-flex; align-items: center; justify-content: center; padding: 0.4rem 1rem; border-radius: var(--radius-full); font-size: 0.85rem; font-weight: 800; color: #fff; text-transform: uppercase; letter-spacing: 1px; }
+        .rank-bronze { background: var(--rank-bronze); }
+        .rank-silver { background: var(--rank-silver); }
+        .rank-gold { background: var(--rank-gold); }
+        .rank-master { background: var(--rank-master); }
+        .rank-legend { background: linear-gradient(45deg, var(--rank-legend), #ff00ff); }
+
+        .rank-progress-container { width: 100%; height: 14px; background: var(--border); border-radius: 7px; overflow: hidden; margin-top: 1rem; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); }
+        .rank-progress-bar { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); }
+
+        .leaderboard-table { width: 100%; border-collapse: collapse; }
+        .leaderboard-table th { color: var(--text-muted); font-size: 0.9rem; padding: 1.2rem; text-align: left; border-bottom: 1px solid var(--border); background: var(--bg); text-transform: uppercase; letter-spacing: 1px; }
+        .leaderboard-table td { padding: 1.2rem; border-bottom: 1px solid var(--border); font-weight: 500; }
+        .leaderboard-table tr:hover td { background: var(--surface-hover); }
         
-        .leaderboard-table { width: 100%; border-collapse: separate; border-spacing: 0 0.5rem; min-width: 600px; }
-        .leaderboard-table th { color: var(--text-muted); font-weight: 600; font-size: 0.9rem; padding: 0.5rem 1rem; text-align: left; }
-        .leaderboard-table td { padding: 1rem; background: var(--bg); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); font-weight: 500; }
-        .leaderboard-table tr td:first-child { border-left: 1px solid var(--border); border-top-left-radius: 12px; border-bottom-left-radius: 12px; font-weight: 800; }
-        .leaderboard-table tr td:last-child { border-right: 1px solid var(--border); border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
+        .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.5rem; }
+        .shop-item { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.8rem; text-align: center; display: flex; flex-direction: column; gap: 1.2rem; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); position: relative; overflow: hidden; }
+        .shop-item:hover { transform: translateY(-5px); border-color: var(--primary); box-shadow: var(--shadow-lg); }
+        .shop-item.equipped { border: 2px solid var(--correct); }
+        .shop-preview-box { height: 70px; background: var(--surface); border-radius: 8px; display: flex; justify-content: center; align-items: center; font-size: 2rem; font-weight: 600; color: var(--text-muted); position: relative; font-family: 'Fira Code', monospace; }
+        .shop-preview-char { position: relative; display: inline-block; color: var(--text-main); }
         
-        .rank-gold td { background: var(--gold) !important; border-color: var(--gold-border) !important; }
-        .rank-silver td { background: var(--silver) !important; border-color: var(--silver-border) !important; }
-        .rank-bronze td { background: var(--bronze) !important; border-color: var(--bronze-border) !important; }
+        /* Cursor Trails */
+        .typing-wrapper span.active::before, .shop-preview-char.active::before, #shop-master-text span.active::before { content: ''; position: absolute; left: -1px; top: 10%; bottom: 10%; width: 2px; background-color: var(--cursor); animation: blink 1s step-end infinite; z-index: 5; }
+        @keyframes blink { 50% { opacity: 0; } }
+        .trail-basic_glow span.active::before { box-shadow: 0 0 8px var(--primary); background-color: var(--primary); }
+        .trail-neon span.active::before { background-color: #0ff; box-shadow: 0 0 5px #0ff, 0 0 15px #0ff, 0 0 30px #8b5cf6; width: 3px; border-radius: 2px; }
+        .trail-fire span.active::before { background-color: #ff4500; animation: blink 1s step-end infinite, fireFlicker 0.15s infinite alternate; width: 3px; }
+        @keyframes fireFlicker { 0% { box-shadow: 0 0 10px #ff4500, 0 -5px 15px #ff8c00; } 100% { box-shadow: 0 0 15px #ff4500, 0 -10px 20px #ff8c00; } }
+        .trail-electric span.active::before { background-color: #0ff; animation: blink 1s step-end infinite, electric 0.1s infinite alternate; box-shadow: 0 0 5px #0ff; }
+        @keyframes electric { 0% { box-shadow: 2px 0 8px #0ff; } 100% { box-shadow: -2px 0 8px #0ff; } }
+        .trail-rainbow span.active::before { background: linear-gradient(to bottom, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff); box-shadow: 0 0 8px #fff; animation: blink 1s step-end infinite, rainbowPulse 2s linear infinite; width: 3px; }
+        @keyframes rainbowPulse { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } }
+        .trail-particle span.active::before { background-color: #fff; box-shadow: 0 0 5px #fff; }
+        .trail-particle span.active::after { content: ''; position: absolute; left: -2px; bottom: 10%; width: 4px; height: 4px; border-radius: 50%; background: #0ff; animation: particleFloat 0.8s linear infinite; opacity: 0; pointer-events: none; z-index: 4; }
+        @keyframes particleFloat { 0% { box-shadow: -4px -2px 0 1px #0ff, -8px 2px 0 -1px #0ff; opacity: 0.8; } 100% { box-shadow: -12px -8px 0 1px #0ff, -16px -4px 0 -1px #0ff; opacity: 0; } }
+        .trail-ghost span.active::before { background-color: var(--text-main); box-shadow: -4px 0 0 rgba(255,255,255,0.4), -8px 0 0 rgba(255,255,255,0.2), -12px 0 0 rgba(255,255,255,0.1); width: 2px; }
+        .trail-pulse span.active::before { background-color: var(--primary); animation: blink 1s step-end infinite, pulseCursor 0.6s infinite; width: 4px; border-radius: 2px; }
+        @keyframes pulseCursor { 0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.8); } 100% { box-shadow: 0 0 0 10px rgba(99, 102, 241, 0); } }
+        .trail-matrix span.active { color: #0f0; text-shadow: 0 0 8px #0f0; font-weight: bold; }
+        .trail-matrix span.active::before { background-color: #0f0; box-shadow: 0 0 10px #0f0; width: 3px; }
+        .trail-gold span.active::before { background: linear-gradient(to bottom, #ffd700, #ffdf00, #daa520); box-shadow: 0 0 10px #ffd700, 0 0 20px #ffdf00; animation: blink 1s step-end infinite, sparkle 1s infinite alternate; width: 4px; border-radius: 2px; }
+        @keyframes sparkle { 0% { filter: brightness(1); } 100% { filter: brightness(1.5); } }
 
-        .app-footer { width: 100%; padding: 2rem 1.5rem; text-align: center; border-top: 1px solid var(--border); margin-top: auto; background: var(--surface); font-size: 0.8rem; color: var(--text-muted); }
+        #username-modal { position: fixed; inset: 0; background: rgba(15,23,42,0.95); display: flex; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(8px); }
+        .modal-box { background: var(--surface); padding: 3rem; border-radius: var(--radius-lg); width: 90%; max-width: 420px; text-align: center; border: 1px solid var(--border); box-shadow: var(--shadow-lg); animation: fadeIn 0.3s ease; }
+        .modal-input { width: 100%; padding: 1.2rem; border-radius: var(--radius-md); border: 1px solid var(--border); background: var(--bg); color: white; margin-bottom: 1.5rem; font-size: 1.2rem; text-align: center; outline: none; transition: border-color 0.2s; }
+        .modal-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2); }
 
-        @media (max-width: 600px) {
+        .rank-anim-text { font-size: 1.8rem; font-weight: 800; display: inline-block; min-width: 80px; }
+        .rank-up { color: var(--correct); animation: pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .rank-down { color: var(--incorrect); animation: shake 0.5s ease; }
+        @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+
+        #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+        .toast { padding: 14px 24px; border-radius: var(--radius-md); color: white; font-weight: 600; box-shadow: var(--shadow-lg); animation: slideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards; opacity: 0; transform: translateX(100%); pointer-events: auto; background: var(--surface); border-left: 4px solid var(--primary); display: flex; align-items: center; gap: 10px; }
+        .toast.error { border-left-color: var(--incorrect); }
+        .toast.success { border-left-color: var(--correct); }
+        .toast.warning { border-left-color: #ffd700; color: #000; background: linear-gradient(135deg, #ffd700, #ffaa00); border: none; font-weight: 800; }
+        @keyframes slideIn { to { opacity: 1; transform: translateX(0); } }
+        @keyframes fadeOut { to { opacity: 0; transform: translateY(10px); } }
+
+        @media (max-width: 768px) {
             .container { padding: 1rem; }
-            .panel { padding: 1.5rem 1rem; }
+            .panel { padding: 1.5rem; }
             .room-controls-wrapper { flex-direction: column; }
-            .room-controls-wrapper button, .room-controls-wrapper input { width: 100%; flex: none; margin: 0; }
-            #text-display { font-size: 1.25rem; padding: 1rem; }
-            .sticky-bar { padding: 0.8rem 1rem; flex-wrap: wrap; }
         }
     </style>
 </head>
 <body>
 
+    <div id="toast-container"></div>
+
     <div id="username-modal" class="hidden">
-        <div class="modal-content">
-            <h2>Welcome to TYPR.</h2>
-            <p>Enter your username to join the global leaderboard.</p>
-            <input type="text" id="inp-username" class="modal-input" placeholder="Username" maxlength="15" autocomplete="off">
-            <button class="btn-primary" id="btn-save-user" style="margin-top:0;">Start Typing</button>
+        <div class="modal-box">
+            <h2 class="font-extrabold text-3xl text-primary mb-1">TYPR V3.</h2>
+            <p class="text-muted mb-4 text-xl">Enter your competitor alias</p>
+            <input type="text" id="inp-username" class="modal-input" placeholder="Username" maxlength="15" autocomplete="off" spellcheck="false">
+            <button class="btn-primary" id="btn-save-user">Connect System</button>
         </div>
     </div>
 
     <div class="container">
         <header>
-            <h1><span class="brand">TYPR.</span></h1>
+            <h1><span class="brand" id="main-brand">TYPR V3.</span></h1>
             <div class="header-stats">
-                <button class="btn-icon" id="btn-sound">🔊 Sound</button>
+                <button class="btn-icon" id="btn-shop">🛒 Shop <span class="coin-display" style="margin-left:4px;" id="head-coins">0</span></button>
                 <button class="btn-icon" id="btn-profile">👤 Profile</button>
-                <button class="btn-icon" id="btn-nav-lb">🏆 Leaderboard</button>
+                <button class="btn-icon" id="btn-nav-lb">🏆 Rank</button>
             </div>
         </header>
 
         <main id="panel-settings" class="panel">
             <div class="settings-grid">
                 <div class="setting-group">
-                    <label>Mode</label>
+                    <label>Typing Mode</label>
                     <div class="custom-select" id="dd-mode" data-value="normal">
                         <div class="select-selected">Normal Text</div>
                         <div class="select-items">
                             <div class="select-item" data-value="normal">Normal Text</div>
-                            <div class="select-item" data-value="coding">Code Snippets</div>
-                            <div class="select-item" data-value="daily" style="color:var(--warning);">📅 Daily Challenge</div>
+                            <div class="select-item" data-value="custom">Custom Text</div>
                         </div>
                     </div>
                 </div>
                 <div class="setting-group">
-                    <label>Test Type</label>
-                    <div class="custom-select" id="dd-type" data-value="time">
-                        <div class="select-selected">Time Based</div>
+                    <label>Match Length</label>
+                    <div class="custom-select" id="dd-val" data-value="short">
+                        <div class="select-selected">Short Match (20 Words)</div>
                         <div class="select-items">
-                            <div class="select-item" data-value="time">Time Based</div>
-                            <div class="select-item" data-value="burst">15s Burst</div>
+                            <div class="select-item" data-value="short">Short Match (20 Words)</div>
+                            <div class="select-item" data-value="medium">Medium Match (40 Words)</div>
+                            <div class="select-item" data-value="long">Long Match (60 Words)</div>
                         </div>
                     </div>
-                </div>
-                <div class="setting-group" id="grp-val">
-                    <label>Duration</label>
-                    <div class="custom-select" id="dd-val" data-value="60">
-                        <div class="select-selected">1 Minute</div>
-                        <div class="select-items" id="val-options"></div>
-                    </div>
-                </div>
-
-                <div class="setting-group">
-                    <label>Caret Focus</label>
-                    <button class="toggle-btn" id="btn-focus">Focus Lens <span>Off</span></button>
-                </div>
-                <div class="setting-group">
-                    <label>Hardcore</label>
-                    <button class="toggle-btn" id="btn-hardcore">No UI/Backspace <span>Off</span></button>
                 </div>
                 
-                <div class="setting-group" style="grid-column: 1 / -1; background: var(--bg); padding: 1.5rem; border-radius: 12px; border: 1px dashed var(--primary); margin-top: 0.5rem;">
-                    <label style="color: var(--primary); font-size: 1.1rem; margin-bottom: 0.5rem; display:block;">🎮 Multiplayer Room</label>
-                    <div class="room-controls-wrapper">
-                        <button class="btn-primary" id="btn-create-room">Create Room</button>
-                        <input type="text" id="inp-room-code" class="room-inp" placeholder="CODE">
-                        <button class="btn-restart" id="btn-join-room" style="background:var(--surface);">Join Room</button>
+                <div class="setting-group hidden mt-2" id="custom-text-group" style="grid-column: 1 / -1;">
+                    <label>Custom Text Data</label>
+                    <textarea id="custom-text-input" class="custom-text-area" placeholder="Type your custom practice text here without punctuation..."></textarea>
+                    <button class="btn-icon mt-1" id="btn-save-custom" style="width:fit-content;">💾 Save Favorite</button>
+                </div>
+
+                <div class="setting-group p-4 mt-3" style="grid-column: 1 / -1; background: var(--bg); border-radius: var(--radius-lg); border: 1px solid var(--border);">
+                    <label class="text-primary text-xl mb-3">🎮 Ranked Multiplayer Lobby</label>
+                    <div class="room-controls-wrapper gap-2">
+                        <button class="btn-primary mt-0" id="btn-create-room">Create Room</button>
+                        <input type="text" id="inp-room-code" class="room-inp" placeholder="CODE" maxlength="5" autocomplete="off">
+                        <button class="btn-restart mt-0" style="background:var(--surface);" id="btn-join-room">Join Room</button>
                     </div>
                 </div>
             </div>
-            <button class="btn-primary" id="btn-start">Play Solo Mode</button>
+            <button class="btn-primary mt-4" id="btn-start" style="padding: 1.5rem; font-size: 1.2rem;">Deploy Solo Match</button>
         </main>
 
         <main id="panel-lobby" class="panel hidden">
-            <h2 style="text-align: center; margin-bottom: 0.5rem; color: var(--primary);">Room: <span id="lobby-room-code" style="letter-spacing: 2px;">-----</span></h2>
-            <p style="text-align: center; color: var(--text-muted); margin-bottom: 1.5rem;" id="lobby-status">Waiting for players...</p>
+            <h2 class="text-center text-primary font-extrabold text-3xl mb-1">Room <span id="lobby-room-code" style="letter-spacing: 3px; color: var(--text-main);"></span></h2>
+            <p class="text-center text-muted mb-4 text-xl">Waiting for competitors to connect...</p>
             
-            <div id="host-controls" class="hidden" style="margin-bottom: 1.5rem; padding: 1rem; background: var(--bg); border: 1px solid var(--border); border-radius: 12px;">
-                <h4 style="margin-bottom: 0.5rem; color: var(--accent);">Host Controls</h4>
-                <div style="display: flex; gap: 0.5rem;">
-                    <div class="custom-select" id="host-mode-select" data-value="normal" style="flex:1;">
-                        <div class="select-selected">Normal Text</div>
-                        <div class="select-items">
-                            <div class="select-item" data-value="normal">Normal Text</div>
-                            <div class="select-item" data-value="coding">Code Snippets</div>
-                        </div>
-                    </div>
-                    <button class="btn-primary" id="btn-host-change" style="margin: 0; width: auto; padding: 0 1.5rem;">Set Mode</button>
+            <div id="host-controls" class="hidden p-3 mb-4" style="background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-md);">
+                <h4 class="text-accent font-bold uppercase mb-2">Host Synchronization</h4>
+                <div class="flex gap-3 flex-wrap">
+                    <button class="btn-restart mt-0 flex-1" id="btn-host-sync-custom">Sync Custom</button>
+                    <button class="btn-restart mt-0 flex-1" id="btn-host-sync-random">Sync Random</button>
                 </div>
             </div>
 
-            <div style="margin-bottom: 1.5rem;">
-                <h3 style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase;">Players in Room</h3>
-                <ul id="lobby-players-list" style="list-style: none; display: flex; flex-direction: column; gap: 0.5rem;"></ul>
+            <div class="mb-4">
+                <h3 class="text-muted font-bold uppercase mb-2">Connected Players</h3>
+                <ul id="lobby-players-list" class="flex flex-col gap-2" style="list-style: none;"></ul>
             </div>
 
-            <div class="chat-box">
-                <div class="chat-messages" id="chat-messages"></div>
-                <div class="msg-typing" id="chat-typing"></div>
-                <div class="chat-input-area">
-                    <input type="text" id="chat-input" placeholder="Type a message..." autocomplete="off">
-                    <button class="btn-send-chat" id="btn-send-chat">Send</button>
-                </div>
-            </div>
-
-            <button class="btn-primary hidden" id="btn-start-room" style="margin-top:1.5rem;">Start Match</button>
-            <button class="btn-restart" id="btn-leave-room">Leave Room</button>
+            <button class="btn-primary hidden mt-2 p-3" id="btn-start-room">Initiate Ranked Match</button>
+            <button class="btn-restart mt-3" id="btn-leave-room">Disconnect</button>
         </main>
 
-        <main id="panel-typing" class="panel hidden" style="padding: 1rem;">
+        <main id="panel-typing" class="panel hidden p-3">
             <div class="sticky-bar">
-                <div style="display:flex; gap: 1.2rem;"><span id="stat-time">01:00</span><span id="stat-wpm">0 WPM</span></div>
-                <div id="stat-acc" style="color: var(--text-muted); font-size: 1rem;">100% Acc</div>
+                <div class="flex gap-3"><span id="stat-time">0:00</span><span id="stat-wpm">0 WPM</span></div>
+                <div id="stat-acc" class="text-muted">100% Acc</div>
             </div>
 
-            <div id="mp-progress-container" class="hidden" style="margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 0.5rem; background: var(--surface); padding: 1rem; border-radius: 12px; border: 1px solid var(--border);"></div>
+            <div id="mp-progress-container" class="hidden flex flex-col gap-2 p-3 mb-3" style="background: var(--bg); border-radius: var(--radius-md); border: 1px solid var(--border);"></div>
             
             <div class="typing-wrapper" id="type-cont">
-                <div id="focus-overlay" class="hidden">
-                    <div class="focus-text" id="focus-main-text">Tap to Initialize</div>
-                    <div class="focus-subtext">Clicking anywhere activates the keyboard</div>
+                <div id="focus-overlay" class="overlay-layer hidden">
+                    <div class="overlay-text" id="focus-main-text">Tap to focus</div>
+                    <div class="text-muted mt-2">Keyboard required</div>
                 </div>
-
-                <div id="countdown-overlay" class="hidden"><div id="countdown-text">3</div></div>
-                <div id="text-display"></div>
+                <div id="status-overlay" class="overlay-layer hidden">
+                    <div class="overlay-text" id="status-text">3</div>
+                </div>
+                <div id="text-display" class="trail-default"></div>
                 <textarea id="hidden-input" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"></textarea>
             </div>
             
-            <button class="btn-restart" id="btn-abort">Abort Match (Esc)</button>
+            <button class="btn-restart mt-3" id="btn-abort">Abort Match</button>
         </main>
 
         <main id="panel-results" class="panel hidden">
-            <h2 id="res-title" style="text-align: center; margin-bottom: 1.5rem; font-size: 1.8rem; font-weight:800;">Analysis Complete</h2>
-            <div id="mp-podium" class="podium-container hidden"></div>
-            <div class="results-grid">
-                <div class="stat-card"><h3>WPM</h3><p id="res-wpm">0</p></div>
-                <div class="stat-card"><h3>Accuracy</h3><p id="res-acc">0%</p></div>
-                <div class="stat-card"><h3>Time</h3><p id="res-time">0s</p></div>
+            <h2 class="text-center font-extrabold text-3xl mb-4">Match Analysis</h2>
+            
+            <div class="text-center p-4 mb-4" style="background:var(--bg); border-radius:var(--radius-lg); border:1px solid var(--border); box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);">
+                <div class="text-muted font-bold uppercase mb-2">Rank Adjustment</div>
+                <div class="flex justify-center items-center gap-2 mb-2">
+                    <span id="rank-update-display" class="rank-anim-text">1000</span>
+                    <span class="text-muted font-bold text-xl">RP</span>
+                </div>
+                <div class="rank-progress-container">
+                    <div class="rank-progress-bar" id="res-rank-bar" style="width:0%;"></div>
+                </div>
+                <div class="rank-progress-labels flex justify-between font-bold text-muted uppercase mt-2">
+                    <span id="res-rank-current">Bronze</span>
+                    <span id="res-rank-next">Silver</span>
+                </div>
             </div>
-            <div style="display:flex; gap:1rem; margin-top: 1.5rem; flex-wrap: wrap;">
-                <button class="btn-restart" id="btn-new-test" style="margin-top:0;">Back to Setup</button>
-                <button class="btn-primary hidden" id="btn-host-restart" style="margin-top:0;">Restart Match</button>
+
+            <div id="mp-podium" class="hidden flex flex-col gap-2 mb-4"></div>
+            
+            <div class="results-grid mb-4">
+                <div class="stat-card"><h3 class="text-muted font-bold uppercase mb-1">Speed</h3><p id="res-wpm">0</p><span id="res-consistency" class="rating-label text-primary"></span></div>
+                <div class="stat-card"><h3 class="text-muted font-bold uppercase mb-1">Precision</h3><p id="res-acc">0%</p><span id="res-acc-label" class="rating-label"></span></div>
+                <div class="stat-card"><h3 class="text-muted font-bold uppercase mb-1">Coins Earned</h3><p id="res-coins" class="coin-display">+0</p></div>
+                <div class="stat-card"><h3 class="text-muted font-bold uppercase mb-1">Time</h3><p id="res-time">0s</p></div>
+            </div>
+            
+            <div class="flex gap-3 flex-wrap mt-4">
+                <button class="btn-restart flex-1 mt-0 p-3" id="btn-new-test">Return to Base</button>
+                <button class="btn-primary hidden flex-1 mt-0 p-3" id="btn-host-rematch">Initiate Rematch</button>
             </div>
         </main>
 
         <main id="panel-profile" class="panel hidden">
-            <h2 style="margin-bottom: 1.5rem; font-weight:800;">User Profile</h2>
-            <div id="prof-badges" style="margin-bottom:1.5rem; display:flex; flex-wrap:wrap; gap:0.5rem;"></div>
+            <h2 class="font-extrabold text-3xl mb-4">Competitor Profile</h2>
             
-            <div class="results-grid" style="margin-bottom: 2rem;">
-                <div class="stat-card"><h3>Best WPM</h3><p id="prof-best">0</p></div>
-                <div class="stat-card"><h3>Average WPM</h3><p id="prof-avg">0</p></div>
-                <div class="stat-card"><h3>Total Games</h3><p id="prof-total">0</p></div>
+            <div class="text-center p-4 mb-4" style="background:var(--bg); border-radius:var(--radius-lg); border:1px solid var(--border);">
+                <div id="prof-rank-badge" class="rank-badge rank-bronze mb-3" style="font-size:1.2rem; padding:0.6rem 2rem;">Bronze</div>
+                <div class="font-extrabold text-primary text-3xl mb-2"><span id="prof-rp">1000</span> <span class="text-xl text-muted">RP</span></div>
+                
+                <div class="rank-progress-container">
+                    <div class="rank-progress-bar" id="prof-rank-bar" style="width:0%;"></div>
+                </div>
+                <div class="rank-progress-labels flex justify-between font-bold text-muted uppercase mt-2">
+                    <span id="prof-rank-current">Bronze</span>
+                    <span id="prof-rank-next">Silver</span>
+                </div>
             </div>
 
-            <h3 style="margin-bottom: 1rem; color:var(--text-muted); font-size:1rem;">Recent Matches (Last 20)</h3>
-            <div style="width:100%; overflow-x:auto; max-height:250px; border-radius:12px; border:1px solid var(--border);">
-                <table class="leaderboard-table" style="margin:0;">
-                    <thead style="position:sticky; top:0; background:var(--surface);"><tr><th>WPM</th><th>Acc</th><th>Mode</th></tr></thead>
-                    <tbody id="prof-history"></tbody>
-                </table>
+            <div class="results-grid mb-4">
+                <div class="stat-card"><h3 class="text-muted font-bold uppercase mb-1">Peak Speed</h3><p id="prof-best">0</p></div>
+                <div class="stat-card"><h3 class="text-muted font-bold uppercase mb-1">Average Speed</h3><p id="prof-avg">0</p></div>
+                <div class="stat-card"><h3 class="text-muted font-bold uppercase mb-1">Total Matches</h3><p id="prof-total">0</p></div>
             </div>
-            <button class="btn-restart" id="btn-prof-back">Back</button>
+            <button class="btn-restart" id="btn-prof-back">Back to Dashboard</button>
         </main>
 
         <main id="panel-leaderboard" class="panel hidden">
-            <h2 style="margin-bottom: 1.5rem; font-size: 1.6rem; font-weight:800; display:flex; justify-content:space-between; align-items:center;">
-                Global Rankings 🏆
-                <button class="btn-icon" id="btn-lb-back" style="font-size: 0.8rem;">← Back</button>
+            <h2 class="flex justify-between items-center font-extrabold text-3xl mb-4">
+                Global Rankings
+                <button class="btn-icon" style="border:none;" id="btn-lb-back">Back</button>
             </h2>
-            <div class="lb-controls" style="display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
-                <div class="custom-select" id="lb-filter-mode" data-value="all" style="flex:1;">
-                    <div class="select-selected">All Modes</div>
-                    <div class="select-items"><div class="select-item selected" data-value="all">All Modes</div><div class="select-item" data-value="normal">Normal Text</div><div class="select-item" data-value="coding">Code Snippets</div></div>
-                </div>
-                <div class="custom-select" id="lb-filter-type" data-value="all" style="flex:1;">
-                    <div class="select-selected">All Types</div>
-                    <div class="select-items"><div class="select-item selected" data-value="all">All Types</div><div class="select-item" data-value="time">Time Based</div><div class="select-item" data-value="burst">15s Burst</div></div>
-                </div>
-            </div>
-            <div style="width: 100%; overflow-x: auto;">
+            <div class="w-full" style="overflow-x: auto; background:var(--bg); border-radius:var(--radius-md); border:1px solid var(--border); box-shadow:var(--shadow-md);">
                 <table class="leaderboard-table">
-                    <thead><tr><th>#</th><th>Player</th><th>WPM</th><th>Acc</th><th>Mode</th></tr></thead>
-                    <tbody id="lb-body"><tr><td colspan="5" style="text-align:center;">Loading...</td></tr></tbody>
+                    <thead><tr><th>Player</th><th>Division</th><th>RP</th><th>Peak WPM</th></tr></thead>
+                    <tbody id="lb-body"><tr><td colspan="4" class="text-center text-muted p-4">Syncing secure data...</td></tr></tbody>
                 </table>
             </div>
         </main>
-    </div>
 
-    <footer class="app-footer">
-        <div style="font-size: 0.9rem; font-weight: 800; letter-spacing: 1px; color: var(--text-main); margin-bottom: 0.8rem;">CREATED BY <span style="color: var(--primary);">MOHAMMED WASI</span></div>
-        <div style="max-width: 800px; margin: 0 auto; line-height: 1.5;">This application features Real-time Multiplayer and strict Anti-Cheat systems via Firebase. Play fair and enjoy.</div>
-    </footer>
+        <main id="panel-shop" class="panel hidden">
+            <div style="background: linear-gradient(135deg, rgba(255,215,0,0.1), transparent); padding: 2rem; border-radius: var(--radius-lg); border: 1px solid rgba(255,215,0,0.3); margin-bottom: 1.5rem; text-align: center;">
+                <h2 class="font-extrabold text-3xl mb-1" style="color: #ffd700; text-shadow: 0 0 10px rgba(255,215,0,0.3);">TYPR PRO Shop</h2>
+                <p class="text-muted mb-2 text-xl">Equip premium trails & unlock exclusive aesthetics.</p>
+                <div id="pro-status-msg" style="font-weight: 800; font-size: 1.1rem;"></div>
+            </div>
+            
+            <div class="shop-master-preview" id="shop-master-preview" style="background: var(--surface);">
+                <div class="typing-wrapper flex items-center justify-center" style="height: 90px; min-height: 90px; border: none; background: transparent; overflow: hidden;">
+                    <div id="shop-master-text" class="trail-default" style="padding: 0; font-size: 2rem;"></div>
+                </div>
+            </div>
+
+            <div class="shop-grid" id="shop-grid"></div>
+            <button class="btn-restart mt-3" id="btn-shop-back">Return to Base</button>
+        </main>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getFirestore, collection, doc, getDoc, setDoc, updateDoc, deleteDoc, deleteField, serverTimestamp, onSnapshot, query, orderBy, limit, addDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getFirestore, collection, doc, getDoc, setDoc, updateDoc, deleteDoc, deleteField, serverTimestamp, onSnapshot, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-        // IMPORTANT: Must wrap entirely in DOMContentLoaded to prevent null DOM errors
+        window.formatT = function(seconds) {
+            if (isNaN(seconds) || seconds < 0) return "0:00";
+            const m = Math.floor(seconds / 60);
+            const s = seconds % 60;
+            return `${m}:${s.toString().padStart(2, '0')}`;
+        };
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            let icon = type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'warning' ? '👑' : 'ℹ️';
+            toast.innerHTML = `<span>${icon}</span> <span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.animation = 'fadeOut 0.3s ease forwards';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
         document.addEventListener("DOMContentLoaded", () => {
-            console.log("DOM loaded - Initializing TYPR");
-
             const firebaseConfig = {
                 apiKey: "AIzaSyCziskazrd-3vFia04uvkqWF8bFVGeqXPk",
                 authDomain: "fast-typing-app-aecdc.firebaseapp.com",
-                projectId: "fast-typing-app-aecdc",
-                storageBucket: "fast-typing-app-aecdc.firebasestorage.app",
-                messagingSenderId: "1059306504411",
-                appId: "1:1059306504411:web:ea56c43e5fd0a8a2c5ccfe"
+                projectId: "fast-typing-app-aecdc"
             };
+            
             const app = initializeApp(firebaseConfig);
             const db = getFirestore(app);
 
-            /* === Utilities & Core State === */
-            window.formatT = function(seconds) {
-                if (isNaN(seconds) || seconds < 0) return "0:00";
-                const m = Math.floor(seconds / 60);
-                const s = seconds % 60;
-                return `${m}:${s.toString().padStart(2, '0')}`;
-            };
+            const wordPoolStr = "the,be,to,of,and,a,in,that,have,it,for,not,on,with,he,as,you,do,at,this,but,his,by,from,they,we,say,her,she,or,an,will,my,one,all,would,there,their,what,so,up,out,if,about,who,get,which,go,me,when,make,can,like,time,no,just,him,know,take,people,into,year,your,good,some,could,them,see,other,than,then,now,look,only,come,its,over,think,also,back,after,use,two,how,our,work,first,well,way,even,new,want,because,any,these,give,day,most,us,is,are,was,were,been,being,has,had,having,does,did,doing,a,an,the,and,but,if,or,because,as,until,while,of,at,by,for,with,about,against,between,into,through,during,before,after,above,below,to,from,up,down,in,out,on,off,over,under,again,further,then,once,here,there,when,where,why,how,all,any,both,each,few,more,most,other,some,such,no,nor,not,only,own,same,so,than,too,very,s,t,can,will,just,don,should,now,system,software,hardware,program,function,variable,constant,database,server,client,network,protocol,security,encryption,algorithm,logic,module,interface,class,object,method,property,event,listener,callback,promise,async,await,thread,process,memory,storage,cache,pointer,reference,value,type,string,number,boolean,array,list,map,dictionary,set,tree,graph,node,edge,vertex,path,cycle,loop,condition,statement,expression,operator,operand,argument,parameter,return,yield,break,continue,switch,case,default,throw,catch,finally,try,except,raise,import,export,require,include,module,package,library,framework,application,service,api,endpoint,request,response,header,body,payload,status,code,error,exception,bug,fix,patch,update,upgrade,version,release,build,deploy,test,debug,trace,log,monitor,metric,alert,dashboard,report,analytics,data,information,knowledge,insight,action,result,outcome,goal,objective,strategy,plan,task,project,team,user,customer,client,partner,vendor,supplier,contract,agreement,license,policy,rule,regulation,law,compliance,audit,review,inspection,check,validate,verify,approve,reject,cancel,suspend,resume,start,stop,pause,play,record,save,load,read,write,delete,remove,add,insert,update,modify,change,edit,format,style,design,layout,theme,color,font,size,weight,align,justify,center,left,right,top,bottom,margin,padding,border,radius,shadow,opacity,visible,hidden,display,block,inline,flex,grid,position,absolute,relative,fixed,sticky,z-index,float,clear,overflow,scroll,auto,clip,transform,translate,scale,rotate,skew,matrix,transition,animation,keyframes,duration,delay,timing,function,iteration,count,direction,fill,mode,play,state,media,query,breakpoint,responsive,mobile,tablet,desktop,screen,print,speech,hover,active,focus,visited,link,target,before,after,first,last,child,type,nth,only,empty,not,has,is,where,root,scope,host,shadow,part,slotted,dir,lang,theme";
+            const wordPool = wordPoolStr.split(",");
 
-            /* === Dynamic Random Text Engine === */
-            const wordPool = {
-                common: ["the", "be", "to", "of", "and", "a", "in", "that", "have", "it", "for", "not", "on", "with", "he", "as", "you", "do", "at", "this", "but", "his", "by", "from", "they", "we", "say", "her", "she", "or", "will", "my", "one", "all", "would", "there", "their", "what", "so", "up", "out", "if", "about", "who", "get", "which", "go", "when", "make", "can", "like", "time", "no", "just", "know", "take", "people", "into", "year", "your", "good", "some", "could", "them", "see", "other", "than", "then", "now", "look", "only", "come", "its", "over", "think", "also", "back", "after", "use", "two", "how", "our", "work", "first", "well", "way", "even", "new", "want", "because", "any", "these", "give", "day", "most", "us"]
-            };
-
-            function generateText(mode, length = 60) {
-                if (mode === 'normal') {
-                    let words = [];
-                    for(let i=0; i<length; i++) {
-                        let w = wordPool.common[Math.floor(Math.random() * wordPool.common.length)];
-                        if(Math.random() < 0.15) w = w.charAt(0).toUpperCase() + w.slice(1);
-                        if(Math.random() < 0.15 && i !== length-1) w += [",", ".", ";", "?"][Math.floor(Math.random() * 4)];
-                        words.push(w);
-                    }
-                    if(words.length > 0) {
-                        words[0] = words[0].charAt(0).toUpperCase() + words[0].slice(1);
-                        words[words.length-1] += ".";
-                    }
-                    return words.join(" ");
-                } else if (mode === 'coding') {
-                    const vars = ["data", "index", "count", "result", "user", "config", "item", "node", "element"];
-                    const methods = ["map", "filter", "reduce", "sort", "find"];
-                    let v1 = vars[Math.floor(Math.random()*vars.length)];
-                    let v2 = vars[Math.floor(Math.random()*vars.length)];
-                    let m = methods[Math.floor(Math.random()*methods.length)];
-                    let snippets = [
-                        `const ${v1} = ${v2}.${m}(x => x !== null);\nconsole.log(${v1});`,
-                        `function process(${v1}) {\n    let total = 0;\n    for(let i=0; i<${v1}.length; i++) {\n        total += ${v1}[i];\n    }\n    return total;\n}`,
-                        `if (${v1} === ${v2}) {\n    return true;\n} else {\n    return false;\n}`
-                    ];
-                    return snippets[Math.floor(Math.random()*snippets.length)] + "\n\n" + snippets[Math.floor(Math.random()*snippets.length)];
-                }
-                return "Fallback text generation.";
-            }
-
-            function generateDailyText() {
-                const seedStr = new Date().toDateString();
-                let seed = seedStr.split('').reduce((a,b)=>a+b.charCodeAt(0),0);
-                function sRand() { var x = Math.sin(seed++) * 10000; return x - Math.floor(x); }
+            function generateCleanText(lengthMode) {
+                let count = 20;
+                if (lengthMode === 'medium') count = 40;
+                if (lengthMode === 'long') count = 60;
                 let words = [];
-                for(let i=0; i<50; i++) words.push(wordPool.common[Math.floor(sRand() * wordPool.common.length)]);
-                return words.join(" ") + ".";
+                for(let i = 0; i < count; i++) words.push(wordPool[Math.floor(Math.random() * wordPool.length)]);
+                words[0] = words[0].charAt(0).toUpperCase() + words[0].slice(1);
+                return words.join(" ");
             }
 
-            function getUid() {
-                let uid = localStorage.getItem('typr_userId');
-                if (!uid) { uid = 'user_' + Math.random().toString(36).substr(2, 9); localStorage.setItem('typr_userId', uid); }
-                return uid;
+            function sanitizeText(txt) { return txt.replace(/[.,;:?]/g, '').replace(/\s+/g, ' ').trim(); }
+
+            const Tiers = [
+                { name: 'Bronze', min: 0, max: 1199, class: 'rank-bronze' },
+                { name: 'Silver', min: 1200, max: 1499, class: 'rank-silver' },
+                { name: 'Gold', min: 1500, max: 1999, class: 'rank-gold' },
+                { name: 'Master', min: 2000, max: 2499, class: 'rank-master' },
+                { name: 'Legend', min: 2500, max: 99999, class: 'rank-legend' }
+            ];
+
+            function getRankInfo(rp) {
+                let tier = Tiers[0];
+                for(let i = 0; i < Tiers.length; i++) if (rp >= Tiers[i].min) tier = Tiers[i];
+                let nextIdx = Tiers.indexOf(tier) + 1;
+                let nextTier = Tiers[nextIdx] || tier;
+                let progress = 100;
+                if (tier !== nextTier) progress = ((rp - tier.min) / (nextTier.min - tier.min)) * 100;
+                return { name: tier.name, class: tier.class, progress: progress, nextName: nextTier.name, nextMin: nextTier.min };
             }
+
+            function updateRankProgressUI(rp, barId, currentId, nextId) {
+                const info = getRankInfo(rp);
+                const bar = document.getElementById(barId);
+                const curr = document.getElementById(currentId);
+                const nxt = document.getElementById(nextId);
+                if(bar) bar.style.width = `${Math.max(0, Math.min(100, info.progress))}%`;
+                if(curr) curr.innerText = info.name;
+                if(nxt) nxt.innerText = info.name === info.nextName ? 'Max Rank' : `${info.nextName} (${info.nextMin} RP)`;
+            }
+
+            function animateValue(obj, start, end, duration) {
+                if(!obj) return;
+                let startTimestamp = null;
+                const step = (timestamp) => {
+                    if (!startTimestamp) startTimestamp = timestamp;
+                    const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                    obj.innerHTML = Math.floor(progress * (end - start) + start);
+                    if (progress < 1) window.requestAnimationFrame(step);
+                    else {
+                        obj.innerHTML = end; 
+                        obj.classList.remove('rank-up', 'rank-down');
+                        if (end > start) obj.classList.add('rank-up');
+                        else if (end < start) obj.classList.add('rank-down');
+                    }
+                };
+                window.requestAnimationFrame(step);
+            }
+
+            function getWPM(typedLen, errs, timeSecs) { 
+                if (timeSecs <= 0) return 0;
+                const netChars = typedLen - errs;
+                const wpm = (netChars / 5) / (timeSecs / 60);
+                return Math.max(0, Math.round(wpm)); 
+            }
+
+            const shopItems = [
+                { id: 'default', name: 'Standard Line', price: 0, class: 'trail-default' },
+                { id: 'basic_glow', name: 'Basic Glow', price: 100, class: 'trail-basic_glow' },
+                { id: 'pulse', name: 'Pulse Cursor', price: 250, class: 'trail-pulse' },
+                { id: 'neon', name: 'Neon Trail', price: 400, class: 'trail-neon' },
+                { id: 'fire', name: 'Fire Trail', price: 600, class: 'trail-fire' },
+                { id: 'electric', name: 'Electric Surge', price: 800, class: 'trail-electric' },
+                { id: 'particle', name: 'Particle Float', price: 1000, class: 'trail-particle' },
+                { id: 'ghost', name: 'Ghost Shadows', price: 1500, class: 'trail-ghost', isPremiumExclusive: true },
+                { id: 'matrix', name: 'Matrix Code', price: 2000, class: 'trail-matrix', isPremiumExclusive: true },
+                { id: 'rainbow', name: 'RGB Rainbow', price: 3000, class: 'trail-rainbow', isPremiumExclusive: true },
+                { id: 'gold', name: 'Premium Gold', price: 5000, class: 'trail-gold', isPremiumExclusive: true }
+            ];
 
             let state = {
-                userId: getUid(), username: localStorage.getItem('typr_username') || '',
-                mode: localStorage.getItem('typr_mode') || 'normal', type: localStorage.getItem('typr_type') || 'time', val: parseInt(localStorage.getItem('typr_val')) || 60,
-                focus: localStorage.getItem('typr_focus') === 'true', hardcore: localStorage.getItem('typr_hardcore') === 'true', sound: localStorage.getItem('typr_sound') === 'true',
-                text: "", spans: [], timer: null, timeSecs: 0, isTyping: false, testEnded: false, errors: 0, totalTyped: 0, maxIdx: 0,
-                roomId: null, isHost: false, roomUnsub: null, chatUnsub: null, heartbeat: null, roomData: null,
-                userStats: { bestWPM: 0, averageWPM: 0, totalGames: 0, history: [], badges: [] }, lbData: [],
-                progressHistory: [], lastProgressChar: 0
+                userId: localStorage.getItem('typr_userId') || ('user_' + Math.random().toString(36).substr(2, 9)),
+                username: localStorage.getItem('typr_username') || '',
+                mode: 'normal', textLength: 'short',
+                text: "", spans: [], timer: null, timeSecs: 0,
+                isTyping: false, testEnded: false, isCountdown: false, errors: 0, totalTyped: 0, maxIdx: 0, currentErrors: 0,
+                roomId: null, isHost: false, roomUnsub: null, heartbeat: null, roomData: null,
+                userStats: { bestWPM: 0, averageWPM: 0, totalGames: 0, rankPoints: 1000, savedTexts: [], coins: 0, purchasedTrails: ['default'], equippedTrail: 'default', premium: false },
+                wpmHistory: [], progressHistory: [], lastProgressChar: 0, lastSyncTime: 0, syncThrottleMs: 2000, lastRenderedLen: 0,
+                previousPlayers: []
+            };
+            localStorage.setItem('typr_userId', state.userId);
+
+            const DOM = {
+                uModal: document.getElementById('username-modal'), uInp: document.getElementById('inp-username'),
+                pSet: document.getElementById('panel-settings'), pType: document.getElementById('panel-typing'), 
+                pRes: document.getElementById('panel-results'), pLb: document.getElementById('panel-leaderboard'), 
+                pLobby: document.getElementById('panel-lobby'), pProf: document.getElementById('panel-profile'), pShop: document.getElementById('panel-shop'),
+                tDisp: document.getElementById('text-display'), hInp: document.getElementById('hidden-input'), 
+                focusOverlay: document.getElementById('focus-overlay'), statusOverlay: document.getElementById('status-overlay'), statusText: document.getElementById('status-text'),
+                sTime: document.getElementById('stat-time'), sWpm: document.getElementById('stat-wpm'), sAcc: document.getElementById('stat-acc'),
+                mpProgCont: document.getElementById('mp-progress-container'), mpPodium: document.getElementById('mp-podium')
             };
 
-            const AudioCtx = window.AudioContext || window.webkitAudioContext;
-            let actx;
-
-            // Safe Event listeners registry
             const listenersRegistry = {};
             const safeListen = (id, event, fn) => {
                 const el = document.getElementById(id);
-                if (!el) return;
+                if(!el) return;
                 if(listenersRegistry[`${id}_${event}`]) el.removeEventListener(event, listenersRegistry[`${id}_${event}`]);
                 listenersRegistry[`${id}_${event}`] = fn;
                 el.addEventListener(event, fn);
             };
 
-            // Safely fetch all DOM nodes
-            const DOM = {
-                uModal: document.getElementById('username-modal'), uInp: document.getElementById('inp-username'), uBtn: document.getElementById('btn-save-user'),
-                pSet: document.getElementById('panel-settings'), pType: document.getElementById('panel-typing'), pRes: document.getElementById('panel-results'), 
-                pLb: document.getElementById('panel-leaderboard'), pLobby: document.getElementById('panel-lobby'), pProf: document.getElementById('panel-profile'),
-                tDisp: document.getElementById('text-display'), hInp: document.getElementById('hidden-input'), overlay: document.getElementById('focus-overlay'),
-                sTime: document.getElementById('stat-time'), sWpm: document.getElementById('stat-wpm'), sAcc: document.getElementById('stat-acc'),
-                mpProgCont: document.getElementById('mp-progress-container'), chatMsgs: document.getElementById('chat-messages'), 
-                cdOverlay: document.getElementById('countdown-overlay'), cdText: document.getElementById('countdown-text'), mpPodium: document.getElementById('mp-podium'),
-                typeCont: document.getElementById('type-cont')
-            };
+            let shopPreviewTimer = null;
+            let shopPreviewIndex = 0;
+            const shopPreviewString = "preview effect";
 
-            /* === Gatekeeper === */
+            function resetTimers() {
+                if(state.timer) { clearInterval(state.timer); state.timer = null; }
+                if(shopPreviewTimer) { clearInterval(shopPreviewTimer); shopPreviewTimer = null; }
+            }
+
+            function initShopPreview() {
+                const container = document.getElementById('shop-master-text');
+                if(!container) return;
+                container.innerHTML = '';
+                for(let i=0; i<shopPreviewString.length; i++) {
+                    let sp = document.createElement('span');
+                    sp.innerText = shopPreviewString[i] === ' ' ? '\u00A0' : shopPreviewString[i];
+                    container.appendChild(sp);
+                }
+                resetTimers();
+                shopPreviewTimer = setInterval(() => {
+                    const spans = container.children;
+                    if(spans.length === 0) return;
+                    for(let i=0; i<spans.length; i++) spans[i].className = 'correct';
+                    if(shopPreviewIndex >= spans.length) shopPreviewIndex = 0;
+                    spans[shopPreviewIndex].className = 'active';
+                    shopPreviewIndex++;
+                }, 150);
+            }
+
+            function stopShopPreview() { if(shopPreviewTimer) { clearInterval(shopPreviewTimer); shopPreviewTimer = null; } }
+
             if (!state.username && DOM.uModal) DOM.uModal.classList.remove('hidden');
+            
             safeListen('btn-save-user', 'click', () => {
                 if(!DOM.uInp) return;
-                const v = DOM.uInp.value.trim();
+                const v = sanitizeText(DOM.uInp.value);
                 if (v.length >= 3) { 
-                    state.username = v; 
-                    localStorage.setItem('typr_username', v); 
+                    state.username = v; localStorage.setItem('typr_username', v); 
                     if(DOM.uModal) DOM.uModal.classList.add('hidden'); 
+                    showToast("System Connected", "success");
                     loadUserStats(); 
-                }
+                } else { showToast("Username must be at least 3 characters", "error"); }
             });
 
-            async function loadUserStats() {
+            // 🔥 FOMO & Real-Time Premium Logic
+            function updatePremiumUI(isPremium) {
+                const brandEl = document.getElementById('main-brand');
+                if (brandEl) {
+                    if (isPremium) {
+                        if (!document.getElementById('header-pro-badge')) {
+                            brandEl.innerHTML = `TYPR V3. <span id="header-pro-badge" class="pro-badge">PRO</span>`;
+                        }
+                        DOM.tDisp.classList.add('pro-active'); // Enables smooth cursor typing animation
+                    } else {
+                        brandEl.innerHTML = `TYPR V3.`;
+                        DOM.tDisp.classList.remove('pro-active');
+                    }
+                }
+            }
+
+            let userProfileUnsub = null;
+            function loadUserStats() {
                 if(!state.username) return;
-                try {
-                    const docSnap = await getDoc(doc(db, 'users', state.userId));
-                    if(docSnap.exists()) state.userStats = { ...state.userStats, ...docSnap.data() };
-                } catch(e) { console.error("Firebase Error:", e); }
+                if (userProfileUnsub) userProfileUnsub();
+                
+                userProfileUnsub = onSnapshot(doc(db, 'users', state.userId), (docSnap) => {
+                    if(docSnap.exists()) {
+                        const d = docSnap.data();
+                        const wasPremium = state.userStats.premium;
+                        
+                        state.userStats = { ...state.userStats, ...d, premium: d.premium || false };
+                        
+                        if(!state.userStats.rankPoints) state.userStats.rankPoints = 1000;
+                        if(!state.userStats.coins) state.userStats.coins = 0;
+                        if(!state.userStats.purchasedTrails) state.userStats.purchasedTrails = ['default'];
+                        if(!state.userStats.equippedTrail) state.userStats.equippedTrail = 'default';
+                        
+                        // Auto-equip gold for new PRO users
+                        if (state.userStats.premium && state.userStats.equippedTrail === 'default' && !wasPremium) {
+                            state.userStats.equippedTrail = 'gold';
+                            setDoc(doc(db, 'users', state.userId), { equippedTrail: 'gold' }, { merge: true });
+                        }
+
+                        updateHeaderCoins();
+                        applyEquippedTrail();
+                        updatePremiumUI(state.userStats.premium);
+                        
+                        if (!DOM.pShop.classList.contains('hidden')) renderShop();
+                    }
+                }, (error) => { console.error("Real-time user sync failed:", error); });
             }
             loadUserStats();
 
-            // Panel Switching
-            function showPanel(p) {
-                if(!p) return;
-                [DOM.pSet, DOM.pType, DOM.pRes, DOM.pLb, DOM.pLobby, DOM.pProf].forEach(el => {
-                    if(el) el.classList.add('hidden');
-                });
-                p.classList.remove('hidden'); 
-                window.scrollTo(0,0);
+            function updateHeaderCoins() {
+                const hd = document.getElementById('head-coins');
+                if(hd) hd.innerText = state.userStats.coins || 0;
             }
 
-            safeListen('btn-start', 'click', () => startTest(false));
-            safeListen('btn-abort', 'click', () => state.roomId ? leaveRoom() : startTest(false));
-            safeListen('btn-new-test', 'click', () => state.roomId ? showPanel(DOM.pLobby) : showPanel(DOM.pSet));
-            safeListen('btn-nav-lb', 'click', () => showPanel(DOM.pLb));
-            safeListen('btn-lb-back', 'click', () => showPanel(DOM.pSet));
-            
-            safeListen('btn-profile', 'click', () => {
-                const pBest = document.getElementById('prof-best'); const pAvg = document.getElementById('prof-avg'); const pTotal = document.getElementById('prof-total');
-                if(pBest) pBest.innerText = state.userStats.bestWPM;
-                if(pAvg) pAvg.innerText = Math.round(state.userStats.averageWPM);
-                if(pTotal) pTotal.innerText = state.userStats.totalGames;
-                
-                const bCont = document.getElementById('prof-badges'); 
-                if(bCont) {
-                    bCont.innerHTML = '';
-                    (state.userStats.badges||[]).forEach(b => bCont.innerHTML += `<span class="badge-tag">${b}</span>`);
+            function applyEquippedTrail() {
+                if(DOM.tDisp) {
+                    // Remove all existing trail classes
+                    shopItems.forEach(i => DOM.tDisp.classList.remove(i.class));
+                    // Allow auto-unlock for PRO users if they somehow equipped it
+                    const equipped = shopItems.find(i => i.id === state.userStats.equippedTrail) || shopItems[0];
+                    DOM.tDisp.classList.add(equipped.class);
                 }
-                
-                const hCont = document.getElementById('prof-history');
-                if(hCont) {
-                    hCont.innerHTML = '';
-                    (state.userStats.history||[]).forEach(h => hCont.innerHTML += `<tr><td style="color:var(--primary); font-weight:bold;">${h.wpm}</td><td>${h.acc}%</td><td>${h.mode}</td></tr>`);
-                }
-                
-                showPanel(DOM.pProf);
-            });
-            safeListen('btn-prof-back', 'click', () => showPanel(DOM.pSet));
+            }
 
-            // Custom Dropdowns Sync Logic
+            function showPanel(p) {
+                if(!p) return;
+                if(p === DOM.pShop) initShopPreview(); else stopShopPreview();
+                if(p !== DOM.pType) { if(state.timer) { clearInterval(state.timer); state.timer = null; } }
+                
+                [DOM.pSet, DOM.pType, DOM.pRes, DOM.pLb, DOM.pLobby, DOM.pProf, DOM.pShop].forEach(el => { if(el) el.classList.add('hidden'); });
+                p.classList.remove('hidden'); window.scrollTo(0,0);
+            }
+
             document.querySelectorAll('.custom-select').forEach(sel => {
                 const head = sel.querySelector('.select-selected'); 
                 const items = sel.querySelector('.select-items');
                 if(head && items) {
-                    // Initialize pre-selected values from local storage
-                    let cv = sel.dataset.value;
-                    if(sel.id === 'dd-mode') cv = state.mode;
-                    if(sel.id === 'dd-type') cv = state.type;
-                    
-                    const itList = sel.querySelectorAll('.select-item');
-                    itList.forEach(it => {
-                        if(it.dataset.value === cv) {
-                            it.classList.add('selected'); head.innerText = it.innerText; sel.dataset.value = cv;
-                        } else it.classList.remove('selected');
-                    });
-
                     head.onclick = (e) => { 
                         e.stopPropagation(); 
-                        document.querySelectorAll('.custom-select .select-items').forEach(i => { if(i !== items) i.classList.remove('show'); });
-                        items.classList.toggle('show'); 
+                        document.querySelectorAll('.select-items').forEach(i=> { if(i!==items) i.classList.remove('show'); }); 
+                        items.classList.toggle('show'); head.parentElement.classList.toggle('active'); 
                     };
-                    
-                    itList.forEach(opt => {
-                        opt.onclick = (e) => {
-                            e.stopPropagation();
-                            itList.forEach(i => i.classList.remove('selected'));
-                            opt.classList.add('selected');
-                            head.innerText = opt.innerText; 
-                            items.classList.remove('show');
+                    sel.querySelectorAll('.select-item').forEach(opt => {
+                        opt.onclick = () => {
+                            head.innerText = opt.innerText; items.classList.remove('show'); head.parentElement.classList.remove('active');
                             sel.dataset.value = opt.dataset.value;
-                            
-                            // App bindings
-                            if(sel.id === 'dd-mode') { state.mode = opt.dataset.value; localStorage.setItem('typr_mode', state.mode); }
-                            if(sel.id === 'dd-type') { state.type = opt.dataset.value; localStorage.setItem('typr_type', state.type); updateValHTML(); }
-                            if(sel.id === 'dd-val') { state.val = parseInt(opt.dataset.value); localStorage.setItem('typr_val', state.val); }
-                            if(sel.id === 'lb-filter-mode' || sel.id === 'lb-filter-type') renderLeaderboard();
+                            if(sel.id === 'dd-mode') {
+                                state.mode = opt.dataset.value;
+                                const customGroup = document.getElementById('custom-text-group');
+                                if(customGroup) {
+                                    if (state.mode === 'custom') customGroup.classList.remove('hidden');
+                                    else customGroup.classList.add('hidden');
+                                }
+                            }
+                            if(sel.id === 'dd-val') state.textLength = opt.dataset.value;
                         }
                     });
                 }
             });
-            document.addEventListener('click', () => { document.querySelectorAll('.select-items').forEach(i => i.classList.remove('show')); });
+            document.addEventListener('click', () => { document.querySelectorAll('.select-items').forEach(i => i.classList.remove('show')); document.querySelectorAll('.custom-select').forEach(s => s.classList.remove('active')); });
 
-            function updateValHTML() {
-                const vOpts = document.getElementById('val-options'); if(!vOpts) return;
-                if(state.type === 'time') { vOpts.innerHTML = `<div class="select-item" data-value="60">1 Minute</div><div class="select-item" data-value="120">2 Minutes</div>`; state.val = 60; }
-                else if(state.type === 'burst') { vOpts.innerHTML = `<div class="select-item" data-value="15">15 Seconds</div>`; state.val = 15; }
+            safeListen('btn-save-custom', 'click', async () => {
+                const customInp = document.getElementById('custom-text-input');
+                if(!customInp) return;
+                const txt = sanitizeText(customInp.value);
+                if(txt.length >= 20 && txt.length <= 500) {
+                    let st = state.userStats.savedTexts || []; st.push(txt); state.userStats.savedTexts = st;
+                    try { 
+                        await setDoc(doc(db, 'users', state.userId), { savedTexts: st }, { merge: true }); 
+                        showToast("Custom text saved!", "success");
+                    } catch(e) { showToast("Failed to save text", "error"); }
+                } else { showToast("Text must be between 20 and 500 characters", "error"); }
+            });
+
+            safeListen('btn-start', 'click', () => startMatch(false));
+            safeListen('btn-abort', 'click', () => { if (state.roomId) leaveRoom(); else showPanel(DOM.pSet); });
+            safeListen('btn-new-test', 'click', () => { if (state.roomId) showPanel(DOM.pLobby); else showPanel(DOM.pSet); });
+            safeListen('btn-nav-lb', 'click', () => { showPanel(DOM.pLb); renderLeaderboard(); });
+            safeListen('btn-lb-back', 'click', () => showPanel(DOM.pSet));
+            safeListen('btn-shop', 'click', () => { showPanel(DOM.pShop); renderShop(); });
+            safeListen('btn-shop-back', 'click', () => showPanel(DOM.pSet));
+            
+            safeListen('btn-profile', 'click', () => {
+                const elBest = document.getElementById('prof-best'); if(elBest) elBest.innerText = state.userStats.bestWPM || 0;
+                const elAvg = document.getElementById('prof-avg'); if(elAvg) elAvg.innerText = Math.round(state.userStats.averageWPM || 0);
+                const elTot = document.getElementById('prof-total'); if(elTot) elTot.innerText = state.userStats.totalGames || 0;
                 
-                const grpVal = document.getElementById('grp-val');
-                if(grpVal) grpVal.classList.toggle('hidden', state.type === 'battle');
+                let rp = state.userStats.rankPoints || 1000;
+                const rd = getRankInfo(rp);
+                const badge = document.getElementById('prof-rank-badge');
+                if(badge) { badge.innerText = rd.name; badge.className = `rank-badge ${rd.class}`; }
+                const elRp = document.getElementById('prof-rp'); if(elRp) elRp.innerText = Math.round(rp);
                 
-                const ddVal = document.getElementById('dd-val');
-                if(ddVal) {
-                    const h = ddVal.querySelector('.select-selected');
-                    if(h && vOpts.firstChild) {
-                        h.innerText = vOpts.firstChild.innerText;
-                        ddVal.dataset.value = vOpts.firstChild.dataset.value;
-                        vOpts.firstChild.classList.add('selected');
-                    }
+                updateRankProgressUI(rp, 'prof-rank-bar', 'prof-rank-current', 'prof-rank-next');
+                showPanel(DOM.pProf);
+            });
+            safeListen('btn-prof-back', 'click', () => showPanel(DOM.pSet));
+
+            // 🔥 FOMO Shop System
+            function renderShop() {
+                const grid = document.getElementById('shop-grid');
+                const proMsg = document.getElementById('pro-status-msg');
+                if(!grid) return;
+                grid.innerHTML = '';
+                
+                let isPro = state.userStats.premium === true;
+                if(proMsg) {
+                    proMsg.innerHTML = isPro 
+                        ? `<span style="color:var(--correct);">✅ PRO ACTIVE: All premium trails unlocked instantly!</span>`
+                        : `<span style="color:var(--text-muted);">Standard Tier. Unlock exclusive aesthetics with PRO.</span>`;
+                }
+
+                let purchased = state.userStats.purchasedTrails || ['default'];
+                let equipped = state.userStats.equippedTrail || 'default';
+                const masterPrev = document.getElementById('shop-master-text');
+
+                if (masterPrev) masterPrev.className = (shopItems.find(i => i.id === equipped) || shopItems[0]).class;
+
+                shopItems.forEach(item => {
+                    // PRO users auto-own everything
+                    const userOwnsIt = purchased.includes(item.id) || (isPro && item.isPremiumExclusive);
+                    const isEquipped = equipped === item.id;
                     
-                    vOpts.querySelectorAll('.select-item').forEach(opt => {
-                        opt.onclick = (e) => { 
-                            e.stopPropagation();
-                            vOpts.querySelectorAll('.select-item').forEach(i => i.classList.remove('selected'));
-                            opt.classList.add('selected');
-                            h.innerText = opt.innerText; 
-                            ddVal.querySelector('.select-items').classList.remove('show'); 
-                            state.val = parseInt(opt.dataset.value); 
+                    const card = document.createElement('div');
+                    card.className = `shop-item ${isEquipped ? 'equipped' : ''}`;
+                    
+                    let actionBtn = '';
+                    let overlayHtml = '';
+
+                    // Lock exclusive items for non-pro users
+                    if (item.isPremiumExclusive && !isPro) {
+                        overlayHtml = `<div class="locked-overlay"><span>🔒</span><button class="btn btn-warning" onclick="showToast('Upgrade to PRO in the Admin Panel to unlock!', 'warning')" style="width: 80%; font-size: 0.85rem;">Upgrade to PRO</button></div>`;
+                        actionBtn = `<button class="shop-btn btn-primary" style="opacity: 0.5; pointer-events:none;">PRO Only</button>`;
+                    } else {
+                        if (isEquipped) actionBtn = `<button class="shop-btn btn-equipped" disabled>Equipped</button>`;
+                        else if (userOwnsIt) actionBtn = `<button class="shop-btn btn-equip" data-id="${item.id}">Equip Trail</button>`;
+                        else actionBtn = `<button class="shop-btn btn-buy" data-id="${item.id}" data-price="${item.price}">Unlock (${item.price})</button>`;
+                    }
+
+                    card.innerHTML = `
+                        ${overlayHtml}
+                        <div class="shop-item-name ${item.isPremiumExclusive ? 'pro-name' : ''}">${item.name}</div>
+                        <div class="shop-preview-box ${item.class}">
+                            <span style="color:var(--text-main);">a</span><span class="shop-preview-char active">b</span><span>c</span>
+                        </div>
+                        <div class="shop-price">${item.price === 0 ? 'Free' : item.isPremiumExclusive && isPro ? '<span style="color:var(--success);">UNLOCKED</span>' : item.price + ' Coins'}</div>
+                        ${actionBtn}
+                    `;
+                    
+                    card.addEventListener('mouseenter', () => { if(masterPrev && (!item.isPremiumExclusive || isPro)) masterPrev.className = item.class; });
+                    card.addEventListener('mouseleave', () => { 
+                        if(masterPrev) {
+                            const eqItem = shopItems.find(i => i.id === state.userStats.equippedTrail) || shopItems[0];
+                            masterPrev.className = eqItem.class;
                         }
                     });
-                }
-            }
-            updateValHTML(); 
 
-            const toggleBtn = (id, key) => {
-                const btn = document.getElementById(id); if(!btn) return;
-                state[key] = !state[key]; localStorage.setItem(`typr_${key}`, state[key]);
-                btn.classList.toggle('active', state[key]); btn.querySelector('span').innerText = state[key] ? 'On' : 'Off';
-            };
-            safeListen('btn-focus', 'click', () => toggleBtn('btn-focus', 'focus'));
-            safeListen('btn-hardcore', 'click', () => toggleBtn('btn-hardcore', 'hardcore'));
-            safeListen('btn-sound', 'click', () => { 
-                state.sound = !state.sound; 
-                const btnSound = document.getElementById('btn-sound');
-                if(btnSound) btnSound.classList.toggle('active', state.sound); 
-                if(state.sound) playAudio('click'); 
-            });
+                    grid.appendChild(card);
+                });
 
-            /* === MOBILE FOCUS LOGIC (Critical Bug Fixes) === */
-            function focusInput() {
-                if (DOM.hInp && !state.testEnded) {
-                    DOM.hInp.focus();
-                    console.log("Input safely focused");
-                    if (DOM.overlay) DOM.overlay.classList.add('hidden');
-                }
-            }
+                document.querySelectorAll('.btn-buy').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        const id = e.target.dataset.id;
+                        const price = parseInt(e.target.dataset.price);
+                        if (state.userStats.coins >= price) {
+                            state.userStats.coins -= price;
+                            state.userStats.purchasedTrails.push(id);
+                            state.userStats.equippedTrail = id;
+                            updateHeaderCoins();
+                            applyEquippedTrail();
+                            renderShop();
+                            showToast("Item Unlocked!", "success");
+                            try { await setDoc(doc(db, 'users', state.userId), { coins: state.userStats.coins, purchasedTrails: state.userStats.purchasedTrails, equippedTrail: state.userStats.equippedTrail }, { merge: true }); } catch(err){ console.error(err); }
+                        } else { showToast("Not enough coins", "error"); }
+                    });
+                });
 
-            if(DOM.overlay) DOM.overlay.addEventListener("click", focusInput);
-            if(DOM.tDisp) DOM.tDisp.addEventListener("click", focusInput);
-            if(DOM.typeCont) DOM.typeCont.addEventListener("click", focusInput);
-
-            if(DOM.hInp) {
-                DOM.hInp.addEventListener("blur", () => {
-                    if (state.isTyping && !state.testEnded) {
-                        console.log("Input blurred - UI restricted. Waiting for tap to refocus.");
-                        if (DOM.overlay) {
-                            const fText = DOM.overlay.querySelector('.focus-text');
-                            if(fText) fText.innerText = "Paused - Tap to Resume";
-                            DOM.overlay.classList.remove("hidden");
-                        }
-                    }
+                document.querySelectorAll('.btn-equip').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        const id = e.target.dataset.id;
+                        state.userStats.equippedTrail = id;
+                        applyEquippedTrail();
+                        renderShop();
+                        try { await setDoc(doc(db, 'users', state.userId), { equippedTrail: id }, { merge: true }); } catch(err){ console.error(err); }
+                    });
                 });
             }
 
-            /* === MULTIPLAYER ROOMS (Stabilized Logic) === */
             safeListen('btn-create-room', 'click', async () => {
-                if(!state.username) return alert("Enter username first.");
-                const btn = document.getElementById('btn-create-room');
-                const origText = btn.innerText; btn.innerText = "Creating...";
-
+                if(!state.username) return;
                 state.roomId = Math.floor(10000 + Math.random() * 90000).toString();
                 state.isHost = true;
+                const btn = document.getElementById('btn-create-room');
+                let origText = '';
+                if(btn) { origText = btn.innerText; btn.innerText = "Creating..."; btn.disabled = true; }
+
                 try {
-                    let genLength = state.type === 'burst' ? 25 : (state.val === 120 ? 120 : 60);
-                    // FIXED: Using merge to prevent overwrite loops
-                    await setDoc(doc(db, 'rooms', state.roomId), {
-                        hostId: state.userId, status: "waiting", mode: state.mode, createdAt: serverTimestamp(),
-                        text: generateText(state.mode, genLength),
-                        players: { [state.userId]: { username: state.username, wpm: 0, progress: 0, finished: false, lastActive: Date.now() } }
-                    }, { merge: true });
+                    let txt = generateCleanText(state.textLength);
+                    if(state.mode === 'custom') {
+                        const customInp = document.getElementById('custom-text-input');
+                        if(customInp) { const cTxt = sanitizeText(customInp.value); if(cTxt.length >= 20) txt = cTxt; }
+                    }
+                    
+                    const roomData = {
+                        hostId: state.userId, status: "waiting", createdAt: serverTimestamp(), text: txt,
+                        players: { [state.userId]: { username: state.username, wpm: 0, progress: 0, finished: false, rp: state.userStats.rankPoints || 1000, premium: state.userStats.premium || false, lastActive: Date.now() } }
+                    };
+                    await setDoc(doc(db, 'rooms', state.roomId), roomData, { merge: true });
+                    state.previousPlayers = [state.userId]; // Initialize
                     enterLobby();
-                } catch(e) { console.error("Firebase Error:", e); alert("Failed to create room."); } 
-                finally { btn.innerText = origText; }
+                } catch(e) {
+                    showToast("Failed to create room", "error"); state.roomId = null; state.isHost = false;
+                } finally { if(btn) { btn.innerText = origText; btn.disabled = false; } }
             });
 
             safeListen('btn-join-room', 'click', async () => {
-                const codeInp = document.getElementById('inp-room-code');
-                if(!codeInp) return;
-                const code = codeInp.value.trim();
-                if(code.length !== 5) return alert("Invalid code.");
+                const codeInp = document.getElementById('inp-room-code'); if(!codeInp) return;
+                const code = codeInp.value.trim(); 
+                if(code.length !== 5) { showToast("Invalid room code", "error"); return; }
                 
-                const btn = document.getElementById('btn-join-room'); const origText = btn.innerText; btn.innerText = "Joining...";
+                const btn = document.getElementById('btn-join-room'); let origText = '';
+                if(btn) { origText = btn.innerText; btn.innerText = "Joining..."; btn.disabled = true; }
 
                 try {
                     const rSnap = await getDoc(doc(db, 'rooms', code));
-                    if(!rSnap.exists() || rSnap.data().status !== "waiting") {
-                        btn.innerText = origText; return alert("Room not found or started.");
-                    }
+                    if(!rSnap.exists()) { showToast("Room not found", "error"); return; }
+                    if(rSnap.data().status !== "waiting") { showToast("Room is currently playing", "error"); return; }
                     
-                    // FIXED: Safely target players.uid specifically
-                    await updateDoc(doc(db, 'rooms', code), { [`players.${state.userId}`]: { username: state.username, wpm: 0, progress: 0, finished: false, lastActive: Date.now() } });
+                    const pData = { username: state.username, wpm: 0, progress: 0, finished: false, rp: state.userStats.rankPoints || 1000, premium: state.userStats.premium || false, lastActive: Date.now() };
+                    await updateDoc(doc(db, 'rooms', code), { [`players.${state.userId}`]: pData });
                     state.roomId = code; state.isHost = false;
+                    state.previousPlayers = []; // Reset on join so we get correct notifications
                     enterLobby();
-                } catch(e) { console.error("Firebase Error:", e); alert("Failed to join room."); } 
-                finally { btn.innerText = origText; }
+                } catch(e) {
+                    showToast("Failed to join room", "error");
+                } finally { if(btn) { btn.innerText = origText; btn.disabled = false; } }
             });
 
             function enterLobby() {
                 showPanel(DOM.pLobby); 
-                const lbRoom = document.getElementById('lobby-room-code');
-                if(lbRoom) lbRoom.innerText = state.roomId;
-                
-                initChat();
+                const lblCode = document.getElementById('lobby-room-code');
+                if(lblCode) lblCode.innerText = state.roomId;
 
-                // Start active heartbeat
-                if(state.heartbeat) clearInterval(state.heartbeat);
+                if(state.heartbeat) { clearInterval(state.heartbeat); state.heartbeat = null; }
                 state.heartbeat = setInterval(() => {
-                    if(state.roomId) updateDoc(doc(db, 'rooms', state.roomId), { [`players.${state.userId}.lastActive`]: Date.now() }).catch(e=>{});
+                    if(state.roomId) updateDoc(doc(db, 'rooms', state.roomId), { [`players.${state.userId}.lastActive`]: Date.now() }).catch(e => console.error(e));
                 }, 15000);
-
+                
                 state.roomUnsub = onSnapshot(doc(db, 'rooms', state.roomId), (docSnap) => {
-                    if(!docSnap.exists()) { console.warn("Room deleted."); alert("Room closed."); leaveRoom(); return; }
+                    if(!docSnap.exists()) { leaveRoom(); showToast("Room closed by host", "info"); return; }
+                    const data = docSnap.data(); state.roomData = data; state.text = data.text;
                     
-                    const data = docSnap.data(); state.roomData = data; 
+                    if(!data.players || !data.players[state.userId]) { leaveRoom(); showToast("You were disconnected", "info"); return; }
+                    if(data.hostId === state.userId && !state.isHost) { state.isHost = true; showToast("You are now the host", "warning"); }
+
+                    // 🔥 Premium Entry Notification
+                    const currentPlayers = Object.keys(data.players || {});
+                    if (state.previousPlayers.length > 0) {
+                        currentPlayers.forEach(uid => {
+                            if (!state.previousPlayers.includes(uid)) {
+                                const p = data.players[uid];
+                                if (p.premium && uid !== state.userId) showToast(`👑 ${escapeHTML(p.username)} (PRO) joined the room!`, "warning");
+                            }
+                        });
+                    }
+                    state.previousPlayers = currentPlayers;
+
+                    const btnStartR = document.getElementById('btn-start-room'); 
+                    if(btnStartR) { if (state.isHost) btnStartR.classList.remove('hidden'); else btnStartR.classList.add('hidden'); }
                     
-                    // Removal check
-                    if(!data.players || !data.players[state.userId]) { alert("You were removed from the room."); leaveRoom(); return; }
+                    const hostCont = document.getElementById('host-controls'); 
+                    if(hostCont) { if (state.isHost) hostCont.classList.remove('hidden'); else hostCont.classList.add('hidden'); }
 
-                    // Host Reassignment Check
-                    if(data.hostId === state.userId && !state.isHost) { console.log("Reassigned as Host"); state.isHost = true; }
-
-                    const btnStartR = document.getElementById('btn-start-room'); if(btnStartR) btnStartR.classList.toggle('hidden', !state.isHost);
-                    const hostCont = document.getElementById('host-controls'); if(hostCont) hostCont.classList.toggle('hidden', !state.isHost);
-
-                    state.text = data.text;
-                    
                     const pListEl = document.getElementById('lobby-players-list'); 
                     if(pListEl) {
                         pListEl.innerHTML = '';
                         Object.entries(data.players).forEach(([uid, p]) => {
-                            const isMe = uid === state.userId;
-                            let kickBtn = (state.isHost && !isMe) ? `<button class="btn-danger" style="padding:0.3rem 0.6rem; font-size:0.8rem;" onclick="kickPlayer('${uid}')">Kick</button>` : '';
-                            pListEl.innerHTML += `<li style="padding:0.8rem; background:var(--surface); border:1px solid var(--border); border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
-                                <span style="font-weight:${isMe?'bold':'normal'}; color:${isMe?'var(--primary)':'inherit'};">${escapeHTML(p.username)} ${uid===data.hostId?'👑':''}</span>
-                                ${kickBtn}
+                            const rd = getRankInfo(p.rp || 1000);
+                            let kickStr = '';
+                            if (state.isHost && uid !== state.userId) kickStr = `<button class="btn-danger p-2" onclick="kickPlayer('${uid}')">Kick</button>`;
+                            
+                            let crownStr = uid === data.hostId ? '👑' : '';
+                            let premClass = p.premium ? 'pro-name' : '';
+                            let premBadge = p.premium ? '<span class="pro-badge">PRO</span>' : '';
+
+                            pListEl.innerHTML += `<li class="p-3 flex justify-between items-center" style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-md);">
+                                <span class="font-bold text-xl ${premClass}">${escapeHTML(p.username)} ${premBadge} <span class="text-muted" style="font-size:0.85rem; font-weight:normal; background: var(--bg); padding: 0.2rem 0.5rem; border-radius: 4px; margin-left: 0.5rem; -webkit-text-fill-color: initial;">${rd.name}</span> ${crownStr}</span>
+                                ${kickStr}
                             </li>`;
                         });
                     }
 
-                    const cTyping = document.getElementById('chat-typing');
-                    if(cTyping) {
-                        const typers = Object.values(data.typing || {}).filter(n => n !== state.username);
-                        cTyping.innerText = typers.length > 0 ? `${typers.join(', ')} ${typers.length>1?'are':'is'} typing...` : '';
-                    }
-
-                    // Multiplayer Sync Flow Fix
                     if(data.status === "countdown" && DOM.pType && DOM.pType.classList.contains('hidden')) {
+                        buildWordDisplay();
                         showPanel(DOM.pType); 
-                        if(DOM.cdOverlay) DOM.cdOverlay.classList.remove('hidden'); 
+                        if(DOM.statusOverlay) DOM.statusOverlay.classList.remove('hidden'); 
                         if(DOM.mpProgCont) DOM.mpProgCont.classList.remove('hidden'); 
-                        
-                        if(DOM.tDisp) {
-                            DOM.tDisp.innerHTML = '';
-                            for (let i=0; i<state.text.length; i++) {
-                                const sp = document.createElement('span'); sp.textContent = state.text[i];
-                                DOM.tDisp.appendChild(sp);
-                            }
-                            state.spans = Array.from(DOM.tDisp.children);
-                            if(state.spans.length>0) state.spans[0].classList.add('active');
-                        }
 
-                        if(DOM.hInp) { DOM.hInp.disabled = true; DOM.hInp.value = ''; }
+                        state.isCountdown = true;
+                        if(DOM.hInp) { DOM.hInp.disabled = false; DOM.hInp.value = ''; }
                         
                         let count = 3; 
-                        if(DOM.cdText) DOM.cdText.innerText = count;
+                        if(DOM.statusText) DOM.statusText.innerText = count;
+                        
                         const cdInt = setInterval(() => {
                             count--;
                             if(count > 0) {
-                                if(DOM.cdText) DOM.cdText.innerText = count;
+                                if(DOM.statusText) DOM.statusText.innerText = count;
                             } else if(count === 0) {
-                                if(DOM.cdText) DOM.cdText.innerText = "GO!";
+                                if(DOM.statusText) DOM.statusText.innerText = "GO!";
                             } else { 
                                 clearInterval(cdInt); 
-                                if(DOM.cdOverlay) DOM.cdOverlay.classList.add('hidden'); 
-                                if(state.isHost) {
-                                    try { updateDoc(doc(db, 'rooms', state.roomId), { status: "playing" }); } catch(e){}
-                                }
-                                startTest(true, true); 
+                                if(DOM.statusOverlay) DOM.statusOverlay.classList.add('hidden'); 
+                                if(state.isHost) { updateDoc(doc(db, 'rooms', state.roomId), { status: "playing" }).catch(e=>{}); }
+                                startRealMatch(true); 
                             }
                         }, 1000);
                     }
@@ -769,8 +995,9 @@
                         if(DOM.mpProgCont) {
                             DOM.mpProgCont.innerHTML = '';
                             Object.values(data.players).forEach(p => {
-                                DOM.mpProgCont.innerHTML += `<div style="font-size:0.85rem; font-weight:bold; color:var(--text-muted); display:flex; justify-content:space-between; margin-bottom:0.3rem;">
-                                    <span>${escapeHTML(p.username)}</span> <span>${p.wpm} WPM</span>
+                                let pClass = p.premium ? 'pro-name' : '';
+                                DOM.mpProgCont.innerHTML += `<div class="flex justify-between mb-1 text-muted font-bold" style="font-size:0.9rem;">
+                                    <span class="${pClass}">${escapeHTML(p.username)}</span> <span class="text-primary">${p.wpm} WPM</span>
                                 </div>
                                 <div class="mp-bar-bg"><div class="mp-bar-fill ${p.finished ? 'mp-bar-finished' : ''}" style="width: ${p.progress}%;"></div></div>`;
                             });
@@ -781,29 +1008,40 @@
             }
 
             window.kickPlayer = async (uid) => { 
-                try { await updateDoc(doc(db, 'rooms', state.roomId), { [`players.${uid}`]: deleteField() }); } catch(e){} 
+                if(!state.roomId) return; 
+                try { await updateDoc(doc(db, 'rooms', state.roomId), { [`players.${uid}`]: deleteField() }); showToast("Player kicked", "info"); } catch(e) {} 
             };
             
-            safeListen('btn-host-change', 'click', () => {
-                const head = document.querySelector('#host-mode-select .select-selected');
-                const val = document.getElementById('host-mode-select').dataset.value || 'normal';
-                let genLength = state.type === 'burst' ? 25 : (state.val === 120 ? 120 : 60);
-                try { updateDoc(doc(db, 'rooms', state.roomId), { mode: val, text: generateText(val, genLength) }); } catch(e){}
+            safeListen('btn-host-sync-custom', 'click', () => {
+                if(!state.roomId) return;
+                const cTxtInp = document.getElementById('custom-text-input'); if(!cTxtInp) return;
+                const cTxt = sanitizeText(cTxtInp.value);
+                if(cTxt.length >= 20) { try { updateDoc(doc(db, 'rooms', state.roomId), { text: cTxt }); showToast("Custom text synced", "success"); } catch(e){} } 
+                else { showToast("Text too short to sync", "error"); }
+            });
+            
+            safeListen('btn-host-sync-random', 'click', () => {
+                if(!state.roomId) return;
+                try { updateDoc(doc(db, 'rooms', state.roomId), { text: generateCleanText(state.textLength) }); showToast("Random text synced", "success"); } catch(e){}
             });
             
             safeListen('btn-start-room', 'click', () => { 
+                if(!state.roomId) return;
                 try { updateDoc(doc(db, 'rooms', state.roomId), { status: "countdown" }); } catch(e){} 
             });
             
             safeListen('btn-leave-room', 'click', leaveRoom);
+
+            window.addEventListener("beforeunload", () => {
+                if (state.roomId && state.isHost) { deleteDoc(doc(db, 'rooms', state.roomId)).catch(e=>{}); }
+            });
             
             async function leaveRoom() {
                 const cId = state.roomId; const isH = state.isHost; const uId = state.userId;
                 if(state.roomUnsub) state.roomUnsub(); 
-                if(state.chatUnsub) state.chatUnsub();
-                if(state.heartbeat) clearInterval(state.heartbeat);
+                if(state.heartbeat) { clearInterval(state.heartbeat); state.heartbeat = null; }
                 
-                state.roomId = null; state.isHost = false; 
+                state.roomId = null; state.isHost = false; state.previousPlayers = [];
                 if(DOM.mpProgCont) DOM.mpProgCont.classList.add('hidden'); 
                 showPanel(DOM.pSet);
 
@@ -815,299 +1053,414 @@
                         if (pList.length === 0) await deleteDoc(doc(db, 'rooms', cId));
                         else {
                             const upd = { [`players.${uId}`]: deleteField() };
-                            if (isH) upd.hostId = pList[0];
+                            if (isH && pList.length > 0) upd.hostId = pList[0];
                             await updateDoc(doc(db, 'rooms', cId), upd);
                         }
                     }
                 } catch(e) {}
             }
 
-            /* === Room Chat & Reactions === */
-            window.reactMsg = (msgId, emoji) => { 
-                try { updateDoc(doc(db, 'rooms', state.roomId, 'messages', msgId), { [`reactions.${emoji}`]: increment(1) }); } catch(e){} 
-            };
-
-            function initChat() {
-                if(!DOM.chatMsgs) return;
-                const q = query(collection(db, 'rooms', state.roomId, 'messages'), orderBy('ts', 'asc'));
-                state.chatUnsub = onSnapshot(q, snap => {
-                    DOM.chatMsgs.innerHTML = '';
-                    if(state.isHost && snap.docs.length > 50) {
-                        const toDel = snap.docs.slice(0, snap.docs.length - 50);
-                        toDel.forEach(d => { try { deleteDoc(doc(db, 'rooms', state.roomId, 'messages', d.id)); } catch(e){} });
+            function buildWordDisplay() {
+                if(!DOM.tDisp) return;
+                DOM.tDisp.innerHTML = '';
+                DOM.tDisp.scrollTop = 0; 
+                state.spans = [];
+                const wordsArray = state.text.split(' ');
+                
+                wordsArray.forEach((word, wordIndex) => {
+                    const wordSpan = document.createElement('span');
+                    wordSpan.className = 'word';
+                    
+                    for(let i=0; i<word.length; i++) {
+                        const charSpan = document.createElement('span');
+                        charSpan.textContent = word[i];
+                        wordSpan.appendChild(charSpan);
+                        state.spans.push(charSpan);
                     }
-                    snap.forEach(docSnap => {
-                        const d = docSnap.data(), isOwn = d.u === state.username, r = d.reactions || {};
-                        DOM.chatMsgs.innerHTML += `
-                            <div class="msg-row ${isOwn ? 'own' : 'other'}">
-                                ${!isOwn ? `<div class="msg-sender">${escapeHTML(d.u)}</div>` : ''}
-                                <div class="msg-bubble">${escapeHTML(d.m)}</div>
-                                <div class="msg-reactions">
-                                    <span class="msg-reaction" onclick="reactMsg('${docSnap.id}', '👍')">👍 ${r['👍']||0}</span>
-                                    <span class="msg-reaction" onclick="reactMsg('${docSnap.id}', '❤️')">❤️ ${r['❤️']||0}</span>
-                                    <span class="msg-reaction" onclick="reactMsg('${docSnap.id}', '😂')">😂 ${r['😂']||0}</span>
-                                    <span class="msg-reaction" onclick="reactMsg('${docSnap.id}', '🔥')">🔥 ${r['🔥']||0}</span>
-                                </div>
-                            </div>`;
-                    });
-                    setTimeout(() => { DOM.chatMsgs.scrollTop = DOM.chatMsgs.scrollHeight; }, 10);
+                    DOM.tDisp.appendChild(wordSpan);
+
+                    if(wordIndex < wordsArray.length - 1) {
+                        const spaceWrapper = document.createElement('span');
+                        spaceWrapper.className = 'space';
+                        const spaceChar = document.createElement('span');
+                        spaceChar.textContent = ' ';
+                        spaceWrapper.appendChild(spaceChar);
+                        state.spans.push(spaceChar);
+                        DOM.tDisp.appendChild(spaceWrapper);
+                    }
                 });
-            }
-            
-            safeListen('btn-send-chat', 'click', async () => {
-                const i = document.getElementById('chat-input'); 
-                if(!i) return;
-                const m = i.value.trim();
-                if(m) { 
-                    i.value = ''; 
-                    try { await addDoc(collection(db, 'rooms', state.roomId, 'messages'), { u: state.username, m: m, ts: serverTimestamp(), reactions: {} }); } catch(e){} 
-                }
-            });
-            const cInp = document.getElementById('chat-input');
-            if(cInp) cInp.addEventListener('keydown', e => { if(e.key === 'Enter') { const btn = document.getElementById('btn-send-chat'); if(btn) btn.click(); }});
-            
-            let typTmt;
-            if(cInp) cInp.addEventListener('input', () => {
-                if(!state.roomId) return;
-                try { updateDoc(doc(db, 'rooms', state.roomId), { [`typing.${state.userId}`]: state.username }); } catch(e){}
-                clearTimeout(typTmt);
-                typTmt = setTimeout(() => { try { updateDoc(doc(db, 'rooms', state.roomId), { [`typing.${state.userId}`]: deleteField() }); } catch(e){} }, 2000);
-            });
-
-            /* === Typing Engine & Timing === */
-            function playAudio(t) {
-                if (!state.sound) return;
-                if (!actx) actx = new AudioCtx();
-                if (actx.state === 'suspended') actx.resume();
-                const o = actx.createOscillator(), g = actx.createGain();
-                o.connect(g); g.connect(actx.destination);
-                if(t === 'click'){ o.type='sine'; o.frequency.setValueAtTime(800, actx.currentTime); o.frequency.exponentialRampToValueAtTime(300, actx.currentTime+0.03); g.gain.setValueAtTime(0.05, actx.currentTime); g.gain.exponentialRampToValueAtTime(0.001, actx.currentTime+0.03); o.start(); o.stop(actx.currentTime+0.03); }
-                else { o.type='sawtooth'; o.frequency.setValueAtTime(150, actx.currentTime); g.gain.setValueAtTime(0.1, actx.currentTime); g.gain.exponentialRampToValueAtTime(0.001, actx.currentTime+0.1); o.start(); o.stop(actx.currentTime+0.1); }
+                
+                if(state.spans.length > 0) state.spans[0].classList.add('active');
             }
 
-            function startTest(isMP = false, skipInit = false) {
-                state.timeSecs = 0; state.isTyping = false; state.errors = 0; state.totalTyped = 0; state.maxIdx = 0;
-                state.testEnded = false; state.progressHistory = []; state.lastProgressChar = 0;
-                clearInterval(state.timer);
+            function startMatch(isMP = false) {
+                state.timeSecs = 0; state.isTyping = false; state.errors = 0; state.currentErrors = 0; state.totalTyped = 0; state.maxIdx = 0;
+                state.testEnded = false; state.isCountdown = false; state.wpmHistory = []; state.progressHistory = []; state.lastProgressChar = 0; state.lastRenderedLen = 0;
+                resetTimers();
 
                 if(!isMP) {
-                    if(state.mode === 'daily') state.text = generateDailyText(); 
-                    else {
-                        let genLength = state.type === 'burst' ? 25 : (state.val === 120 ? 120 : 60);
-                        state.text = generateText(state.mode, genLength);
-                    }
+                    if(state.mode === 'custom') {
+                        const cTxtInp = document.getElementById('custom-text-input');
+                        if(cTxtInp) { const cTxt = sanitizeText(cTxtInp.value); state.text = cTxt.length >= 20 ? cTxt : generateCleanText(state.textLength); }
+                    } else state.text = generateCleanText(state.textLength);
                     if(DOM.mpProgCont) DOM.mpProgCont.classList.add('hidden');
                 }
 
                 if(DOM.hInp) { DOM.hInp.value = ''; DOM.hInp.disabled = false; }
+                buildWordDisplay();
                 
-                if (DOM.typeCont) {
-                    let cClasses = 'typing-wrapper';
-                    if(state.mode === 'coding') cClasses += ' coding-mode';
-                    if(state.focus) cClasses += ' focus-mode';
-                    if(state.hardcore) cClasses += ' hardcore-mode';
-                    DOM.typeCont.className = cClasses;
-                }
+                if(DOM.sTime) DOM.sTime.innerText = "0:00";
+                if(DOM.sWpm) DOM.sWpm.innerText = "0 WPM";
 
-                if(!skipInit && DOM.tDisp) {
-                    DOM.tDisp.innerHTML = '';
-                    for (let i=0; i<state.text.length; i++) {
-                        const sp = document.createElement('span'); sp.textContent = state.text[i];
-                        DOM.tDisp.appendChild(sp);
-                    }
-                    state.spans = Array.from(DOM.tDisp.children);
-                    if(state.spans.length>0) state.spans[0].classList.add('active');
-                }
-
-                if(!isMP) { 
-                    showPanel(DOM.pType); 
-                    if(DOM.overlay) {
-                        const fText = DOM.overlay.querySelector('.focus-text');
-                        if(fText) fText.innerText = "Tap to Initialize";
-                        DOM.overlay.classList.remove('hidden'); 
-                    }
-                } else if(skipInit) {
-                    if(DOM.overlay) {
-                        const fText = DOM.overlay.querySelector('.focus-text');
-                        if(fText) fText.innerText = "GO! Tap to type";
-                        DOM.overlay.classList.remove('hidden');
-                    }
+                showPanel(DOM.pType); 
+                if(!isMP && DOM.focusOverlay) {
+                    const fText = DOM.focusOverlay.querySelector('.overlay-text');
+                    if(fText) fText.innerText = "Tap to Initialize";
+                    DOM.focusOverlay.classList.remove('hidden');
                 }
             }
 
+            function startRealMatch(isMP) {
+                state.isCountdown = false; state.timeSecs = 0; state.isTyping = false; state.errors = 0; state.currentErrors = 0; state.totalTyped = 0; state.maxIdx = 0; state.lastRenderedLen = 0;
+                state.wpmHistory = []; state.progressHistory = []; state.lastProgressChar = 0;
+                resetTimers();
+                
+                if(DOM.hInp) { 
+                    DOM.hInp.value = ''; 
+                    DOM.hInp.disabled = false; 
+                    DOM.hInp.focus({ preventScroll: true }); 
+                }
+                buildWordDisplay();
+            }
+
+            safeListen('focus-overlay', 'click', () => { 
+                if(DOM.focusOverlay) DOM.focusOverlay.classList.add('hidden'); 
+                if(DOM.hInp) DOM.hInp.focus({ preventScroll: true }); 
+            });
+            
+            safeListen('type-cont', 'mousedown', (e) => { 
+                e.preventDefault(); 
+                if(DOM.focusOverlay) DOM.focusOverlay.classList.add('hidden'); 
+                if(DOM.hInp) { DOM.hInp.focus({ preventScroll: true }); } 
+            });
+
             if(DOM.hInp) {
+                DOM.hInp.addEventListener('paste', e => { e.preventDefault(); showToast("Pasting is disabled.", "error"); });
+                DOM.hInp.addEventListener('drop', e => e.preventDefault());
+
+                DOM.hInp.addEventListener('blur', () => {
+                    if (state.isTyping && !state.testEnded) {
+                        if (DOM.focusOverlay) {
+                            const fText = DOM.focusOverlay.querySelector('.overlay-text');
+                            if(fText) fText.innerText = "Paused";
+                            DOM.focusOverlay.classList.remove("hidden");
+                        }
+                    }
+                });
+
                 DOM.hInp.addEventListener('input', () => {
                     if(state.testEnded) return;
-                    if(!state.isTyping) { state.isTyping = true; state.timer = setInterval(runTimer, 1000); }
-                    const tpd = DOM.hInp.value; let scrErrs = 0;
+                    if(state.isCountdown) { DOM.hInp.value = ''; return; }
 
-                    for (let i=0; i<state.spans.length; i++) {
-                        const sp = state.spans[i]; 
-                        if(sp) sp.className = '';
-                        if(i < tpd.length) {
-                            if(tpd[i] === state.text[i]) { if(sp) sp.classList.add('correct'); }
-                            else { if(sp) sp.classList.add('incorrect'); scrErrs++; }
-                        } else if(i === tpd.length) {
-                            if(sp) sp.classList.add('active');
+                    if(!state.isTyping) { 
+                        state.isTyping = true; 
+                        resetTimers();
+                        state.timer = setInterval(runTimer, 1000); 
+                    }
+                    
+                    const tpd = DOM.hInp.value; 
+                    const newLen = tpd.length;
+                    const oldLen = state.lastRenderedLen;
+                    
+                    // O(1) Delta Paint
+                    if (newLen > oldLen) {
+                        for (let i = oldLen; i < newLen; i++) {
+                            if (!state.spans[i]) continue;
+                            const isCorrect = (tpd[i] === state.text[i]);
+                            state.spans[i].className = isCorrect ? 'correct' : 'incorrect';
+                            if (!isCorrect) state.currentErrors++;
+                        }
+                    } else if (newLen < oldLen) {
+                        for (let i = newLen; i < oldLen; i++) {
+                            if (!state.spans[i]) continue;
+                            if (state.spans[i].classList.contains('incorrect')) state.currentErrors--;
+                            state.spans[i].className = '';
                         }
                     }
 
-                    if(tpd.length > state.maxIdx) { state.totalTyped++; if(tpd[tpd.length-1] !== state.text[tpd.length-1]) state.errors++; state.maxIdx = tpd.length; }
+                    if (state.spans[oldLen]) state.spans[oldLen].classList.remove('active');
+                    if (state.spans[newLen]) state.spans[newLen].classList.add('active');
 
-                    const act = state.spans[tpd.length];
-                    if(act && DOM.tDisp) DOM.tDisp.scrollTop = act.offsetTop - (DOM.tDisp.clientHeight/2) + 20;
+                    state.lastRenderedLen = newLen;
 
-                    const wpm = state.timeSecs <= 0 ? 0 : Math.max(0, Math.round(((tpd.length-scrErrs)/5)/(state.timeSecs/60)));
-                    if(DOM.sWpm) DOM.sWpm.innerText = `${wpm} WPM`;
-
-                    if(state.roomId && tpd.length % 5 === 0) { 
-                        try { updateDoc(doc(db, 'rooms', state.roomId), { [`players.${state.userId}.wpm`]: wpm, [`players.${state.userId}.progress`]: Math.round((tpd.length/state.text.length)*100) }); } catch(e){}
+                    if(newLen > state.maxIdx) { 
+                        state.totalTyped++; 
+                        if(tpd[newLen-1] !== state.text[newLen-1]) { state.errors++; }
+                        state.maxIdx = newLen; 
                     }
 
-                    if(tpd.length >= state.text.length) endTest(scrErrs, tpd.length);
+                    // Mobile Isolated Scroll Lock
+                    const act = state.spans[newLen];
+                    if (act && DOM.tDisp) {
+                        requestAnimationFrame(() => {
+                            const container = DOM.tDisp;
+                            const offset = act.offsetTop - container.offsetTop;
+                            container.scrollTop = offset - (container.clientHeight * 0.4);
+                        });
+                    }
+
+                    const wpm = getWPM(newLen, state.currentErrors, state.timeSecs);
+                    if(DOM.sWpm) DOM.sWpm.innerText = `${wpm} WPM`;
+
+                    if(state.roomId) {
+                        const now = Date.now();
+                        const progress = Math.round((newLen/state.text.length)*100);
+                        if(now - state.lastSyncTime > state.syncThrottleMs || progress === 100) {
+                            state.lastSyncTime = now;
+                            updateDoc(doc(db, 'rooms', state.roomId), { [`players.${state.userId}.wpm`]: wpm, [`players.${state.userId}.progress`]: progress, [`players.${state.userId}.lastActive`]: now }).catch(e=>{});
+                        }
+                    }
+
+                    if(newLen >= state.text.length) endTest(state.currentErrors, newLen);
                 });
             }
 
             function runTimer() {
-                if(state.testEnded) return;
+                if(state.testEnded || state.isCountdown) return;
                 state.timeSecs++;
                 
                 const charsThisSec = state.totalTyped - state.lastProgressChar;
                 state.progressHistory.push(charsThisSec);
                 state.lastProgressChar = state.totalTyped;
 
-                if (!state.roomId) { // Solo
-                    const rem = state.val - state.timeSecs;
-                    if(DOM.sTime) DOM.sTime.innerText = window.formatT(rem);
-                    if (rem <= 0 && DOM.hInp) endTest(document.querySelectorAll('.incorrect').length, DOM.hInp.value.length);
-                } else { // MP
-                    if(DOM.sTime) DOM.sTime.innerText = window.formatT(state.timeSecs);
-                    // FIXED: 60s Auto Kick Check
+                const currentValLength = DOM.hInp ? DOM.hInp.value.length : 0;
+                const curWpm = getWPM(currentValLength, state.currentErrors, state.timeSecs);
+                state.wpmHistory.push(curWpm);
+
+                if(DOM.sTime) DOM.sTime.innerText = window.formatT(state.timeSecs);
+
+                if (state.roomId) {
                     if (state.isHost && state.roomData && state.roomData.status === "playing") {
-                        Object.entries(state.roomData.players).forEach(([uid, p]) => {
-                            if (p.lastActive && (Date.now() - p.lastActive > 60000) && !p.finished) {
-                                console.warn(`Player inactive for 60s. Auto-kicking ${uid}.`);
-                                window.kickPlayer(uid);
-                            }
+                        Object.entries(state.roomData.players || {}).forEach(([uid, p]) => {
+                            if (p.lastActive && (Date.now() - p.lastActive > 60000) && !p.finished) window.kickPlayer(uid);
                         });
                     }
                 }
             }
 
-            /* === Results, Anti-Cheat, Badges & Stats === */
-            function checkBadges(w, a, t) {
-                let b = state.userStats.badges || [];
-                if(w >= 80 && !b.includes('🚀 Speedster')) b.push('🚀 Speedster');
-                if(w >= 100 && !b.includes('⚡ Pro')) b.push('⚡ Pro');
-                if(a >= 95 && !b.includes('🎯 Accuracy King')) b.push('🎯 Accuracy King');
-                if(t >= 50 && !b.includes('🛠️ Grinder')) b.push('🛠️ Grinder');
-                return b;
-            }
-
             async function endTest(scrErrs, len) {
                 if(state.testEnded) return;
                 state.testEnded = true;
-                clearInterval(state.timer); 
-                if(DOM.hInp) DOM.hInp.disabled = true;
+                resetTimers();
+                if(DOM.hInp) { DOM.hInp.disabled = true; DOM.hInp.blur(); }
 
-                const wpm = state.timeSecs <= 0 ? 0 : Math.max(0, Math.round(((len-scrErrs)/5)/(state.timeSecs/60)));
+                const wpm = getWPM(len, scrErrs, state.timeSecs);
                 const acc = state.totalTyped > 0 ? Math.max(0, Math.round(((state.totalTyped - state.errors)/state.totalTyped)*100)) : 100;
 
-                // Anti-Cheat Check
                 let maxBurst = Math.max(...(state.progressHistory.length ? state.progressHistory : [0]));
-                if (maxBurst > 30) { alert("Anti-Cheat: Unrealistic typing burst. Score discarded."); showPanel(DOM.pSet); return; }
-                if(wpm > 180 || state.timeSecs < 3) { alert("Anti-Cheat: Suspicious speed/time. Score discarded."); showPanel(DOM.pSet); return; }
-                if(wpm > 160 && acc === 100) { alert("Anti-Cheat: Impossible accuracy at this speed. Score discarded."); showPanel(DOM.pSet); return; }
+                if (maxBurst > 30) { showToast("Suspicious typing speed detected.", "error"); showPanel(DOM.pSet); return; }
+                if(wpm > 180 || state.timeSecs < 2) { showToast("Speed limit exceeded.", "error"); showPanel(DOM.pSet); return; }
 
-                const rWpm = document.getElementById('res-wpm'); if(rWpm) rWpm.innerText = wpm; 
-                const rAcc = document.getElementById('res-acc'); if(rAcc) rAcc.innerText = `${acc}%`; 
-                const rTime = document.getElementById('res-time'); if(rTime) rTime.innerText = `${state.timeSecs}s`;
+                let accLabel = "Rough"; let accColor = "var(--incorrect)";
+                if(acc === 100) { accLabel = "Perfect"; accColor = "var(--correct)"; }
+                else if(acc >= 95) { accLabel = "Sharp"; accColor = "var(--primary)"; }
+                else if(acc >= 90) { accLabel = "Clean"; accColor = "var(--warning)"; }
+
+                let variance = 0;
+                if(state.wpmHistory.length > 2) {
+                    const avg = state.wpmHistory.reduce((a,b)=>a+b,0)/state.wpmHistory.length;
+                    variance = state.wpmHistory.reduce((a,b)=>a+Math.pow(b-avg,2),0)/state.wpmHistory.length;
+                }
+                const consistency = Math.max(0, 100 - Math.sqrt(variance)*2);
+
+                const elWpm = document.getElementById('res-wpm'); if(elWpm) elWpm.innerText = wpm;
+                const elAcc = document.getElementById('res-acc'); if(elAcc) elAcc.innerText = `${acc}%`;
+                const elAccLbl = document.getElementById('res-acc-label'); 
+                if(elAccLbl) { elAccLbl.innerText = accLabel; elAccLbl.style.color = accColor; }
+                const elCons = document.getElementById('res-consistency'); 
+                if(elCons) elCons.innerText = `${consistency.toFixed(0)}% Consistency`;
+                const elTime = document.getElementById('res-time'); 
+                if(elTime) elTime.innerText = `${state.timeSecs}s`;
+
+                // Base Scoring
+                let rpChange = Math.round(wpm / 10);
+                if (acc >= 95) rpChange += 5;
+                else if (acc >= 90) rpChange += 2;
+
+                let coinsEarned = Math.floor(wpm / 10) + (acc >= 95 ? 5 : 0);
+
+                if(state.roomId && state.roomData && state.roomData.players) {
+                    const players = state.roomData.players;
+                    const N = Object.keys(players).length;
+                    
+                    if (N > 1) {
+                        let sortedPlayers = [];
+                        for (let uid in players) {
+                            let pWpm = uid === state.userId ? wpm : (players[uid].wpm || 0);
+                            sortedPlayers.push({ uid: uid, wpm: pWpm });
+                        }
+                        sortedPlayers.sort((a, b) => b.wpm - a.wpm);
+                        let pos = sortedPlayers.findIndex(p => p.uid === state.userId);
+                        
+                        if (pos === 0) { 
+                            rpChange += 10;
+                            coinsEarned += 10;
+                        } else { 
+                            rpChange = -2;
+                        }
+                    }
+                }
+
+                // 🔥 PREMIUM GAMEPLAY ADVANTAGES (Balanced FOMO Boost)
+                if (state.userStats.premium === true) {
+                    rpChange += Math.floor(Math.random() * 4) + 2; // +2 to +5 extra RP
+                    coinsEarned = Math.floor(coinsEarned * 1.5) + 5; // 50% coin boost + 5 flat
+                }
+
+                const elCoins = document.getElementById('res-coins');
+                if(elCoins) elCoins.innerText = `+${coinsEarned}`;
+
+                let oldRp = state.userStats.rankPoints || 1000;
+                let newRp = Math.max(0, oldRp + rpChange);
+                state.userStats.rankPoints = newRp;
+                
+                state.userStats.coins = (state.userStats.coins || 0) + coinsEarned;
+                updateHeaderCoins();
 
                 let newAvg = Math.round(((state.userStats.averageWPM * state.userStats.totalGames) + wpm) / (state.userStats.totalGames + 1));
                 state.userStats.bestWPM = Math.max(state.userStats.bestWPM || 0, wpm);
                 state.userStats.averageWPM = newAvg || wpm;
                 state.userStats.totalGames = (state.userStats.totalGames || 0) + 1;
-                state.userStats.history = state.userStats.history || [];
-                state.userStats.history.unshift({ wpm: wpm, acc: acc, mode: state.mode });
-                if(state.userStats.history.length > 20) state.userStats.history.pop();
-                state.userStats.badges = checkBadges(wpm, acc, state.userStats.totalGames);
                 
-                try { await setDoc(doc(db, 'users', state.userId), state.userStats, { merge: true }); } catch(e){}
+                try { await setDoc(doc(db, 'users', state.userId), state.userStats, { merge: true }); } catch(e) {}
 
                 if(!state.roomId) {
-                    showPanel(DOM.pRes); if(DOM.mpPodium) DOM.mpPodium.classList.add('hidden');
+                    const rpDisp = document.getElementById('rank-update-display');
+                    if(rpDisp) {
+                        rpDisp.innerText = Math.round(oldRp);
+                        rpDisp.className = "rank-anim-text";
+                        animateValue(rpDisp, oldRp, newRp, 1500);
+                    }
+                    updateRankProgressUI(newRp, 'res-rank-bar', 'res-rank-current', 'res-rank-next');
+                    
+                    showPanel(DOM.pRes); 
+                    if(DOM.mpPodium) DOM.mpPodium.classList.add('hidden');
+                    
                     try {
-                        const uDoc = await getDoc(doc(db, 'leaderboard', state.userId));
-                        if(!uDoc.exists() || wpm > uDoc.data().wpm) { await setDoc(doc(db, 'leaderboard', state.userId), { username: state.username, wpm: wpm, accuracy: acc, mode: state.mode, timestamp: serverTimestamp() }); }
+                        if(typeof newRp === 'number' && !isNaN(newRp)) {
+                            const displaySuffix = state.userId.slice(-4).toUpperCase();
+                            const uniqueUsername = `${state.username}#${displaySuffix}`;
+                            // 🔥 Ensure we constantly update Leaderboard with PRO status so badges show globally
+                            await setDoc(doc(db, 'leaderboard', state.userId), { 
+                                username: uniqueUsername, 
+                                rp: newRp, wpm: state.userStats.bestWPM, 
+                                premium: state.userStats.premium || false, 
+                                timestamp: serverTimestamp() 
+                            });
+                        }
                     } catch(e){}
                 } else {
                     try {
-                        await updateDoc(doc(db, 'rooms', state.roomId), { [`players.${state.userId}.wpm`]: wpm, [`players.${state.userId}.progress`]: 100, [`players.${state.userId}.finished`]: true });
+                        await updateDoc(doc(db, 'rooms', state.roomId), { [`players.${state.userId}.wpm`]: wpm, [`players.${state.userId}.progress`]: 100, [`players.${state.userId}.finished`]: true, [`players.${state.userId}.rp`]: newRp, [`players.${state.userId}.oldRp`]: oldRp });
                         if(state.isHost) {
                             const rSnap = await getDoc(doc(db, 'rooms', state.roomId));
-                            if(Object.values(rSnap.data().players).every(p => p.finished)) updateDoc(doc(db, 'rooms', state.roomId), { status: "finished" });
+                            if(rSnap.exists() && Object.values(rSnap.data().players || {}).every(p => p.finished)) {
+                                updateDoc(doc(db, 'rooms', state.roomId), { status: "finished" }).catch(e=>{});
+                            }
                         }
                     } catch(e){}
                 }
             }
 
             function showWinnerScreen(playersObj) {
-                const btnNewT = document.getElementById('btn-new-test'); if(btnNewT) btnNewT.classList.add('hidden');
-                const btnHRest = document.getElementById('btn-host-restart'); if(btnHRest) btnHRest.classList.toggle('hidden', !state.isHost);
-                let arr = Object.values(playersObj).sort((a,b) => b.wpm - a.wpm || b.accuracy - a.accuracy);
+                if(!playersObj) playersObj = {};
+                const btnNewT = document.getElementById('btn-new-test'); 
+                if(btnNewT) btnNewT.classList.add('hidden');
+                
+                const btnHRest = document.getElementById('btn-host-rematch'); 
+                if(btnHRest) {
+                    if (state.isHost) btnHRest.classList.remove('hidden');
+                    else btnHRest.classList.add('hidden');
+                }
+                
+                let arr = Object.values(playersObj).sort((a,b) => b.wpm - a.wpm);
                 
                 if(DOM.mpPodium) {
                     DOM.mpPodium.innerHTML = '';
                     arr.forEach((p, idx) => {
-                        let rIcon = ''; let bg = 'var(--bg)';
-                        if(idx===0){ rIcon='🥇 1ST'; bg='var(--gold)'; } else if(idx===1){ rIcon='🥈 2ND'; bg='var(--silver)'; } else if(idx===2){ rIcon='🥉 3RD'; bg='var(--bronze)'; }
-                        DOM.mpPodium.innerHTML += `<div style="display:flex; justify-content:space-between; padding:1.2rem; border-radius:12px; background:${bg}; border:1px solid var(--border); font-weight:bold; font-size:1.1rem; box-shadow:var(--shadow-sm);">
-                            <span>${rIcon} ${escapeHTML(p.username)}</span> <span style="color:var(--primary);">${p.wpm} WPM</span></div>`;
+                        let rIcon = ''; let bg = 'var(--surface)'; let border = 'var(--border)';
+                        if(idx===0){ rIcon='🥇 1ST'; border='var(--rank-gold)'; } 
+                        else if(idx===1){ rIcon='🥈 2ND'; border='var(--rank-silver)'; } 
+                        else if(idx===2){ rIcon='🥉 3RD'; border='var(--rank-bronze)'; }
+                        
+                        let premClass = p.premium ? 'pro-name' : '';
+                        let premBadge = p.premium ? '<span class="pro-badge">PRO</span>' : '';
+
+                        DOM.mpPodium.innerHTML += `<div class="flex justify-between p-3" style="border-radius:var(--radius-md); background:${bg}; border:1px solid ${border}; font-weight:700; font-size: 1.1rem; box-shadow: var(--shadow-sm);">
+                            <span class="${premClass}">${rIcon} ${escapeHTML(p.username)} ${premBadge}</span> <span class="text-primary">${p.wpm} WPM</span></div>`;
                     });
                     DOM.mpPodium.classList.remove('hidden'); 
                 }
+                
+                const rpDisp = document.getElementById('rank-update-display');
+                if(rpDisp && playersObj[state.userId]) {
+                    const myOldRp = playersObj[state.userId].oldRp || state.userStats.rankPoints;
+                    rpDisp.innerText = Math.round(myOldRp);
+                    rpDisp.className = "rank-anim-text";
+                    animateValue(rpDisp, myOldRp, state.userStats.rankPoints, 1500);
+                }
+                updateRankProgressUI(state.userStats.rankPoints, 'res-rank-bar', 'res-rank-current', 'res-rank-next');
+
                 showPanel(DOM.pRes);
             }
 
-            safeListen('btn-host-restart', 'click', () => {
-                if(state.isHost) {
+            safeListen('btn-host-rematch', 'click', () => {
+                if(state.isHost && state.roomId && state.roomData) {
                     let updates = { status: "waiting" };
-                    Object.keys(state.roomData.players).forEach(uid => { updates[`players.${uid}.progress`] = 0; updates[`players.${uid}.wpm`] = 0; updates[`players.${uid}.finished`] = false; });
+                    Object.keys(state.roomData.players || {}).forEach(uid => { 
+                        updates[`players.${uid}.progress`] = 0; updates[`players.${uid}.wpm`] = 0; updates[`players.${uid}.finished`] = false; 
+                    });
                     try { updateDoc(doc(db, 'rooms', state.roomId), updates).then(() => showPanel(DOM.pLobby)); } catch(e){}
                 }
             });
 
-            // Solo Leaderboard Engine
-            try {
-                onSnapshot(query(collection(db, 'leaderboard'), orderBy('wpm', 'desc'), limit(50)), (snap) => {
-                    state.lbData = []; snap.forEach((doc) => state.lbData.push(doc.data())); renderLeaderboard();
-                });
-            } catch(e){}
-
             function renderLeaderboard() {
-                const fModeEl = document.getElementById('lb-filter-mode');
-                const fTypeEl = document.getElementById('lb-filter-type');
-                const fM = fModeEl ? fModeEl.dataset.value : 'all'; 
-                const fT = fTypeEl ? fTypeEl.dataset.value : 'all';
-                let filtered = state.lbData.filter(d => (fM==='all' || d.mode===fM) && (fT==='all' || d.testType===fT)).slice(0, 20);
-                
-                const tbody = document.getElementById('lb-body'); 
-                if(tbody) {
-                    tbody.innerHTML = '';
-                    filtered.forEach((row, i) => {
-                        let rankStr = `${i + 1}`; let rCls = '';
-                        if (i===0) { rCls = 'rank-gold'; rankStr = '🥇'; } else if (i===1) { rCls = 'rank-silver'; rankStr = '🥈'; } else if (i===2) { rCls = 'rank-bronze'; rankStr = '🥉'; }
-                        tbody.innerHTML += `<tr class="${rCls}"><td>${rankStr}</td><td>${escapeHTML(row.username)}</td><td style="color:var(--primary); font-weight:bold;">${row.wpm}</td><td>${row.accuracy}%</td><td><span class="tag">${row.mode}</span></td></tr>`;
-                    });
-                }
+                const tbody = document.getElementById('lb-body');
+                if(tbody) tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted p-4">Syncing secure data...</td></tr>`;
+                try {
+                    getDocs(query(collection(db, 'leaderboard'), orderBy('rp', 'desc'), limit(50)))
+                    .then(snap => {
+                        if(tbody) {
+                            tbody.innerHTML = '';
+                            let i = 1;
+                            const fragment = document.createDocumentFragment();
+                            snap.forEach((d) => {
+                                const row = d.data();
+                                const rd = getRankInfo(row.rp || 1000);
+                                const tr = document.createElement('tr');
+                                
+                                let premClass = row.premium ? 'pro-name' : '';
+                                let premBadge = row.premium ? '<span class="pro-badge">PRO</span>' : '';
+
+                                tr.innerHTML = `
+                                    <td><span class="font-bold ${premClass}">${i}. ${escapeHTML(row.username)} ${premBadge}</span></td>
+                                    <td><span class="rank-badge ${rd.class}" style="font-size:0.75rem; padding:0.3rem 0.8rem; -webkit-text-fill-color: initial;">${rd.name}</span></td>
+                                    <td class="text-primary font-extrabold">${Math.round(row.rp||1000)}</td>
+                                    <td class="font-bold">${row.wpm} WPM</td>
+                                `;
+                                fragment.appendChild(tr);
+                                i++;
+                            });
+                            if (snap.empty) { tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted p-4">No ranked players found.</td></tr>`; }
+                            else { tbody.appendChild(fragment); }
+                        }
+                    }).catch(e => { console.error(e); });
+                } catch(e) {}
             }
-            
-            safeListen('lb-filter-mode', 'change', renderLeaderboard); 
-            safeListen('lb-filter-type', 'change', renderLeaderboard);
             
             function escapeHTML(str) { return str ? str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag])) : ''; }
 
-        }); // END DOMContentLoaded
+        });
     </script>
 </body>
-    </html>
+</html>
