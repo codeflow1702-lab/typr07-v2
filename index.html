@@ -6,6 +6,11 @@
     <title>TYPR V3 - Competitive Multiplayer Typing</title>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
+        /* === 🔥 ENGINE LEVEL FIX: Disable scroll anchoring globally === */
+        html, body {
+            overflow-anchor: none;
+        }
+
         /* === CSS Variables & Clean Modern Theme === */
         :root {
             --bg: #0f172a; --surface: #1e293b; --surface-hover: #334155; 
@@ -59,39 +64,13 @@
         .text-3xl { font-size: 2rem; }
         .uppercase { text-transform: uppercase; letter-spacing: 1px; }
 
-        /* === 🔥 PRO / PREMIUM VISUAL SYSTEM === */
-        .pro-name { 
-            background: linear-gradient(135deg, #ffd700, #ffaa00); 
-            -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent; 
-            font-weight: 900 !important; 
-            text-shadow: 0 0 12px rgba(255, 215, 0, 0.4);
-        }
-        .pro-badge { 
-            display: inline-flex; align-items: center; justify-content: center; 
-            background: linear-gradient(135deg, #ffd700, #ffaa00); color: #000; 
-            font-size: 0.65rem; font-weight: 900; padding: 0.15rem 0.5rem; 
-            border-radius: 4px; margin-left: 0.5rem; text-transform: uppercase; 
-            letter-spacing: 1px; box-shadow: 0 0 8px rgba(255,215,0,0.6); vertical-align: middle; 
-        }
-        /* Exclusive Typing Glow for PROs */
-        #text-display.pro-active span.active::before {
-            box-shadow: 0 0 10px var(--primary), 0 0 20px var(--accent);
-            animation: proCursorBlink 0.6s ease-in-out infinite alternate !important;
-            background: #fff;
-            width: 3px;
-        }
+        .pro-name { background: linear-gradient(135deg, #ffd700, #ffaa00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900 !important; text-shadow: 0 0 12px rgba(255, 215, 0, 0.4); }
+        .pro-badge { display: inline-flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #ffd700, #ffaa00); color: #000; font-size: 0.65rem; font-weight: 900; padding: 0.15rem 0.5rem; border-radius: 4px; margin-left: 0.5rem; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 0 8px rgba(255,215,0,0.6); vertical-align: middle; }
+        #text-display.pro-active span.active::before { box-shadow: 0 0 10px var(--primary), 0 0 20px var(--accent); animation: proCursorBlink 0.6s ease-in-out infinite alternate !important; background: #fff; width: 3px; }
         @keyframes proCursorBlink { 0% { opacity: 0.5; height: 70%; } 100% { opacity: 1; height: 100%; } }
-
-        /* Locked FOMO Shop Items */
-        .locked-overlay {
-            position: absolute; inset: 0; background: rgba(15, 23, 42, 0.75);
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            border-radius: var(--radius-md); backdrop-filter: blur(3px); z-index: 10;
-        }
+        .locked-overlay { position: absolute; inset: 0; background: rgba(15, 23, 42, 0.75); display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: var(--radius-md); backdrop-filter: blur(3px); z-index: 10; }
         .locked-overlay span { font-size: 2.5rem; margin-bottom: 0.5rem; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5)); }
         
-        /* Layout */
         .container { width: 100%; max-width: 1000px; padding: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem; flex: 1; }
         .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2.5rem; box-shadow: var(--shadow-md); animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
@@ -134,6 +113,8 @@
         .room-controls-wrapper { display: flex; gap: 0.8rem; align-items: stretch; width: 100%; }
         .room-inp { flex: 1; border-radius: var(--radius-md); border: 1px solid var(--border); background: var(--bg); color: white; padding: 0.8rem; text-align: center; font-weight: 800; font-size: 1.2rem; outline: none; letter-spacing: 2px; width: 100%; transition: border-color 0.2s; text-transform: uppercase; }
         .room-inp:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2); }
+        .custom-text-area { width: 100%; height: 120px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.2rem; color: var(--text-main); resize: none; outline: none; font-size: 1rem; line-height: 1.6; transition: border-color 0.2s; }
+        .custom-text-area:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2); }
 
         .sticky-bar { display: flex; justify-content: space-between; align-items: center; background: var(--bg); padding: 1.2rem 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border); margin-bottom: 1.5rem; font-weight: 700; color: var(--primary); }
         .typing-wrapper { display: flex; height: 40vh; min-height: 250px; border-radius: var(--radius-md); border: 1px solid var(--border); background: var(--bg); overflow: hidden; position: relative; cursor: text; }
@@ -142,7 +123,7 @@
             flex-grow: 1; padding: 2rem; font-size: 1.6rem; line-height: 1.8; 
             overflow-y: auto; height: 100%; color: var(--text-muted); 
             position: relative; z-index: 2; font-family: 'Fira Code', monospace; 
-            scroll-behavior: auto; overflow-anchor: none;
+            scroll-behavior: auto;
         }
         
         .word { display: inline-block; white-space: pre; margin-bottom: 0.4rem; position: static !important; }
@@ -152,11 +133,26 @@
         #text-display span.correct { color: var(--text-main); }
         #text-display span.incorrect { color: var(--incorrect); background: var(--incorrect-bg); }
         
-        #hidden-input { 
-            position: fixed; top: 10px; left: 10px; width: 1px; height: 1px; padding: 0; margin: 0;
-            z-index: -1; opacity: 0; color: transparent; background: transparent; border: none; 
-            outline: none; resize: none; font-size: 16px; cursor: text; overflow: hidden;
-            pointer-events: none; touch-action: none; 
+        /* === 🔥 ENGINE LEVEL FIX: Isolated 1x1 input to kill vertical caret shifts === */
+        #hidden-input {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: 0;
+            opacity: 0;
+            pointer-events: none;
+            border: none;
+            outline: none;
+            resize: none;
+            color: transparent;
+            background: transparent;
+            white-space: nowrap; /* CRITICAL: Stops vertical caret wrapping */
+            overflow: hidden;
+            touch-action: none;
+            z-index: -1;
         }
         
         .overlay-layer { position: absolute; inset: 0; background: rgba(15, 23, 42, 0.85); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 20; color: #fff; backdrop-filter: blur(4px); transition: opacity 0.3s; }
@@ -236,9 +232,37 @@
         @keyframes fadeOut { to { opacity: 0; transform: translateY(10px); } }
 
         @media (max-width: 768px) {
-            .container { padding: 1rem; }
-            .panel { padding: 1.5rem; }
-            .room-controls-wrapper { flex-direction: column; }
+            .controls-group { width: 100%; flex-direction: column; align-items: stretch; }
+            .custom-dropdown, .search-inp, .btn { width: 100%; }
+            .header { flex-direction: column; align-items: stretch; text-align: center; }
+            .header div { justify-content: center; }
+        }
+
+        /* ==========================================================================
+           🚀 DESKTOP & TABLET ENHANCEMENTS (Mobile UI Remains 100% Untouched)
+           ========================================================================== */
+        @media (min-width: 768px) {
+            .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+            .panel { padding: 3.5rem; }
+            h1 { font-size: 2.8rem; }
+            #text-display { font-size: 2rem; line-height: 2; padding: 3rem; }
+            .settings-grid { grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+            #lobby-players-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+            .results-grid { grid-template-columns: repeat(4, 1fr); gap: 2rem; }
+            .stat-card p { font-size: 3rem; }
+            .flex.gap-3.flex-wrap.mt-4 { flex-wrap: nowrap; }
+        }
+
+        @media (min-width: 1024px) {
+            .container { padding: 3rem 0; gap: 2.5rem; }
+            .typing-wrapper { height: 45vh; min-height: 350px; }
+            #text-display { font-size: 2.2rem; line-height: 2.1; }
+            @media (hover: hover) {
+                .stat-card:hover { transform: translateY(-8px) scale(1.02); box-shadow: var(--shadow-lg); border-color: var(--primary); }
+                .shop-item:hover { transform: translateY(-8px) scale(1.03); box-shadow: var(--shadow-lg); }
+                #lobby-players-list li { transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease; }
+                #lobby-players-list li:hover { border-color: var(--primary); background: var(--surface-hover); transform: translateX(8px); }
+            }
         }
     </style>
 </head>
@@ -632,7 +656,6 @@
                 } else { showToast("Username must be at least 3 characters", "error"); }
             });
 
-            // 🔥 FOMO & Real-Time Premium Logic
             function updatePremiumUI(isPremium) {
                 const brandEl = document.getElementById('main-brand');
                 if (brandEl) {
@@ -640,7 +663,7 @@
                         if (!document.getElementById('header-pro-badge')) {
                             brandEl.innerHTML = `TYPR V3. <span id="header-pro-badge" class="pro-badge">PRO</span>`;
                         }
-                        DOM.tDisp.classList.add('pro-active'); // Enables smooth cursor typing animation
+                        DOM.tDisp.classList.add('pro-active'); 
                     } else {
                         brandEl.innerHTML = `TYPR V3.`;
                         DOM.tDisp.classList.remove('pro-active');
@@ -665,7 +688,6 @@
                         if(!state.userStats.purchasedTrails) state.userStats.purchasedTrails = ['default'];
                         if(!state.userStats.equippedTrail) state.userStats.equippedTrail = 'default';
                         
-                        // Auto-equip gold for new PRO users
                         if (state.userStats.premium && state.userStats.equippedTrail === 'default' && !wasPremium) {
                             state.userStats.equippedTrail = 'gold';
                             setDoc(doc(db, 'users', state.userId), { equippedTrail: 'gold' }, { merge: true });
@@ -688,9 +710,7 @@
 
             function applyEquippedTrail() {
                 if(DOM.tDisp) {
-                    // Remove all existing trail classes
                     shopItems.forEach(i => DOM.tDisp.classList.remove(i.class));
-                    // Allow auto-unlock for PRO users if they somehow equipped it
                     const equipped = shopItems.find(i => i.id === state.userStats.equippedTrail) || shopItems[0];
                     DOM.tDisp.classList.add(equipped.class);
                 }
@@ -770,7 +790,6 @@
             });
             safeListen('btn-prof-back', 'click', () => showPanel(DOM.pSet));
 
-            // 🔥 FOMO Shop System
             function renderShop() {
                 const grid = document.getElementById('shop-grid');
                 const proMsg = document.getElementById('pro-status-msg');
@@ -791,7 +810,6 @@
                 if (masterPrev) masterPrev.className = (shopItems.find(i => i.id === equipped) || shopItems[0]).class;
 
                 shopItems.forEach(item => {
-                    // PRO users auto-own everything
                     const userOwnsIt = purchased.includes(item.id) || (isPro && item.isPremiumExclusive);
                     const isEquipped = equipped === item.id;
                     
@@ -801,7 +819,6 @@
                     let actionBtn = '';
                     let overlayHtml = '';
 
-                    // Lock exclusive items for non-pro users
                     if (item.isPremiumExclusive && !isPro) {
                         overlayHtml = `<div class="locked-overlay"><span>🔒</span><button class="btn btn-warning" onclick="showToast('Upgrade to PRO in the Admin Panel to unlock!', 'warning')" style="width: 80%; font-size: 0.85rem;">Upgrade to PRO</button></div>`;
                         actionBtn = `<button class="shop-btn btn-primary" style="opacity: 0.5; pointer-events:none;">PRO Only</button>`;
@@ -880,7 +897,7 @@
                         players: { [state.userId]: { username: state.username, wpm: 0, progress: 0, finished: false, rp: state.userStats.rankPoints || 1000, premium: state.userStats.premium || false, lastActive: Date.now() } }
                     };
                     await setDoc(doc(db, 'rooms', state.roomId), roomData, { merge: true });
-                    state.previousPlayers = [state.userId]; // Initialize
+                    state.previousPlayers = [state.userId];
                     enterLobby();
                 } catch(e) {
                     showToast("Failed to create room", "error"); state.roomId = null; state.isHost = false;
@@ -903,7 +920,7 @@
                     const pData = { username: state.username, wpm: 0, progress: 0, finished: false, rp: state.userStats.rankPoints || 1000, premium: state.userStats.premium || false, lastActive: Date.now() };
                     await updateDoc(doc(db, 'rooms', code), { [`players.${state.userId}`]: pData });
                     state.roomId = code; state.isHost = false;
-                    state.previousPlayers = []; // Reset on join so we get correct notifications
+                    state.previousPlayers = []; 
                     enterLobby();
                 } catch(e) {
                     showToast("Failed to join room", "error");
@@ -927,7 +944,6 @@
                     if(!data.players || !data.players[state.userId]) { leaveRoom(); showToast("You were disconnected", "info"); return; }
                     if(data.hostId === state.userId && !state.isHost) { state.isHost = true; showToast("You are now the host", "warning"); }
 
-                    // 🔥 Premium Entry Notification
                     const currentPlayers = Object.keys(data.players || {});
                     if (state.previousPlayers.length > 0) {
                         currentPlayers.forEach(uid => {
@@ -1016,18 +1032,18 @@
                 if(!state.roomId) return;
                 const cTxtInp = document.getElementById('custom-text-input'); if(!cTxtInp) return;
                 const cTxt = sanitizeText(cTxtInp.value);
-                if(cTxt.length >= 20) { try { updateDoc(doc(db, 'rooms', state.roomId), { text: cTxt }); showToast("Custom text synced", "success"); } catch(e){} } 
-                else { showToast("Text too short to sync", "error"); }
+                if(cTxt.length >= 20) { try { updateDoc(doc(db, 'rooms', state.roomId), { text: cTxt }); showToast("Custom text synced", "success"); } catch(e){ console.error(e); showToast("Sync failed", "error"); } 
+                } else { showToast("Text too short to sync", "error"); }
             });
             
             safeListen('btn-host-sync-random', 'click', () => {
                 if(!state.roomId) return;
-                try { updateDoc(doc(db, 'rooms', state.roomId), { text: generateCleanText(state.textLength) }); showToast("Random text synced", "success"); } catch(e){}
+                try { updateDoc(doc(db, 'rooms', state.roomId), { text: generateCleanText(state.textLength) }); showToast("Random text synced", "success"); } catch(e){ console.error(e); showToast("Sync failed", "error"); }
             });
             
             safeListen('btn-start-room', 'click', () => { 
                 if(!state.roomId) return;
-                try { updateDoc(doc(db, 'rooms', state.roomId), { status: "countdown" }); } catch(e){} 
+                try { updateDoc(doc(db, 'rooms', state.roomId), { status: "countdown" }); } catch(e){ console.error(e); showToast("Failed to start", "error"); } 
             });
             
             safeListen('btn-leave-room', 'click', leaveRoom);
@@ -1145,6 +1161,7 @@
             });
 
             if(DOM.hInp) {
+                DOM.hInp.addEventListener("input", (e) => { e.preventDefault(); });
                 DOM.hInp.addEventListener('paste', e => { e.preventDefault(); showToast("Pasting is disabled.", "error"); });
                 DOM.hInp.addEventListener('drop', e => e.preventDefault());
 
@@ -1172,7 +1189,6 @@
                     const newLen = tpd.length;
                     const oldLen = state.lastRenderedLen;
                     
-                    // O(1) Delta Paint
                     if (newLen > oldLen) {
                         for (let i = oldLen; i < newLen; i++) {
                             if (!state.spans[i]) continue;
@@ -1199,13 +1215,13 @@
                         state.maxIdx = newLen; 
                     }
 
-                    // Mobile Isolated Scroll Lock
+                    // 🔥 HARD LOCK SCROLL CONTROL
                     const act = state.spans[newLen];
                     if (act && DOM.tDisp) {
                         requestAnimationFrame(() => {
                             const container = DOM.tDisp;
-                            const offset = act.offsetTop - container.offsetTop;
-                            container.scrollTop = offset - (container.clientHeight * 0.4);
+                            const targetScroll = act.offsetTop - (container.clientHeight * 0.4);
+                            container.scrollTop = targetScroll;
                         });
                     }
 
@@ -1282,7 +1298,6 @@
                 const elTime = document.getElementById('res-time'); 
                 if(elTime) elTime.innerText = `${state.timeSecs}s`;
 
-                // Base Scoring
                 let rpChange = Math.round(wpm / 10);
                 if (acc >= 95) rpChange += 5;
                 else if (acc >= 90) rpChange += 2;
@@ -1311,10 +1326,9 @@
                     }
                 }
 
-                // 🔥 PREMIUM GAMEPLAY ADVANTAGES (Balanced FOMO Boost)
                 if (state.userStats.premium === true) {
-                    rpChange += Math.floor(Math.random() * 4) + 2; // +2 to +5 extra RP
-                    coinsEarned = Math.floor(coinsEarned * 1.5) + 5; // 50% coin boost + 5 flat
+                    rpChange += Math.floor(Math.random() * 4) + 2; 
+                    coinsEarned = Math.floor(coinsEarned * 1.5) + 5; 
                 }
 
                 const elCoins = document.getElementById('res-coins');
@@ -1350,7 +1364,6 @@
                         if(typeof newRp === 'number' && !isNaN(newRp)) {
                             const displaySuffix = state.userId.slice(-4).toUpperCase();
                             const uniqueUsername = `${state.username}#${displaySuffix}`;
-                            // 🔥 Ensure we constantly update Leaderboard with PRO status so badges show globally
                             await setDoc(doc(db, 'leaderboard', state.userId), { 
                                 username: uniqueUsername, 
                                 rp: newRp, wpm: state.userStats.bestWPM, 
@@ -1454,7 +1467,7 @@
                             if (snap.empty) { tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted p-4">No ranked players found.</td></tr>`; }
                             else { tbody.appendChild(fragment); }
                         }
-                    }).catch(e => { console.error(e); });
+                    }).catch(e => {});
                 } catch(e) {}
             }
             
@@ -1463,4 +1476,4 @@
         });
     </script>
 </body>
-</html>
+    </html>
