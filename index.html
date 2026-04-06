@@ -3,14 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TYPR V3 - Competitive Multiplayer Typing</title>
+    <title>TYPR07-V4 - Competitive Multiplayer Typing</title>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         /* === 🔥 ENGINE LEVEL FIX: Disable scroll anchoring globally === */
-        html, body {
-            overflow-anchor: none;
-        }
-
+        html, body { overflow-anchor: none; }
+        
         /* === CSS Variables & Clean Modern Theme === */
         :root {
             --bg: #0f172a; --surface: #1e293b; --surface-hover: #334155; 
@@ -37,39 +35,38 @@
         ::-webkit-scrollbar-thumb:hover { background: var(--border-hover); }
 
         .text-center { text-align: center; }
-        .mb-1 { margin-bottom: 0.5rem; }
-        .mb-2 { margin-bottom: 1rem; }
-        .mb-3 { margin-bottom: 1.5rem; }
-        .mb-4 { margin-bottom: 2rem; }
-        .mt-1 { margin-top: 0.5rem; }
-        .mt-2 { margin-top: 1rem; }
-        .mt-3 { margin-top: 1.5rem; }
-        .p-2 { padding: 1rem; }
-        .p-3 { padding: 1.5rem; }
-        .p-4 { padding: 2rem; }
-        .flex { display: flex; }
-        .flex-col { display: flex; flex-direction: column; }
-        .items-center { align-items: center; }
-        .justify-between { justify-content: space-between; }
-        .justify-center { justify-content: center; }
-        .gap-2 { gap: 0.8rem; }
-        .gap-3 { gap: 1.2rem; }
-        .w-full { width: 100%; }
-        .font-bold { font-weight: 700; }
-        .font-extrabold { font-weight: 800; }
-        .text-muted { color: var(--text-muted); }
-        .text-primary { color: var(--primary); }
-        .text-xl { font-size: 1.25rem; }
-        .text-2xl { font-size: 1.5rem; }
-        .text-3xl { font-size: 2rem; }
+        .mb-1 { margin-bottom: 0.5rem; } .mb-2 { margin-bottom: 1rem; } .mb-3 { margin-bottom: 1.5rem; } .mb-4 { margin-bottom: 2rem; }
+        .mt-1 { margin-top: 0.5rem; } .mt-2 { margin-top: 1rem; } .mt-3 { margin-top: 1.5rem; }
+        .p-2 { padding: 1rem; } .p-3 { padding: 1.5rem; } .p-4 { padding: 2rem; }
+        .flex { display: flex; } .flex-col { display: flex; flex-direction: column; }
+        .items-center { align-items: center; } .justify-between { justify-content: space-between; } .justify-center { justify-content: center; }
+        .gap-2 { gap: 0.8rem; } .gap-3 { gap: 1.2rem; } .w-full { width: 100%; }
+        .font-bold { font-weight: 700; } .font-extrabold { font-weight: 800; }
+        .text-muted { color: var(--text-muted); } .text-primary { color: var(--primary); }
+        .text-xl { font-size: 1.25rem; } .text-2xl { font-size: 1.5rem; } .text-3xl { font-size: 2rem; }
         .uppercase { text-transform: uppercase; letter-spacing: 1px; }
 
+        /* === 👑 FOMO PRO STYLING === */
         .pro-name { background: linear-gradient(135deg, #ffd700, #ffaa00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900 !important; text-shadow: 0 0 12px rgba(255, 215, 0, 0.4); }
         .pro-badge { display: inline-flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #ffd700, #ffaa00); color: #000; font-size: 0.65rem; font-weight: 900; padding: 0.15rem 0.5rem; border-radius: 4px; margin-left: 0.5rem; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 0 8px rgba(255,215,0,0.6); vertical-align: middle; }
-        #text-display.pro-active span.active::before { box-shadow: 0 0 10px var(--primary), 0 0 20px var(--accent); animation: proCursorBlink 0.6s ease-in-out infinite alternate !important; background: #fff; width: 3px; }
-        @keyframes proCursorBlink { 0% { opacity: 0.5; height: 70%; } 100% { opacity: 1; height: 100%; } }
+        #text-display.pro-active span.active::before { box-shadow: 0 0 10px var(--primary), 0 0 20px var(--accent); animation: proCursorBlink 0.6s ease-in-out infinite alternate !important; background: #fff; width: 3px; will-change: opacity, transform; }
+        @keyframes proCursorBlink { 0% { opacity: 0.5; transform: scaleY(0.7); } 100% { opacity: 1; transform: scaleY(1); } }
+        
         .locked-overlay { position: absolute; inset: 0; background: rgba(15, 23, 42, 0.75); display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: var(--radius-md); backdrop-filter: blur(3px); z-index: 10; }
         .locked-overlay span { font-size: 2.5rem; margin-bottom: 0.5rem; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5)); }
+
+        /* === 🎬 CINEMATIC PREMIUM ENTRY ANIMATION === */
+        #premium-entry-overlay { position: fixed; inset: 0; z-index: 10000; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.4s ease-out; }
+        #premium-entry-overlay.show { opacity: 1; pointer-events: auto; }
+        .premium-entry-content { text-align: center; transform: scale(0.5) translateY(50px); opacity: 0; }
+        #premium-entry-overlay.show .premium-entry-content { animation: premiumCinematic 3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+        .premium-entry-title { font-size: clamp(1rem, 4vw, 1.5rem); color: var(--text-muted); text-transform: uppercase; letter-spacing: 4px; margin-bottom: 0.5rem; }
+        .premium-entry-text { font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 900; background: linear-gradient(135deg, #fff, #ffd700, #ffaa00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.6)); text-transform: uppercase; letter-spacing: -2px; display: flex; align-items: center; justify-content: center; gap: 1rem; }
+        .premium-entry-text .crown { font-size: clamp(2rem, 6vw, 4rem); filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.8)); }
+        
+        @keyframes premiumCinematic { 0% { transform: scale(0.5) translateY(50px); opacity: 0; } 15% { transform: scale(1.1) translateY(0); opacity: 1; } 25% { transform: scale(1) translateY(0); opacity: 1; filter: drop-shadow(0 0 40px rgba(255, 215, 0, 1)); } 85% { transform: scale(1.05) translateY(0); opacity: 1; filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.6)); } 100% { transform: scale(1.5) translateY(-50px); opacity: 0; } }
+        @keyframes screenShake { 0%, 100% { transform: translateX(0); } 10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); } 20%, 40%, 60%, 80% { transform: translateX(4px); } }
+        .shake-active { animation: screenShake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both; }
         
         .container { width: 100%; max-width: 1000px; padding: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem; flex: 1; }
         .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2.5rem; box-shadow: var(--shadow-md); animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; }
@@ -110,9 +107,11 @@
         .select-item:last-child { border-bottom: none; }
         .select-item:hover { background: var(--bg); color: var(--primary); }
 
-        .room-controls-wrapper { display: flex; gap: 0.8rem; align-items: stretch; width: 100%; }
-        .room-inp { flex: 1; border-radius: var(--radius-md); border: 1px solid var(--border); background: var(--bg); color: white; padding: 0.8rem; text-align: center; font-weight: 800; font-size: 1.2rem; outline: none; letter-spacing: 2px; width: 100%; transition: border-color 0.2s; text-transform: uppercase; }
-        .room-inp:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2); }
+        .lobby-controls-stack { display: flex; flex-direction: column; gap: 1.2rem; width: 100%; }
+        .room-inp-standalone { width: 100%; height: 60px; border-radius: var(--radius-md); border: 2px solid var(--border); background: var(--surface); color: #ffffff; text-align: center; font-weight: 800; font-size: 1.5rem; letter-spacing: 4px; outline: none; transition: all 0.2s ease; text-transform: uppercase; }
+        .room-inp-standalone::placeholder { color: var(--text-faint); font-size: 1.1rem; letter-spacing: 1px; font-weight: 600; }
+        .room-inp-standalone:focus { border-color: var(--primary); box-shadow: 0 0 15px rgba(99, 102, 241, 0.3); background: #233044; }
+
         .custom-text-area { width: 100%; height: 120px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.2rem; color: var(--text-main); resize: none; outline: none; font-size: 1rem; line-height: 1.6; transition: border-color 0.2s; }
         .custom-text-area:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2); }
 
@@ -123,40 +122,23 @@
             flex-grow: 1; padding: 2rem; font-size: 1.6rem; line-height: 1.8; 
             overflow-y: auto; height: 100%; color: var(--text-muted); 
             position: relative; z-index: 2; font-family: 'Fira Code', monospace; 
-            scroll-behavior: auto;
+            scroll-behavior: auto; overflow-anchor: none;
         }
         
-        .word { display: inline-block; white-space: pre; margin-bottom: 0.4rem; position: static !important; }
-        .space { display: inline-block; white-space: pre; position: static !important; }
-        
+        .word, .space { display: inline-block; white-space: pre; margin-bottom: 0.4rem; position: relative; }
         #text-display span:not(.word):not(.space) { position: relative; border-radius: 4px; padding: 0 1px; }
         #text-display span.correct { color: var(--text-main); }
         #text-display span.incorrect { color: var(--incorrect); background: var(--incorrect-bg); }
         
         /* === 🔥 ENGINE LEVEL FIX: Isolated 1x1 input to kill vertical caret shifts === */
-        #hidden-input {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: 0;
-            opacity: 0;
-            pointer-events: none;
-            border: none;
-            outline: none;
-            resize: none;
-            color: transparent;
-            background: transparent;
-            white-space: nowrap; /* CRITICAL: Stops vertical caret wrapping */
-            overflow: hidden;
-            touch-action: none;
-            z-index: -1;
+        #hidden-input { 
+            position: fixed; top: 0; left: 0; width: 1px; height: 1px; padding: 0; margin: 0; opacity: 0; pointer-events: none;
+            border: none; outline: none; resize: none; color: transparent; background: transparent; 
+            white-space: nowrap; overflow: hidden; touch-action: none; z-index: -1; 
         }
         
-        .overlay-layer { position: absolute; inset: 0; background: rgba(15, 23, 42, 0.85); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 20; color: #fff; backdrop-filter: blur(4px); transition: opacity 0.3s; }
-        .overlay-text { font-size: 2.5rem; font-weight: 800; color: var(--primary); text-shadow: 0 0 20px rgba(99, 102, 241, 0.4); }
+        .overlay-layer { position: absolute; inset: 0; background: rgba(15, 23, 42, 0.85); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 20; color: #fff; backdrop-filter: blur(4px); transition: opacity 0.3s; text-align: center; }
+        .overlay-text { font-size: 2.5rem; font-weight: 800; color: var(--primary); text-shadow: 0 0 20px rgba(99, 102, 241, 0.4); text-align: center; padding: 0 1rem; }
 
         .mp-bar-bg { width: 100%; height: 12px; background: var(--border); border-radius: 6px; overflow: hidden; margin-bottom: 0.8rem; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); }
         .mp-bar-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
@@ -169,12 +151,8 @@
         .rating-label { font-size: 1rem; font-weight: 700; margin-top: 0.5rem; display: block; }
 
         .rank-badge { display: inline-flex; align-items: center; justify-content: center; padding: 0.4rem 1rem; border-radius: var(--radius-full); font-size: 0.85rem; font-weight: 800; color: #fff; text-transform: uppercase; letter-spacing: 1px; }
-        .rank-bronze { background: var(--rank-bronze); }
-        .rank-silver { background: var(--rank-silver); }
-        .rank-gold { background: var(--rank-gold); }
-        .rank-master { background: var(--rank-master); }
-        .rank-legend { background: linear-gradient(45deg, var(--rank-legend), #ff00ff); }
-
+        .rank-bronze { background: var(--rank-bronze); } .rank-silver { background: var(--rank-silver); } .rank-gold { background: var(--rank-gold); } .rank-master { background: var(--rank-master); } .rank-legend { background: linear-gradient(45deg, var(--rank-legend), #ff00ff); }
+        
         .rank-progress-container { width: 100%; height: 14px; background: var(--border); border-radius: 7px; overflow: hidden; margin-top: 1rem; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); }
         .rank-progress-bar { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); }
 
@@ -190,27 +168,76 @@
         .shop-preview-box { height: 70px; background: var(--surface); border-radius: 8px; display: flex; justify-content: center; align-items: center; font-size: 2rem; font-weight: 600; color: var(--text-muted); position: relative; font-family: 'Fira Code', monospace; }
         .shop-preview-char { position: relative; display: inline-block; color: var(--text-main); }
         
-        /* Cursor Trails */
+        /* === 🟢 CORE TRAIL STYLING (CURSORS ONLY) === */
         .typing-wrapper span.active::before, .shop-preview-char.active::before, #shop-master-text span.active::before { content: ''; position: absolute; left: -1px; top: 10%; bottom: 10%; width: 2px; background-color: var(--cursor); animation: blink 1s step-end infinite; z-index: 5; }
         @keyframes blink { 50% { opacity: 0; } }
-        .trail-basic_glow span.active::before { box-shadow: 0 0 8px var(--primary); background-color: var(--primary); }
-        .trail-neon span.active::before { background-color: #0ff; box-shadow: 0 0 5px #0ff, 0 0 15px #0ff, 0 0 30px #8b5cf6; width: 3px; border-radius: 2px; }
-        .trail-fire span.active::before { background-color: #ff4500; animation: blink 1s step-end infinite, fireFlicker 0.15s infinite alternate; width: 3px; }
-        @keyframes fireFlicker { 0% { box-shadow: 0 0 10px #ff4500, 0 -5px 15px #ff8c00; } 100% { box-shadow: 0 0 15px #ff4500, 0 -10px 20px #ff8c00; } }
-        .trail-electric span.active::before { background-color: #0ff; animation: blink 1s step-end infinite, electric 0.1s infinite alternate; box-shadow: 0 0 5px #0ff; }
-        @keyframes electric { 0% { box-shadow: 2px 0 8px #0ff; } 100% { box-shadow: -2px 0 8px #0ff; } }
-        .trail-rainbow span.active::before { background: linear-gradient(to bottom, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff); box-shadow: 0 0 8px #fff; animation: blink 1s step-end infinite, rainbowPulse 2s linear infinite; width: 3px; }
-        @keyframes rainbowPulse { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } }
-        .trail-particle span.active::before { background-color: #fff; box-shadow: 0 0 5px #fff; }
-        .trail-particle span.active::after { content: ''; position: absolute; left: -2px; bottom: 10%; width: 4px; height: 4px; border-radius: 50%; background: #0ff; animation: particleFloat 0.8s linear infinite; opacity: 0; pointer-events: none; z-index: 4; }
-        @keyframes particleFloat { 0% { box-shadow: -4px -2px 0 1px #0ff, -8px 2px 0 -1px #0ff; opacity: 0.8; } 100% { box-shadow: -12px -8px 0 1px #0ff, -16px -4px 0 -1px #0ff; opacity: 0; } }
-        .trail-ghost span.active::before { background-color: var(--text-main); box-shadow: -4px 0 0 rgba(255,255,255,0.4), -8px 0 0 rgba(255,255,255,0.2), -12px 0 0 rgba(255,255,255,0.1); width: 2px; }
-        .trail-pulse span.active::before { background-color: var(--primary); animation: blink 1s step-end infinite, pulseCursor 0.6s infinite; width: 4px; border-radius: 2px; }
-        @keyframes pulseCursor { 0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.8); } 100% { box-shadow: 0 0 0 10px rgba(99, 102, 241, 0); } }
-        .trail-matrix span.active { color: #0f0; text-shadow: 0 0 8px #0f0; font-weight: bold; }
-        .trail-matrix span.active::before { background-color: #0f0; box-shadow: 0 0 10px #0f0; width: 3px; }
-        .trail-gold span.active::before { background: linear-gradient(to bottom, #ffd700, #ffdf00, #daa520); box-shadow: 0 0 10px #ffd700, 0 0 20px #ffdf00; animation: blink 1s step-end infinite, sparkle 1s infinite alternate; width: 4px; border-radius: 2px; }
-        @keyframes sparkle { 0% { filter: brightness(1); } 100% { filter: brightness(1.5); } }
+        
+        .trail-basic_glow span.active::before { box-shadow: 0 0 8px var(--primary); background-color: var(--primary); } 
+        .trail-neon span.active::before { background-color: #0ff; box-shadow: 0 0 5px #0ff, 0 0 15px #0ff, 0 0 30px #8b5cf6; width: 3px; border-radius: 2px; } 
+        .trail-fire span.active::before { background-color: #ff4500; animation: blink 1s step-end infinite, fireFlicker 0.15s infinite alternate; width: 3px; } @keyframes fireFlicker { 0% { box-shadow: 0 0 10px #ff4500, 0 -5px 15px #ff8c00; } 100% { box-shadow: 0 0 15px #ff4500, 0 -10px 20px #ff8c00; } } 
+        .trail-electric span.active::before { background-color: #0ff; animation: blink 1s step-end infinite, electric 0.1s infinite alternate; box-shadow: 0 0 5px #0ff; } @keyframes electric { 0% { box-shadow: 2px 0 8px #0ff; } 100% { box-shadow: -2px 0 8px #0ff; } } 
+        .trail-rainbow span.active::before { background: linear-gradient(to bottom, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff); box-shadow: 0 0 8px #fff; animation: blink 1s step-end infinite, rainbowPulse 2s linear infinite; width: 3px; } @keyframes rainbowPulse { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } } 
+        .trail-particle span.active::before { background-color: #fff; box-shadow: 0 0 5px #fff; } 
+        .trail-ghost span.active::before { background-color: var(--text-main); box-shadow: -4px 0 0 rgba(255,255,255,0.4), -8px 0 0 rgba(255,255,255,0.2), -12px 0 0 rgba(255,255,255,0.1); width: 2px; } 
+        .trail-pulse span.active::before { background-color: var(--primary); animation: blink 1s step-end infinite, pulseCursor 0.6s infinite; width: 4px; border-radius: 2px; } @keyframes pulseCursor { 0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.8); } 100% { box-shadow: 0 0 0 10px rgba(99, 102, 241, 0); } } 
+        .trail-matrix span.active { color: #0f0; text-shadow: 0 0 8px #0f0; font-weight: bold; } .trail-matrix span.active::before { background-color: #0f0; box-shadow: 0 0 10px #0f0; width: 3px; } 
+        .trail-gold span.active::before { background: linear-gradient(to bottom, #ffd700, #ffdf00, #daa520); box-shadow: 0 0 10px #ffd700, 0 0 20px #ffdf00; animation: blink 1s step-end infinite, sparkle 1s infinite alternate; width: 4px; border-radius: 2px; } @keyframes sparkle { 0% { filter: brightness(1); } 100% { filter: brightness(1.5); } }
+        
+        .trail-hearts span.active::before { background: #ff1493; box-shadow: 0 0 10px #ff69b4; width: 3px; }
+        .trail-bubbles span.active::before { background: rgba(0, 255, 255, 0.5); box-shadow: 0 0 10px rgba(0, 255, 255, 0.8); width: 3px; border-radius: 4px; }
+        .trail-stars span.active::before { background: #fff; box-shadow: 0 0 15px #ffd700; width: 3px; }
+        .trail-lightning span.active::before { background: #fff; box-shadow: 0 0 10px #0ff, 0 0 20px #00f; width: 3px; animation: electric 0.05s infinite alternate; }
+        .trail-galaxy span.active::before { background: #8a2be2; box-shadow: 0 0 15px #8a2be2, 0 0 30px #e0b0ff; width: 4px; border-radius: 2px; }
+        .trail-smoke span.active::before { background: #aaa; box-shadow: 0 0 10px #777; width: 3px; }
+        .trail-fireflies span.active::before { background: #adff2f; box-shadow: 0 0 15px #7fff00; width: 2px; }
+        .trail-ice span.active::before { background: #e0ffff; box-shadow: 0 0 15px #00ffff; width: 3px; }
+        .trail-cosmic_swirl span.active::before { background: #ff00ff; box-shadow: 0 0 15px #8a2be2; width: 4px; border-radius: 2px; }
+        .trail-energy_wave span.active::before { background: #00ffff; box-shadow: 0 0 20px #00bfff; width: 3px; }
+        .trail-flame_aura span.active::before { background: radial-gradient(circle, #fff, #ff4500); box-shadow: 0 0 15px #ff8c00; width: 4px; border-radius: 2px; }
+        .trail-diamond_sparkle span.active::before { background: #fff; box-shadow: 0 0 20px #e0ffff; width: 2px; }
+        .trail-shadow_trail span.active::before { background: #222; box-shadow: 0 0 15px #000; width: 4px; }
+        .trail-neon_dots span.active::before { background: #ff00ff; box-shadow: 0 0 20px #ff1493; width: 4px; border-radius: 50%; height: 8px; top: 20%; }
+
+        /* === 🌟 REALISTIC PURE CSS PARTICLE SYSTEM === */
+        #particle-layer { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 15; }
+        .typing-particle { 
+            position: absolute; pointer-events: none; z-index: 10; 
+            animation: physicalParticle ease-out forwards; 
+            transform: translate(-50%, -50%); 
+            will-change: transform, opacity; 
+            border-radius: 50%;
+        }
+        @keyframes physicalParticle { 
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 1; } 
+            100% { transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(var(--scale)); opacity: 0; } 
+        }
+
+        .particle-default { width: 3px; height: 3px; background: #666; }
+        .particle-basic_glow { width: 4px; height: 4px; background: var(--primary); box-shadow: 0 0 8px var(--primary); }
+        .particle-pulse { width: 6px; height: 6px; border: 1px solid var(--primary); background: transparent; }
+        .particle-neon { width: 3px; height: 8px; background: #0ff; box-shadow: 0 0 6px #0ff, 0 0 12px #f0f; border-radius: 1px; }
+        .particle-fire { width: 6px; height: 6px; background: #ff4500; box-shadow: 0 0 10px #ff8c00; filter: blur(1px); }
+        .particle-electric { width: 2px; height: 10px; background: #fff; box-shadow: 0 0 6px #0ff; border-radius: 0; transform: rotate(25deg); }
+        .particle-particle { width: 3px; height: 3px; background: #fff; box-shadow: 0 0 5px #fff; }
+        .particle-ghost { width: 8px; height: 8px; background: rgba(255,255,255,0.6); filter: blur(2px); }
+        .particle-matrix { width: 4px; height: 4px; background: #0f0; box-shadow: 0 0 8px #0f0; border-radius: 0; }
+        .particle-rainbow { width: 5px; height: 5px; } /* color set via JS */
+        .particle-gold { width: 4px; height: 4px; background: #ffd700; box-shadow: 0 0 8px #ffaa00; }
+        
+        .particle-hearts { width: 5px; height: 5px; background: #ff1493; box-shadow: 0 0 8px #ff69b4; }
+        .particle-bubbles { width: 6px; height: 6px; border: 1px solid rgba(0, 255, 255, 0.8); background: rgba(0, 255, 255, 0.2); box-shadow: 0 0 5px rgba(0, 255, 255, 0.5); }
+        .particle-stars { width: 4px; height: 4px; background: #fff; box-shadow: 0 0 10px #ffd700; transform: rotate(45deg); border-radius: 0; }
+        .particle-lightning { width: 2px; height: 12px; background: #e0ffff; box-shadow: 0 0 8px #00ffff; border-radius: 0; }
+        .particle-galaxy { width: 5px; height: 5px; background: #8a2be2; box-shadow: 0 0 12px #e0b0ff; filter: blur(1px); }
+        .particle-smoke { width: 12px; height: 12px; background: rgba(150, 150, 150, 0.4); box-shadow: 0 0 10px rgba(100, 100, 100, 0.3); filter: blur(3px); }
+        .particle-fireflies { width: 3px; height: 3px; background: #adff2f; box-shadow: 0 0 8px #adff2f, 0 0 15px #7fff00; }
+        .particle-ice { width: 4px; height: 4px; background: #e0ffff; box-shadow: 0 0 8px #00ffff; border-radius: 0; transform: rotate(45deg); }
+        .particle-cosmic_swirl { width: 5px; height: 5px; background: #ff00ff; box-shadow: 0 0 10px #8a2be2; }
+        .particle-energy_wave { width: 8px; height: 8px; border: 2px solid #00ffff; border-radius: 50%; background: transparent; box-shadow: 0 0 8px #00ffff; }
+        .particle-flame_aura { width: 7px; height: 7px; background: radial-gradient(circle, #fff, #ff4500); box-shadow: 0 0 12px #ff8c00; filter: blur(1px); }
+        .particle-diamond_sparkle { width: 4px; height: 4px; background: #fff; box-shadow: 0 0 10px #e0ffff; transform: rotate(45deg); border-radius: 0; }
+        .particle-shadow_trail { width: 8px; height: 8px; background: #222; box-shadow: 0 0 10px #000; filter: blur(2px); }
+        .particle-neon_dots { width: 5px; height: 5px; background: #ff00ff; box-shadow: 0 0 10px #ff1493; }
 
         #username-modal { position: fixed; inset: 0; background: rgba(15,23,42,0.95); display: flex; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(8px); }
         .modal-box { background: var(--surface); padding: 3rem; border-radius: var(--radius-lg); width: 90%; max-width: 420px; text-align: center; border: 1px solid var(--border); box-shadow: var(--shadow-lg); animation: fadeIn 0.3s ease; }
@@ -225,22 +252,45 @@
 
         #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
         .toast { padding: 14px 24px; border-radius: var(--radius-md); color: white; font-weight: 600; box-shadow: var(--shadow-lg); animation: slideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards; opacity: 0; transform: translateX(100%); pointer-events: auto; background: var(--surface); border-left: 4px solid var(--primary); display: flex; align-items: center; gap: 10px; }
-        .toast.error { border-left-color: var(--incorrect); }
-        .toast.success { border-left-color: var(--correct); }
-        .toast.warning { border-left-color: #ffd700; color: #000; background: linear-gradient(135deg, #ffd700, #ffaa00); border: none; font-weight: 800; }
-        @keyframes slideIn { to { opacity: 1; transform: translateX(0); } }
-        @keyframes fadeOut { to { opacity: 0; transform: translateY(10px); } }
+        .toast.error { border-left-color: var(--incorrect); } .toast.success { border-left-color: var(--correct); } .toast.warning { border-left-color: #ffd700; color: #000; background: linear-gradient(135deg, #ffd700, #ffaa00); border: none; font-weight: 800; }
+        @keyframes slideIn { to { opacity: 1; transform: translateX(0); } } @keyframes fadeOut { to { opacity: 0; transform: translateY(10px); } }
 
-        @media (max-width: 768px) {
-            .controls-group { width: 100%; flex-direction: column; align-items: stretch; }
-            .custom-dropdown, .search-inp, .btn { width: 100%; }
-            .header { flex-direction: column; align-items: stretch; text-align: center; }
-            .header div { justify-content: center; }
+        /* === 📱 MOBILE RESPONSIVENESS & ALIGNMENT FIXES === */
+        @media (max-width: 767px) {
+            .container { padding: 0.8rem; gap: 1rem; width: 100%; overflow-x: hidden; }
+            .panel { padding: 1.2rem; width: 100%; overflow-x: hidden; }
+            header { flex-direction: column; align-items: center; gap: 1rem; }
+            h1 { font-size: 1.8rem; text-align: center; width: 100%; }
+            .header-stats { width: 100%; justify-content: center; gap: 0.6rem; flex-wrap: wrap; }
+            .btn-icon { padding: 0.5rem 0.8rem; font-size: 0.85rem; flex: 1; justify-content: center; min-width: max-content; }
+            .settings-grid { gap: 1rem; grid-template-columns: 1fr; }
+            .typing-wrapper { min-height: 200px; height: 35vh; }
+            #text-display { padding: 1rem; font-size: 1.3rem; line-height: 1.6; }
+            .overlay-text { font-size: 1.5rem; text-align: center; padding: 0 1rem; }
+            .sticky-bar { padding: 1rem; flex-direction: column; gap: 0.8rem; align-items: center; }
+            .sticky-bar > div:first-child { width: 100%; justify-content: center; gap: 2rem; }
+            .room-inp-standalone { height: 50px; font-size: 1.2rem; }
+            .btn-primary, .btn-restart, .btn-warning, .btn-danger { padding: 1rem; font-size: 1rem; width: 100%; text-align: center; justify-content: center; }
+            .lobby-controls-stack { gap: 0.8rem; }
+            .results-grid, .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 0.8rem; }
+            .stat-card { padding: 1rem; }
+            .stat-card p { font-size: 1.5rem; }
+            .stat-card h3 { font-size: 0.75rem; }
+            .modal-box { padding: 1.5rem; width: 95%; max-width: 340px; }
+            .modal-input { font-size: 1.1rem; padding: 1rem; }
+            #premium-entry-overlay .premium-entry-text { font-size: 1.8rem; flex-wrap: wrap; text-align: center; }
+            #premium-entry-overlay .crown { font-size: 1.5rem; }
+            td, th { padding: 0.8rem 0.5rem; font-size: 0.85rem; }
+            .rank-badge, .pro-badge { padding: 0.2rem 0.5rem; font-size: 0.65rem; }
+            #lobby-players-list li { flex-direction: column; gap: 0.8rem; text-align: center; padding: 1rem; align-items: center; }
+            .shop-grid { grid-template-columns: 1fr; gap: 1rem; }
+            .shop-preview-box { font-size: 1.5rem; height: 60px; }
+            .shop-item { padding: 1.2rem; }
+            #mp-progress-container { padding: 1rem; }
+            .flex.gap-3.flex-wrap.mt-4 { flex-direction: column; gap: 0.8rem; }
         }
 
-        /* ==========================================================================
-           🚀 DESKTOP & TABLET ENHANCEMENTS (Mobile UI Remains 100% Untouched)
-           ========================================================================== */
+        /* === 🚀 DESKTOP & TABLET ENHANCEMENTS === */
         @media (min-width: 768px) {
             .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
             .panel { padding: 3.5rem; }
@@ -251,6 +301,7 @@
             .results-grid { grid-template-columns: repeat(4, 1fr); gap: 2rem; }
             .stat-card p { font-size: 3rem; }
             .flex.gap-3.flex-wrap.mt-4 { flex-wrap: nowrap; }
+            .lobby-controls-stack { flex-direction: row; }
         }
 
         @media (min-width: 1024px) {
@@ -260,7 +311,7 @@
             @media (hover: hover) {
                 .stat-card:hover { transform: translateY(-8px) scale(1.02); box-shadow: var(--shadow-lg); border-color: var(--primary); }
                 .shop-item:hover { transform: translateY(-8px) scale(1.03); box-shadow: var(--shadow-lg); }
-                #lobby-players-list li { transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease; }
+                #lobby-players-list li { transition: transform 0.2s ease, background-color 0.2s ease, border-color: 0.2s ease; }
                 #lobby-players-list li:hover { border-color: var(--primary); background: var(--surface-hover); transform: translateX(8px); }
             }
         }
@@ -269,19 +320,28 @@
 <body>
 
     <div id="toast-container"></div>
-
-    <div id="username-modal" class="hidden">
-        <div class="modal-box">
-            <h2 class="font-extrabold text-3xl text-primary mb-1">TYPR V3.</h2>
-            <p class="text-muted mb-4 text-xl">Enter your competitor alias</p>
-            <input type="text" id="inp-username" class="modal-input" placeholder="Username" maxlength="15" autocomplete="off" spellcheck="false">
-            <button class="btn-primary" id="btn-save-user">Connect System</button>
+    
+    <div id="premium-entry-overlay">
+        <div class="premium-entry-content">
+            <div class="premium-entry-title">VIP Player Joined</div>
+            <div class="premium-entry-text">
+                <span class="crown">👑</span><span id="premium-entry-name"></span><span class="crown">👑</span>
+            </div>
         </div>
     </div>
 
-    <div class="container">
+    <div id="username-modal" class="hidden">
+        <div class="modal-box">
+            <h2 class="font-extrabold text-3xl text-primary mb-1">TYPR07-V4.</h2>
+            <p class="text-muted mb-4 text-xl">Enter your name</p>
+            <input type="text" id="inp-username" class="modal-input" placeholder="Username" maxlength="15" autocomplete="off" spellcheck="false">
+            <button class="btn-primary" id="btn-save-user">Continue</button>
+        </div>
+    </div>
+
+    <div class="container" id="main-container">
         <header>
-            <h1><span class="brand" id="main-brand">TYPR V3.</span></h1>
+            <h1><span class="brand" id="main-brand">TYPR07-V4.</span></h1>
             <div class="header-stats">
                 <button class="btn-icon" id="btn-shop">🛒 Shop <span class="coin-display" style="margin-left:4px;" id="head-coins">0</span></button>
                 <button class="btn-icon" id="btn-profile">👤 Profile</button>
@@ -320,23 +380,23 @@
                 </div>
 
                 <div class="setting-group p-4 mt-3" style="grid-column: 1 / -1; background: var(--bg); border-radius: var(--radius-lg); border: 1px solid var(--border);">
-                    <label class="text-primary text-xl mb-3">🎮 Ranked Multiplayer Lobby</label>
-                    <div class="room-controls-wrapper gap-2">
-                        <button class="btn-primary mt-0" id="btn-create-room">Create Room</button>
-                        <input type="text" id="inp-room-code" class="room-inp" placeholder="CODE" maxlength="5" autocomplete="off">
-                        <button class="btn-restart mt-0" style="background:var(--surface);" id="btn-join-room">Join Room</button>
+                    <label class="text-primary text-xl mb-3 text-center" style="display: block;">🎮 Ranked Multiplayer</label>
+                    <div class="lobby-controls-stack">
+                        <button class="btn-primary mt-0 w-full" id="btn-create-room">Create Room</button>
+                        <input type="text" id="inp-room-code" class="room-inp-standalone" placeholder="ENTER 5-DIGIT CODE" maxlength="5" autocomplete="off" spellcheck="false">
+                        <button class="btn-restart mt-0 w-full" style="background:var(--surface);" id="btn-join-room">Join Room</button>
                     </div>
                 </div>
             </div>
-            <button class="btn-primary mt-4" id="btn-start" style="padding: 1.5rem; font-size: 1.2rem;">Deploy Solo Match</button>
+            <button class="btn-primary mt-4" id="btn-start" style="padding: 1.5rem; font-size: 1.2rem;">Start Game</button>
         </main>
 
         <main id="panel-lobby" class="panel hidden">
             <h2 class="text-center text-primary font-extrabold text-3xl mb-1">Room <span id="lobby-room-code" style="letter-spacing: 3px; color: var(--text-main);"></span></h2>
-            <p class="text-center text-muted mb-4 text-xl">Waiting for competitors to connect...</p>
+            <p class="text-center text-muted mb-4 text-xl">Waiting for players to connect...</p>
             
             <div id="host-controls" class="hidden p-3 mb-4" style="background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-md);">
-                <h4 class="text-accent font-bold uppercase mb-2">Host Synchronization</h4>
+                <h4 class="text-accent font-bold uppercase mb-2">Host Settings</h4>
                 <div class="flex gap-3 flex-wrap">
                     <button class="btn-restart mt-0 flex-1" id="btn-host-sync-custom">Sync Custom</button>
                     <button class="btn-restart mt-0 flex-1" id="btn-host-sync-random">Sync Random</button>
@@ -348,8 +408,8 @@
                 <ul id="lobby-players-list" class="flex flex-col gap-2" style="list-style: none;"></ul>
             </div>
 
-            <button class="btn-primary hidden mt-2 p-3" id="btn-start-room">Initiate Ranked Match</button>
-            <button class="btn-restart mt-3" id="btn-leave-room">Disconnect</button>
+            <button class="btn-primary hidden mt-2 p-3" id="btn-start-room">Start Match</button>
+            <button class="btn-restart mt-3" id="btn-leave-room">Leave Room</button>
         </main>
 
         <main id="panel-typing" class="panel hidden p-3">
@@ -369,6 +429,7 @@
                     <div class="overlay-text" id="status-text">3</div>
                 </div>
                 <div id="text-display" class="trail-default"></div>
+                <div id="particle-layer"></div>
                 <textarea id="hidden-input" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"></textarea>
             </div>
             
@@ -376,7 +437,7 @@
         </main>
 
         <main id="panel-results" class="panel hidden">
-            <h2 class="text-center font-extrabold text-3xl mb-4">Match Analysis</h2>
+            <h2 class="text-center font-extrabold text-3xl mb-4">Results</h2>
             
             <div class="text-center p-4 mb-4" style="background:var(--bg); border-radius:var(--radius-lg); border:1px solid var(--border); box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);">
                 <div class="text-muted font-bold uppercase mb-2">Rank Adjustment</div>
@@ -384,12 +445,9 @@
                     <span id="rank-update-display" class="rank-anim-text">1000</span>
                     <span class="text-muted font-bold text-xl">RP</span>
                 </div>
-                <div class="rank-progress-container">
-                    <div class="rank-progress-bar" id="res-rank-bar" style="width:0%;"></div>
-                </div>
+                <div class="rank-progress-container"><div class="rank-progress-bar" id="res-rank-bar" style="width:0%;"></div></div>
                 <div class="rank-progress-labels flex justify-between font-bold text-muted uppercase mt-2">
-                    <span id="res-rank-current">Bronze</span>
-                    <span id="res-rank-next">Silver</span>
+                    <span id="res-rank-current">Bronze</span><span id="res-rank-next">Silver</span>
                 </div>
             </div>
 
@@ -409,18 +467,15 @@
         </main>
 
         <main id="panel-profile" class="panel hidden">
-            <h2 class="font-extrabold text-3xl mb-4">Competitor Profile</h2>
+            <h2 class="font-extrabold text-3xl mb-4">Profile</h2>
             
             <div class="text-center p-4 mb-4" style="background:var(--bg); border-radius:var(--radius-lg); border:1px solid var(--border);">
                 <div id="prof-rank-badge" class="rank-badge rank-bronze mb-3" style="font-size:1.2rem; padding:0.6rem 2rem;">Bronze</div>
                 <div class="font-extrabold text-primary text-3xl mb-2"><span id="prof-rp">1000</span> <span class="text-xl text-muted">RP</span></div>
                 
-                <div class="rank-progress-container">
-                    <div class="rank-progress-bar" id="prof-rank-bar" style="width:0%;"></div>
-                </div>
+                <div class="rank-progress-container"><div class="rank-progress-bar" id="prof-rank-bar" style="width:0%;"></div></div>
                 <div class="rank-progress-labels flex justify-between font-bold text-muted uppercase mt-2">
-                    <span id="prof-rank-current">Bronze</span>
-                    <span id="prof-rank-next">Silver</span>
+                    <span id="prof-rank-current">Bronze</span><span id="prof-rank-next">Silver</span>
                 </div>
             </div>
 
@@ -434,8 +489,7 @@
 
         <main id="panel-leaderboard" class="panel hidden">
             <h2 class="flex justify-between items-center font-extrabold text-3xl mb-4">
-                Global Rankings
-                <button class="btn-icon" style="border:none;" id="btn-lb-back">Back</button>
+                Global Rankings <button class="btn-icon" style="border:none;" id="btn-lb-back">Back</button>
             </h2>
             <div class="w-full" style="overflow-x: auto; background:var(--bg); border-radius:var(--radius-md); border:1px solid var(--border); box-shadow:var(--shadow-md);">
                 <table class="leaderboard-table">
@@ -453,8 +507,9 @@
             </div>
             
             <div class="shop-master-preview" id="shop-master-preview" style="background: var(--surface);">
-                <div class="typing-wrapper flex items-center justify-center" style="height: 90px; min-height: 90px; border: none; background: transparent; overflow: hidden;">
-                    <div id="shop-master-text" class="trail-default" style="padding: 0; font-size: 2rem;"></div>
+                <div class="typing-wrapper flex items-center justify-center" style="height: 90px; min-height: 90px; border: none; background: transparent; overflow: hidden; position: relative;">
+                    <div id="shop-master-text" class="trail-default" style="padding: 0; font-size: 2rem; z-index: 2;"></div>
+                    <div id="shop-particle-layer" style="position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 15;"></div>
                 </div>
             </div>
 
@@ -465,287 +520,276 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getFirestore, collection, doc, getDoc, setDoc, updateDoc, deleteDoc, deleteField, serverTimestamp, onSnapshot, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getFirestore, collection, doc, getDoc, setDoc, updateDoc, deleteDoc, deleteField, serverTimestamp, onSnapshot, query, orderBy, limit, getDocs, where } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-        window.formatT = function(seconds) {
-            if (isNaN(seconds) || seconds < 0) return "0:00";
-            const m = Math.floor(seconds / 60);
-            const s = seconds % 60;
-            return `${m}:${s.toString().padStart(2, '0')}`;
-        };
-
-        function showToast(message, type = 'info') {
+        // Must define globals to use inside inline handlers or standard DOM listeners securely
+        window.showToast = function(message, type = 'info') {
             const container = document.getElementById('toast-container');
+            if(!container) return;
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
             let icon = type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'warning' ? '👑' : 'ℹ️';
             toast.innerHTML = `<span>${icon}</span> <span>${message}</span>`;
             container.appendChild(toast);
-            setTimeout(() => {
-                toast.style.animation = 'fadeOut 0.3s ease forwards';
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
+            setTimeout(() => { toast.style.animation = 'fadeOut 0.3s ease forwards'; setTimeout(() => toast.remove(), 300); }, 3000);
+        };
+
+        window.formatT = function(seconds) {
+            if (isNaN(seconds) || seconds < 0) return "0:00";
+            const m = Math.floor(seconds / 60); const s = seconds % 60;
+            return `${m}:${s.toString().padStart(2, '0')}`;
+        };
+
+        let audioCtx = null;
+        window.playPremiumSound = function() {
+            try {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+                osc.type = 'triangle'; osc.frequency.setValueAtTime(200, audioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 1.5);
+                gain.gain.setValueAtTime(0.05, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 2.5);
+                osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime + 2.5);
+            } catch(e) { console.warn("Audio blocked"); }
+        };
+
+        window.showPremiumEntry = function(username) {
+            const overlay = document.getElementById('premium-entry-overlay');
+            const textEl = document.getElementById('premium-entry-name');
+            const container = document.getElementById('main-container');
+            if(!overlay || !textEl) return;
+            window.playPremiumSound();
+            textEl.innerText = username;
+            overlay.classList.add('show');
+            if(container) container.classList.add('shake-active');
+            setTimeout(() => { overlay.classList.remove('show'); if(container) container.classList.remove('shake-active'); }, 3000);
+        };
+
+        // 🔥 FIXED: Spawn Particles safely in absolute layer (Main Typing + Shop Preview)
+        window.spawnParticle = function(span, trailId, isShopPreview = false) {
+            if (!span || trailId === 'default') return;
+            const layer = document.getElementById(isShopPreview ? 'shop-particle-layer' : 'particle-layer');
+            if (!layer) return;
+
+            if (layer.childElementCount > 60) return; // Prevent performance lag
+
+            const p = document.createElement('span');
+            p.className = `typing-particle particle-${trailId}`;
+            
+            const rect = span.getBoundingClientRect();
+            const layerRect = layer.getBoundingClientRect();
+            
+            const startX = rect.left - layerRect.left + (rect.width / 2);
+            const startY = rect.top - layerRect.top + (rect.height / 2);
+            
+            p.style.left = startX + 'px';
+            p.style.top = startY + 'px';
+            
+            // Generate physics calculations
+            const tx = (Math.random() - 0.5) * 40; 
+            const ty = (Math.random() - 1) * 40;   
+            const scale = Math.random() * 1.5 + 0.5; 
+            const duration = Math.random() * 400 + 400;
+            
+            p.style.setProperty('--tx', `${tx}px`);
+            p.style.setProperty('--ty', `${ty}px`);
+            p.style.setProperty('--scale', scale);
+            p.style.animationDuration = `${duration}ms`;
+            
+            if(trailId === 'rainbow') {
+                const colors = ['#ff0000', '#ff7f00', '#ffff00', '#00ff00', '#0000ff', '#4b0082', '#8b00ff'];
+                p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                p.style.boxShadow = `0 0 8px ${p.style.backgroundColor}`;
+            }
+
+            layer.appendChild(p);
+            setTimeout(() => { if(p.parentNode) p.remove(); }, duration);
+        };
+
+        function throttle(func, limit) {
+            let inThrottle;
+            return function(...args) {
+                if (!inThrottle) { func.apply(this, args); inThrottle = true; setTimeout(() => inThrottle = false, limit); }
+            }
+        }
+
+        const syncPlayerProgress = throttle((dbInstance, roomId, userId, wpm, progress) => {
+            updateDoc(doc(dbInstance, 'rooms', roomId), { [`players.${userId}.wpm`]: wpm, [`players.${userId}.progress`]: progress, [`players.${userId}.lastActive`]: Date.now() }).catch(e => {});
+        }, 1500);
+
+        let shopPreviewTimer = null;
+        let shopPreviewIndex = 0;
+        const shopPreviewString = "preview effect";
+        let lastOffsetTop = 0;
+
+        let state = {
+            userId: localStorage.getItem('typr_userId') || ('user_' + Math.random().toString(36).substr(2, 9)),
+            username: localStorage.getItem('typr_username') || '',
+            mode: 'normal', textLength: 'short', text: "", spans: [], timer: null, timeSecs: 0,
+            isTyping: false, testEnded: false, isCountdown: false, errors: 0, totalTyped: 0, maxIdx: 0, currentErrors: 0,
+            roomId: null, isHost: false, roomUnsub: null, heartbeat: null, roomData: null,
+            userStats: { bestWPM: 0, averageWPM: 0, totalGames: 0, rankPoints: 1000, savedTexts: [], coins: 0, purchasedTrails: ['default'], equippedTrail: 'default', premium: false },
+            wpmHistory: [], progressHistory: [], lastProgressChar: 0, lastSyncTime: 0, syncThrottleMs: 2000, lastRenderedLen: 0, previousPlayers: []
+        };
+        localStorage.setItem('typr_userId', state.userId);
+
+        function resetTimers() {
+            if(state.timer) { clearInterval(state.timer); state.timer = null; }
+            if(shopPreviewTimer) { clearInterval(shopPreviewTimer); shopPreviewTimer = null; }
+        }
+
+        window.stopShopPreview = function() {
+            if(shopPreviewTimer) { clearInterval(shopPreviewTimer); shopPreviewTimer = null; shopPreviewIndex = 0; }
+            const shopLayer = document.getElementById('shop-particle-layer');
+            if(shopLayer) shopLayer.innerHTML = '';
+        };
+
+        const DOM = {
+            uModal: document.getElementById('username-modal'), uInp: document.getElementById('inp-username'),
+            pSet: document.getElementById('panel-settings'), pType: document.getElementById('panel-typing'), 
+            pRes: document.getElementById('panel-results'), pLb: document.getElementById('panel-leaderboard'), 
+            pLobby: document.getElementById('panel-lobby'), pProf: document.getElementById('panel-profile'), pShop: document.getElementById('panel-shop'),
+            tDisp: document.getElementById('text-display'), hInp: document.getElementById('hidden-input'), 
+            focusOverlay: document.getElementById('focus-overlay'), statusOverlay: document.getElementById('status-overlay'), statusText: document.getElementById('status-text'),
+            sTime: document.getElementById('stat-time'), sWpm: document.getElementById('stat-wpm'), sAcc: document.getElementById('stat-acc'),
+            mpProgCont: document.getElementById('mp-progress-container'), mpPodium: document.getElementById('mp-podium')
+        };
+
+        const listenersRegistry = {};
+        const safeListen = (id, event, fn) => { const el = document.getElementById(id); if(!el) return; if(listenersRegistry[`${id}_${event}`]) el.removeEventListener(event, listenersRegistry[`${id}_${event}`]); listenersRegistry[`${id}_${event}`] = fn; el.addEventListener(event, fn); };
+
+        function initShopPreview() {
+            const container = document.getElementById('shop-master-text'); if(!container) return; container.innerHTML = '';
+            for(let i=0; i<shopPreviewString.length; i++) { let sp = document.createElement('span'); sp.innerText = shopPreviewString[i] === ' ' ? '\u00A0' : shopPreviewString[i]; container.appendChild(sp); }
+            resetTimers();
+            shopPreviewTimer = setInterval(() => {
+                const spans = container.children; if(spans.length === 0) return;
+                for(let i=0; i<spans.length; i++) spans[i].className = 'correct';
+                if(shopPreviewIndex >= spans.length) shopPreviewIndex = 0; 
+                spans[shopPreviewIndex].className = 'active'; 
+                window.spawnParticle(spans[shopPreviewIndex], state.userStats.equippedTrail, true);
+                shopPreviewIndex++;
+            }, 150);
         }
 
         document.addEventListener("DOMContentLoaded", () => {
-            const firebaseConfig = {
-                apiKey: "AIzaSyCziskazrd-3vFia04uvkqWF8bFVGeqXPk",
-                authDomain: "fast-typing-app-aecdc.firebaseapp.com",
-                projectId: "fast-typing-app-aecdc"
-            };
-            
-            const app = initializeApp(firebaseConfig);
-            const db = getFirestore(app);
+            const firebaseConfig = { apiKey: "AIzaSyCziskazrd-3vFia04uvkqWF8bFVGeqXPk", authDomain: "fast-typing-app-aecdc.firebaseapp.com", projectId: "fast-typing-app-aecdc" };
+            let app, firestoreDb;
+            try {
+                app = initializeApp(firebaseConfig);
+                firestoreDb = getFirestore(app);
+            } catch(e) { console.error("Firebase init error", e); window.showToast("Database connection failed", "error"); }
 
             const wordPoolStr = "the,be,to,of,and,a,in,that,have,it,for,not,on,with,he,as,you,do,at,this,but,his,by,from,they,we,say,her,she,or,an,will,my,one,all,would,there,their,what,so,up,out,if,about,who,get,which,go,me,when,make,can,like,time,no,just,him,know,take,people,into,year,your,good,some,could,them,see,other,than,then,now,look,only,come,its,over,think,also,back,after,use,two,how,our,work,first,well,way,even,new,want,because,any,these,give,day,most,us,is,are,was,were,been,being,has,had,having,does,did,doing,a,an,the,and,but,if,or,because,as,until,while,of,at,by,for,with,about,against,between,into,through,during,before,after,above,below,to,from,up,down,in,out,on,off,over,under,again,further,then,once,here,there,when,where,why,how,all,any,both,each,few,more,most,other,some,such,no,nor,not,only,own,same,so,than,too,very,s,t,can,will,just,don,should,now,system,software,hardware,program,function,variable,constant,database,server,client,network,protocol,security,encryption,algorithm,logic,module,interface,class,object,method,property,event,listener,callback,promise,async,await,thread,process,memory,storage,cache,pointer,reference,value,type,string,number,boolean,array,list,map,dictionary,set,tree,graph,node,edge,vertex,path,cycle,loop,condition,statement,expression,operator,operand,argument,parameter,return,yield,break,continue,switch,case,default,throw,catch,finally,try,except,raise,import,export,require,include,module,package,library,framework,application,service,api,endpoint,request,response,header,body,payload,status,code,error,exception,bug,fix,patch,update,upgrade,version,release,build,deploy,test,debug,trace,log,monitor,metric,alert,dashboard,report,analytics,data,information,knowledge,insight,action,result,outcome,goal,objective,strategy,plan,task,project,team,user,customer,client,partner,vendor,supplier,contract,agreement,license,policy,rule,regulation,law,compliance,audit,review,inspection,check,validate,verify,approve,reject,cancel,suspend,resume,start,stop,pause,play,record,save,load,read,write,delete,remove,add,insert,update,modify,change,edit,format,style,design,layout,theme,color,font,size,weight,align,justify,center,left,right,top,bottom,margin,padding,border,radius,shadow,opacity,visible,hidden,display,block,inline,flex,grid,position,absolute,relative,fixed,sticky,z-index,float,clear,overflow,scroll,auto,clip,transform,translate,scale,rotate,skew,matrix,transition,animation,keyframes,duration,delay,timing,function,iteration,count,direction,fill,mode,play,state,media,query,breakpoint,responsive,mobile,tablet,desktop,screen,print,speech,hover,active,focus,visited,link,target,before,after,first,last,child,type,nth,only,empty,not,has,is,where,root,scope,host,shadow,part,slotted,dir,lang,theme";
             const wordPool = wordPoolStr.split(",");
-
-            function generateCleanText(lengthMode) {
-                let count = 20;
-                if (lengthMode === 'medium') count = 40;
-                if (lengthMode === 'long') count = 60;
-                let words = [];
-                for(let i = 0; i < count; i++) words.push(wordPool[Math.floor(Math.random() * wordPool.length)]);
-                words[0] = words[0].charAt(0).toUpperCase() + words[0].slice(1);
-                return words.join(" ");
-            }
-
+            function generateCleanText(lengthMode) { let count = 20; if (lengthMode === 'medium') count = 40; if (lengthMode === 'long') count = 60; let words = []; for(let i = 0; i < count; i++) words.push(wordPool[Math.floor(Math.random() * wordPool.length)]); words[0] = words[0].charAt(0).toUpperCase() + words[0].slice(1); return words.join(" "); }
             function sanitizeText(txt) { return txt.replace(/[.,;:?]/g, '').replace(/\s+/g, ' ').trim(); }
-
-            const Tiers = [
-                { name: 'Bronze', min: 0, max: 1199, class: 'rank-bronze' },
-                { name: 'Silver', min: 1200, max: 1499, class: 'rank-silver' },
-                { name: 'Gold', min: 1500, max: 1999, class: 'rank-gold' },
-                { name: 'Master', min: 2000, max: 2499, class: 'rank-master' },
-                { name: 'Legend', min: 2500, max: 99999, class: 'rank-legend' }
-            ];
-
-            function getRankInfo(rp) {
-                let tier = Tiers[0];
-                for(let i = 0; i < Tiers.length; i++) if (rp >= Tiers[i].min) tier = Tiers[i];
-                let nextIdx = Tiers.indexOf(tier) + 1;
-                let nextTier = Tiers[nextIdx] || tier;
-                let progress = 100;
-                if (tier !== nextTier) progress = ((rp - tier.min) / (nextTier.min - tier.min)) * 100;
-                return { name: tier.name, class: tier.class, progress: progress, nextName: nextTier.name, nextMin: nextTier.min };
-            }
-
-            function updateRankProgressUI(rp, barId, currentId, nextId) {
-                const info = getRankInfo(rp);
-                const bar = document.getElementById(barId);
-                const curr = document.getElementById(currentId);
-                const nxt = document.getElementById(nextId);
-                if(bar) bar.style.width = `${Math.max(0, Math.min(100, info.progress))}%`;
-                if(curr) curr.innerText = info.name;
-                if(nxt) nxt.innerText = info.name === info.nextName ? 'Max Rank' : `${info.nextName} (${info.nextMin} RP)`;
-            }
-
-            function animateValue(obj, start, end, duration) {
-                if(!obj) return;
-                let startTimestamp = null;
-                const step = (timestamp) => {
-                    if (!startTimestamp) startTimestamp = timestamp;
-                    const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-                    obj.innerHTML = Math.floor(progress * (end - start) + start);
-                    if (progress < 1) window.requestAnimationFrame(step);
-                    else {
-                        obj.innerHTML = end; 
-                        obj.classList.remove('rank-up', 'rank-down');
-                        if (end > start) obj.classList.add('rank-up');
-                        else if (end < start) obj.classList.add('rank-down');
-                    }
-                };
-                window.requestAnimationFrame(step);
-            }
-
-            function getWPM(typedLen, errs, timeSecs) { 
-                if (timeSecs <= 0) return 0;
-                const netChars = typedLen - errs;
-                const wpm = (netChars / 5) / (timeSecs / 60);
-                return Math.max(0, Math.round(wpm)); 
-            }
+            const Tiers = [ { name: 'Bronze', min: 0, max: 1199, class: 'rank-bronze' }, { name: 'Silver', min: 1200, max: 1499, class: 'rank-silver' }, { name: 'Gold', min: 1500, max: 1999, class: 'rank-gold' }, { name: 'Master', min: 2000, max: 2499, class: 'rank-master' }, { name: 'Legend', min: 2500, max: 99999, class: 'rank-legend' } ];
+            function getRankInfo(rp) { let tier = Tiers[0]; for(let i = 0; i < Tiers.length; i++) if (rp >= Tiers[i].min) tier = Tiers[i]; let nextIdx = Tiers.indexOf(tier) + 1; let nextTier = Tiers[nextIdx] || tier; let progress = 100; if (tier !== nextTier) progress = ((rp - tier.min) / (nextTier.min - tier.min)) * 100; return { name: tier.name, class: tier.class, progress: progress, nextName: nextTier.name, nextMin: nextTier.min }; }
+            function updateRankProgressUI(rp, barId, currentId, nextId) { const info = getRankInfo(rp); const bar = document.getElementById(barId); const curr = document.getElementById(currentId); const nxt = document.getElementById(nextId); if(bar) bar.style.width = `${Math.max(0, Math.min(100, info.progress))}%`; if(curr) curr.innerText = info.name; if(nxt) nxt.innerText = info.name === info.nextName ? 'Max Rank' : `${info.nextName} (${info.nextMin} RP)`; }
+            function animateValue(obj, start, end, duration) { if(!obj) return; let startTimestamp = null; const step = (timestamp) => { if (!startTimestamp) startTimestamp = timestamp; const progress = Math.min((timestamp - startTimestamp) / duration, 1); obj.innerHTML = Math.floor(progress * (end - start) + start); if (progress < 1) window.requestAnimationFrame(step); else { obj.innerHTML = end; obj.classList.remove('rank-up', 'rank-down'); if (end > start) obj.classList.add('rank-up'); else if (end < start) obj.classList.add('rank-down'); } }; window.requestAnimationFrame(step); }
+            function getWPM(typedLen, errs, timeSecs) { if (timeSecs <= 0) return 0; const netChars = typedLen - errs; const wpm = (netChars / 5) / (timeSecs / 60); return Math.max(0, Math.round(wpm)); }
 
             const shopItems = [
-                { id: 'default', name: 'Standard Line', price: 0, class: 'trail-default' },
-                { id: 'basic_glow', name: 'Basic Glow', price: 100, class: 'trail-basic_glow' },
+                { id: 'default', name: 'Standard Line', price: 0, class: 'trail-default' }, 
+                { id: 'basic_glow', name: 'Basic Glow', price: 100, class: 'trail-basic_glow' }, 
                 { id: 'pulse', name: 'Pulse Cursor', price: 250, class: 'trail-pulse' },
-                { id: 'neon', name: 'Neon Trail', price: 400, class: 'trail-neon' },
-                { id: 'fire', name: 'Fire Trail', price: 600, class: 'trail-fire' },
+                { id: 'neon', name: 'Neon Trail', price: 400, class: 'trail-neon' }, 
+                { id: 'fire', name: 'Fire Trail', price: 600, class: 'trail-fire' }, 
                 { id: 'electric', name: 'Electric Surge', price: 800, class: 'trail-electric' },
-                { id: 'particle', name: 'Particle Float', price: 1000, class: 'trail-particle' },
+                { id: 'particle', name: 'Particle Float', price: 1000, class: 'trail-particle' }, 
                 { id: 'ghost', name: 'Ghost Shadows', price: 1500, class: 'trail-ghost', isPremiumExclusive: true },
-                { id: 'matrix', name: 'Matrix Code', price: 2000, class: 'trail-matrix', isPremiumExclusive: true },
+                { id: 'matrix', name: 'Matrix Code', price: 2000, class: 'trail-matrix', isPremiumExclusive: true }, 
                 { id: 'rainbow', name: 'RGB Rainbow', price: 3000, class: 'trail-rainbow', isPremiumExclusive: true },
-                { id: 'gold', name: 'Premium Gold', price: 5000, class: 'trail-gold', isPremiumExclusive: true }
+                { id: 'gold', name: 'Premium Gold', price: 5000, class: 'trail-gold', isPremiumExclusive: true },
+                { id: 'hearts', name: 'Hearts ❤️', price: 6000, class: 'trail-hearts', isPremiumExclusive: true },
+                { id: 'bubbles', name: 'Bubbles 🫧', price: 6500, class: 'trail-bubbles', isPremiumExclusive: true },
+                { id: 'stars', name: 'Stars ⭐', price: 7000, class: 'trail-stars', isPremiumExclusive: true },
+                { id: 'lightning', name: 'Lightning ⚡', price: 7500, class: 'trail-lightning', isPremiumExclusive: true },
+                { id: 'galaxy', name: 'Galaxy 🌌', price: 8000, class: 'trail-galaxy', isPremiumExclusive: true },
+                { id: 'smoke', name: 'Smoke 🌫️', price: 8500, class: 'trail-smoke', isPremiumExclusive: true },
+                { id: 'fireflies', name: 'Fireflies ✨', price: 9000, class: 'trail-fireflies', isPremiumExclusive: true },
+                { id: 'ice', name: 'Ice ❄️', price: 9500, class: 'trail-ice', isPremiumExclusive: true },
+                { id: 'cosmic_swirl', name: 'Cosmic Swirl 🌌', price: 10000, class: 'trail-cosmic_swirl', isPremiumExclusive: true },
+                { id: 'energy_wave', name: 'Energy Wave ⚡', price: 10500, class: 'trail-energy_wave', isPremiumExclusive: true },
+                { id: 'flame_aura', name: 'Flame Aura 🔥', price: 11000, class: 'trail-flame_aura', isPremiumExclusive: true },
+                { id: 'diamond_sparkle', name: 'Diamond Sparkle 💎', price: 11500, class: 'trail-diamond_sparkle', isPremiumExclusive: true },
+                { id: 'shadow_trail', name: 'Shadow Trail 👻', price: 12000, class: 'trail-shadow_trail', isPremiumExclusive: true },
+                { id: 'neon_dots', name: 'Neon Dots ✨', price: 12500, class: 'trail-neon_dots', isPremiumExclusive: true }
             ];
-
-            let state = {
-                userId: localStorage.getItem('typr_userId') || ('user_' + Math.random().toString(36).substr(2, 9)),
-                username: localStorage.getItem('typr_username') || '',
-                mode: 'normal', textLength: 'short',
-                text: "", spans: [], timer: null, timeSecs: 0,
-                isTyping: false, testEnded: false, isCountdown: false, errors: 0, totalTyped: 0, maxIdx: 0, currentErrors: 0,
-                roomId: null, isHost: false, roomUnsub: null, heartbeat: null, roomData: null,
-                userStats: { bestWPM: 0, averageWPM: 0, totalGames: 0, rankPoints: 1000, savedTexts: [], coins: 0, purchasedTrails: ['default'], equippedTrail: 'default', premium: false },
-                wpmHistory: [], progressHistory: [], lastProgressChar: 0, lastSyncTime: 0, syncThrottleMs: 2000, lastRenderedLen: 0,
-                previousPlayers: []
-            };
-            localStorage.setItem('typr_userId', state.userId);
-
-            const DOM = {
-                uModal: document.getElementById('username-modal'), uInp: document.getElementById('inp-username'),
-                pSet: document.getElementById('panel-settings'), pType: document.getElementById('panel-typing'), 
-                pRes: document.getElementById('panel-results'), pLb: document.getElementById('panel-leaderboard'), 
-                pLobby: document.getElementById('panel-lobby'), pProf: document.getElementById('panel-profile'), pShop: document.getElementById('panel-shop'),
-                tDisp: document.getElementById('text-display'), hInp: document.getElementById('hidden-input'), 
-                focusOverlay: document.getElementById('focus-overlay'), statusOverlay: document.getElementById('status-overlay'), statusText: document.getElementById('status-text'),
-                sTime: document.getElementById('stat-time'), sWpm: document.getElementById('stat-wpm'), sAcc: document.getElementById('stat-acc'),
-                mpProgCont: document.getElementById('mp-progress-container'), mpPodium: document.getElementById('mp-podium')
-            };
-
-            const listenersRegistry = {};
-            const safeListen = (id, event, fn) => {
-                const el = document.getElementById(id);
-                if(!el) return;
-                if(listenersRegistry[`${id}_${event}`]) el.removeEventListener(event, listenersRegistry[`${id}_${event}`]);
-                listenersRegistry[`${id}_${event}`] = fn;
-                el.addEventListener(event, fn);
-            };
-
-            let shopPreviewTimer = null;
-            let shopPreviewIndex = 0;
-            const shopPreviewString = "preview effect";
-
-            function resetTimers() {
-                if(state.timer) { clearInterval(state.timer); state.timer = null; }
-                if(shopPreviewTimer) { clearInterval(shopPreviewTimer); shopPreviewTimer = null; }
-            }
-
-            function initShopPreview() {
-                const container = document.getElementById('shop-master-text');
-                if(!container) return;
-                container.innerHTML = '';
-                for(let i=0; i<shopPreviewString.length; i++) {
-                    let sp = document.createElement('span');
-                    sp.innerText = shopPreviewString[i] === ' ' ? '\u00A0' : shopPreviewString[i];
-                    container.appendChild(sp);
-                }
-                resetTimers();
-                shopPreviewTimer = setInterval(() => {
-                    const spans = container.children;
-                    if(spans.length === 0) return;
-                    for(let i=0; i<spans.length; i++) spans[i].className = 'correct';
-                    if(shopPreviewIndex >= spans.length) shopPreviewIndex = 0;
-                    spans[shopPreviewIndex].className = 'active';
-                    shopPreviewIndex++;
-                }, 150);
-            }
-
-            function stopShopPreview() { if(shopPreviewTimer) { clearInterval(shopPreviewTimer); shopPreviewTimer = null; } }
 
             if (!state.username && DOM.uModal) DOM.uModal.classList.remove('hidden');
             
-            safeListen('btn-save-user', 'click', () => {
-                if(!DOM.uInp) return;
-                const v = sanitizeText(DOM.uInp.value);
-                if (v.length >= 3) { 
-                    state.username = v; localStorage.setItem('typr_username', v); 
-                    if(DOM.uModal) DOM.uModal.classList.add('hidden'); 
-                    showToast("System Connected", "success");
-                    loadUserStats(); 
-                } else { showToast("Username must be at least 3 characters", "error"); }
-            });
+            const btnSaveUser = document.getElementById('btn-save-user');
+            if(btnSaveUser) {
+                btnSaveUser.addEventListener('click', async () => {
+                    if(!firestoreDb) return window.showToast("Database not initialized", "error");
+                    if(!DOM.uInp) return;
+                    const originalName = DOM.uInp.value.trim();
+                    const lower = originalName.toLowerCase();
+                    if (originalName.length >= 3) { 
+                        const origText = btnSaveUser.innerText; btnSaveUser.innerText = "Checking..."; btnSaveUser.disabled = true;
+                        try {
+                            const q = query(collection(firestoreDb, 'users'), where('username_lowercase', '==', lower), limit(1));
+                            const snap = await getDocs(q);
+                            if (!snap.empty && snap.docs[0].id !== state.userId) {
+                                window.showToast("Username already taken", "error");
+                                btnSaveUser.innerText = origText; btnSaveUser.disabled = false; return;
+                            }
+                            state.username = originalName; localStorage.setItem('typr_username', originalName); 
+                            await setDoc(doc(firestoreDb, 'users', state.userId), { username: originalName, username_lowercase: lower }, { merge: true });
+                            if(DOM.uModal) DOM.uModal.classList.add('hidden'); 
+                            window.showToast("Connected successfully", "success");
+                            loadUserStats(); 
+                        } catch(e) { console.error(e); window.showToast("Error verifying username", "error"); } 
+                        finally { btnSaveUser.innerText = origText; btnSaveUser.disabled = false; }
+                    } else { window.showToast("Name must be at least 3 letters", "error"); }
+                });
+            }
 
             function updatePremiumUI(isPremium) {
                 const brandEl = document.getElementById('main-brand');
                 if (brandEl) {
                     if (isPremium) {
-                        if (!document.getElementById('header-pro-badge')) {
-                            brandEl.innerHTML = `TYPR V3. <span id="header-pro-badge" class="pro-badge">PRO</span>`;
-                        }
-                        DOM.tDisp.classList.add('pro-active'); 
-                    } else {
-                        brandEl.innerHTML = `TYPR V3.`;
-                        DOM.tDisp.classList.remove('pro-active');
-                    }
+                        if (!document.getElementById('header-pro-badge')) brandEl.innerHTML = `TYPR07-V4. <span id="header-pro-badge" class="pro-badge">PRO</span>`;
+                        if(DOM.tDisp) DOM.tDisp.classList.add('pro-active'); 
+                    } else { brandEl.innerHTML = `TYPR07-V4.`; if(DOM.tDisp) DOM.tDisp.classList.remove('pro-active'); }
                 }
             }
 
             let userProfileUnsub = null;
             function loadUserStats() {
-                if(!state.username) return;
+                if(!state.username || !firestoreDb) return;
                 if (userProfileUnsub) userProfileUnsub();
-                
-                userProfileUnsub = onSnapshot(doc(db, 'users', state.userId), (docSnap) => {
+                userProfileUnsub = onSnapshot(doc(firestoreDb, 'users', state.userId), (docSnap) => {
                     if(docSnap.exists()) {
-                        const d = docSnap.data();
-                        const wasPremium = state.userStats.premium;
-                        
+                        const d = docSnap.data(); const wasPremium = state.userStats.premium;
                         state.userStats = { ...state.userStats, ...d, premium: d.premium || false };
-                        
-                        if(!state.userStats.rankPoints) state.userStats.rankPoints = 1000;
-                        if(!state.userStats.coins) state.userStats.coins = 0;
-                        if(!state.userStats.purchasedTrails) state.userStats.purchasedTrails = ['default'];
-                        if(!state.userStats.equippedTrail) state.userStats.equippedTrail = 'default';
-                        
-                        if (state.userStats.premium && state.userStats.equippedTrail === 'default' && !wasPremium) {
-                            state.userStats.equippedTrail = 'gold';
-                            setDoc(doc(db, 'users', state.userId), { equippedTrail: 'gold' }, { merge: true });
-                        }
-
-                        updateHeaderCoins();
-                        applyEquippedTrail();
-                        updatePremiumUI(state.userStats.premium);
-                        
-                        if (!DOM.pShop.classList.contains('hidden')) renderShop();
+                        if(!state.userStats.rankPoints) state.userStats.rankPoints = 1000; if(!state.userStats.coins) state.userStats.coins = 0;
+                        if(!state.userStats.purchasedTrails) state.userStats.purchasedTrails = ['default']; if(!state.userStats.equippedTrail) state.userStats.equippedTrail = 'default';
+                        if (state.userStats.premium && state.userStats.equippedTrail === 'default' && !wasPremium) { state.userStats.equippedTrail = 'gold'; setDoc(doc(firestoreDb, 'users', state.userId), { equippedTrail: 'gold' }, { merge: true }); }
+                        updateHeaderCoins(); applyEquippedTrail(); updatePremiumUI(state.userStats.premium);
+                        if (DOM.pShop && !DOM.pShop.classList.contains('hidden')) renderShop();
                     }
-                }, (error) => { console.error("Real-time user sync failed:", error); });
+                }, (error) => { console.error("Real-time sync failed:", error); });
             }
-            loadUserStats();
+            if(state.username) loadUserStats();
 
-            function updateHeaderCoins() {
-                const hd = document.getElementById('head-coins');
-                if(hd) hd.innerText = state.userStats.coins || 0;
-            }
-
-            function applyEquippedTrail() {
-                if(DOM.tDisp) {
-                    shopItems.forEach(i => DOM.tDisp.classList.remove(i.class));
-                    const equipped = shopItems.find(i => i.id === state.userStats.equippedTrail) || shopItems[0];
-                    DOM.tDisp.classList.add(equipped.class);
-                }
-            }
-
+            function updateHeaderCoins() { const hd = document.getElementById('head-coins'); if(hd) hd.innerText = state.userStats.coins || 0; }
+            function applyEquippedTrail() { if(DOM.tDisp) { shopItems.forEach(i => DOM.tDisp.classList.remove(i.class)); const equipped = shopItems.find(i => i.id === state.userStats.equippedTrail) || shopItems[0]; DOM.tDisp.classList.add(equipped.class); } }
             function showPanel(p) {
-                if(!p) return;
-                if(p === DOM.pShop) initShopPreview(); else stopShopPreview();
+                if(!p) return; if(p === DOM.pShop) initShopPreview(); else window.stopShopPreview();
                 if(p !== DOM.pType) { if(state.timer) { clearInterval(state.timer); state.timer = null; } }
-                
                 [DOM.pSet, DOM.pType, DOM.pRes, DOM.pLb, DOM.pLobby, DOM.pProf, DOM.pShop].forEach(el => { if(el) el.classList.add('hidden'); });
                 p.classList.remove('hidden'); window.scrollTo(0,0);
             }
 
             document.querySelectorAll('.custom-select').forEach(sel => {
-                const head = sel.querySelector('.select-selected'); 
-                const items = sel.querySelector('.select-items');
+                const head = sel.querySelector('.select-selected'); const items = sel.querySelector('.select-items');
                 if(head && items) {
-                    head.onclick = (e) => { 
-                        e.stopPropagation(); 
-                        document.querySelectorAll('.select-items').forEach(i=> { if(i!==items) i.classList.remove('show'); }); 
-                        items.classList.toggle('show'); head.parentElement.classList.toggle('active'); 
-                    };
+                    head.onclick = (e) => { e.stopPropagation(); document.querySelectorAll('.select-items').forEach(i=> { if(i!==items) i.classList.remove('show'); }); items.classList.toggle('show'); head.parentElement.classList.toggle('active'); };
                     sel.querySelectorAll('.select-item').forEach(opt => {
-                        opt.onclick = () => {
-                            head.innerText = opt.innerText; items.classList.remove('show'); head.parentElement.classList.remove('active');
-                            sel.dataset.value = opt.dataset.value;
-                            if(sel.id === 'dd-mode') {
-                                state.mode = opt.dataset.value;
-                                const customGroup = document.getElementById('custom-text-group');
-                                if(customGroup) {
-                                    if (state.mode === 'custom') customGroup.classList.remove('hidden');
-                                    else customGroup.classList.add('hidden');
-                                }
-                            }
+                        opt.onclick = () => { head.innerText = opt.innerText; items.classList.remove('show'); head.parentElement.classList.remove('active'); sel.dataset.value = opt.dataset.value;
+                            if(sel.id === 'dd-mode') { state.mode = opt.dataset.value; const customGroup = document.getElementById('custom-text-group'); if(customGroup) { if (state.mode === 'custom') customGroup.classList.remove('hidden'); else customGroup.classList.add('hidden'); } }
                             if(sel.id === 'dd-val') state.textLength = opt.dataset.value;
                         }
                     });
@@ -754,16 +798,13 @@
             document.addEventListener('click', () => { document.querySelectorAll('.select-items').forEach(i => i.classList.remove('show')); document.querySelectorAll('.custom-select').forEach(s => s.classList.remove('active')); });
 
             safeListen('btn-save-custom', 'click', async () => {
-                const customInp = document.getElementById('custom-text-input');
-                if(!customInp) return;
+                if(!firestoreDb) return;
+                const customInp = document.getElementById('custom-text-input'); if(!customInp) return;
                 const txt = sanitizeText(customInp.value);
                 if(txt.length >= 20 && txt.length <= 500) {
                     let st = state.userStats.savedTexts || []; st.push(txt); state.userStats.savedTexts = st;
-                    try { 
-                        await setDoc(doc(db, 'users', state.userId), { savedTexts: st }, { merge: true }); 
-                        showToast("Custom text saved!", "success");
-                    } catch(e) { showToast("Failed to save text", "error"); }
-                } else { showToast("Text must be between 20 and 500 characters", "error"); }
+                    try { await setDoc(doc(firestoreDb, 'users', state.userId), { savedTexts: st }, { merge: true }); window.showToast("Custom text saved!", "success"); } catch(e) { window.showToast("Failed to save text", "error"); }
+                } else { window.showToast("Text must be between 20 and 500 characters", "error"); }
             });
 
             safeListen('btn-start', 'click', () => startMatch(false));
@@ -773,470 +814,285 @@
             safeListen('btn-lb-back', 'click', () => showPanel(DOM.pSet));
             safeListen('btn-shop', 'click', () => { showPanel(DOM.pShop); renderShop(); });
             safeListen('btn-shop-back', 'click', () => showPanel(DOM.pSet));
-            
             safeListen('btn-profile', 'click', () => {
                 const elBest = document.getElementById('prof-best'); if(elBest) elBest.innerText = state.userStats.bestWPM || 0;
                 const elAvg = document.getElementById('prof-avg'); if(elAvg) elAvg.innerText = Math.round(state.userStats.averageWPM || 0);
                 const elTot = document.getElementById('prof-total'); if(elTot) elTot.innerText = state.userStats.totalGames || 0;
-                
-                let rp = state.userStats.rankPoints || 1000;
-                const rd = getRankInfo(rp);
-                const badge = document.getElementById('prof-rank-badge');
-                if(badge) { badge.innerText = rd.name; badge.className = `rank-badge ${rd.class}`; }
+                let rp = state.userStats.rankPoints || 1000; const rd = getRankInfo(rp);
+                const badge = document.getElementById('prof-rank-badge'); if(badge) { badge.innerText = rd.name; badge.className = `rank-badge ${rd.class}`; }
                 const elRp = document.getElementById('prof-rp'); if(elRp) elRp.innerText = Math.round(rp);
-                
-                updateRankProgressUI(rp, 'prof-rank-bar', 'prof-rank-current', 'prof-rank-next');
-                showPanel(DOM.pProf);
+                updateRankProgressUI(rp, 'prof-rank-bar', 'prof-rank-current', 'prof-rank-next'); showPanel(DOM.pProf);
             });
             safeListen('btn-prof-back', 'click', () => showPanel(DOM.pSet));
 
             function renderShop() {
-                const grid = document.getElementById('shop-grid');
-                const proMsg = document.getElementById('pro-status-msg');
-                if(!grid) return;
-                grid.innerHTML = '';
-                
+                const grid = document.getElementById('shop-grid'); const proMsg = document.getElementById('pro-status-msg'); if(!grid) return; grid.innerHTML = '';
                 let isPro = state.userStats.premium === true;
-                if(proMsg) {
-                    proMsg.innerHTML = isPro 
-                        ? `<span style="color:var(--correct);">✅ PRO ACTIVE: All premium trails unlocked instantly!</span>`
-                        : `<span style="color:var(--text-muted);">Standard Tier. Unlock exclusive aesthetics with PRO.</span>`;
-                }
-
-                let purchased = state.userStats.purchasedTrails || ['default'];
-                let equipped = state.userStats.equippedTrail || 'default';
-                const masterPrev = document.getElementById('shop-master-text');
-
-                if (masterPrev) masterPrev.className = (shopItems.find(i => i.id === equipped) || shopItems[0]).class;
+                if(proMsg) { proMsg.innerHTML = isPro ? `<span style="color:var(--correct);">✅ PRO ACTIVE: All premium trails unlocked instantly!</span>` : `<span style="color:var(--text-muted);">Standard Tier. Unlock exclusive aesthetics with PRO.</span>`; }
+                let purchased = state.userStats.purchasedTrails || ['default']; let equipped = state.userStats.equippedTrail || 'default';
+                const masterPrev = document.getElementById('shop-master-text'); if (masterPrev) masterPrev.className = (shopItems.find(i => i.id === equipped) || shopItems[0]).class;
 
                 shopItems.forEach(item => {
-                    const userOwnsIt = purchased.includes(item.id) || (isPro && item.isPremiumExclusive);
-                    const isEquipped = equipped === item.id;
-                    
-                    const card = document.createElement('div');
-                    card.className = `shop-item ${isEquipped ? 'equipped' : ''}`;
-                    
-                    let actionBtn = '';
-                    let overlayHtml = '';
-
-                    if (item.isPremiumExclusive && !isPro) {
-                        overlayHtml = `<div class="locked-overlay"><span>🔒</span><button class="btn btn-warning" onclick="showToast('Upgrade to PRO in the Admin Panel to unlock!', 'warning')" style="width: 80%; font-size: 0.85rem;">Upgrade to PRO</button></div>`;
-                        actionBtn = `<button class="shop-btn btn-primary" style="opacity: 0.5; pointer-events:none;">PRO Only</button>`;
-                    } else {
-                        if (isEquipped) actionBtn = `<button class="shop-btn btn-equipped" disabled>Equipped</button>`;
-                        else if (userOwnsIt) actionBtn = `<button class="shop-btn btn-equip" data-id="${item.id}">Equip Trail</button>`;
-                        else actionBtn = `<button class="shop-btn btn-buy" data-id="${item.id}" data-price="${item.price}">Unlock (${item.price})</button>`;
+                    const userOwnsIt = purchased.includes(item.id) || (isPro && item.isPremiumExclusive); const isEquipped = equipped === item.id;
+                    const card = document.createElement('div'); card.className = `shop-item ${isEquipped ? 'equipped' : ''}`;
+                    let actionBtn = ''; let overlayHtml = '';
+                    if (item.isPremiumExclusive && !isPro) { 
+                        overlayHtml = `<div class="locked-overlay"><span>🔒</span><button class="btn btn-warning btn-upgrade-pro" style="width: 80%; font-size: 0.85rem;">Upgrade to PRO</button></div>`; 
+                        actionBtn = `<button class="shop-btn btn-primary" style="opacity: 0.5; pointer-events:none;">PRO Only</button>`; 
+                    } else { 
+                        if (isEquipped) actionBtn = `<button class="shop-btn btn-equipped" disabled>Equipped</button>`; 
+                        else if (userOwnsIt) actionBtn = `<button class="shop-btn btn-equip" data-id="${item.id}">Equip Trail</button>`; 
+                        else actionBtn = `<button class="shop-btn btn-buy" data-id="${item.id}" data-price="${item.price}">Unlock (${item.price})</button>`; 
                     }
-
                     card.innerHTML = `
                         ${overlayHtml}
                         <div class="shop-item-name ${item.isPremiumExclusive ? 'pro-name' : ''}">${item.name}</div>
-                        <div class="shop-preview-box ${item.class}">
-                            <span style="color:var(--text-main);">a</span><span class="shop-preview-char active">b</span><span>c</span>
-                        </div>
+                        <div class="shop-preview-box ${item.class}"><span style="color:var(--text-main);">a</span><span class="shop-preview-char active">b</span><span>c</span></div>
                         <div class="shop-price">${item.price === 0 ? 'Free' : item.isPremiumExclusive && isPro ? '<span style="color:var(--success);">UNLOCKED</span>' : item.price + ' Coins'}</div>
                         ${actionBtn}
                     `;
-                    
                     card.addEventListener('mouseenter', () => { if(masterPrev && (!item.isPremiumExclusive || isPro)) masterPrev.className = item.class; });
-                    card.addEventListener('mouseleave', () => { 
-                        if(masterPrev) {
-                            const eqItem = shopItems.find(i => i.id === state.userStats.equippedTrail) || shopItems[0];
-                            masterPrev.className = eqItem.class;
-                        }
-                    });
-
+                    card.addEventListener('mouseleave', () => { if(masterPrev) { const eqItem = shopItems.find(i => i.id === state.userStats.equippedTrail) || shopItems[0]; masterPrev.className = eqItem.class; } });
                     grid.appendChild(card);
+                });
+
+                document.querySelectorAll('.btn-upgrade-pro').forEach(btn => {
+                    btn.addEventListener('click', () => { window.showToast("Ask owner for premium access", "warning"); });
                 });
 
                 document.querySelectorAll('.btn-buy').forEach(btn => {
                     btn.addEventListener('click', async (e) => {
-                        const id = e.target.dataset.id;
-                        const price = parseInt(e.target.dataset.price);
+                        if(!firestoreDb) return;
+                        const id = e.target.dataset.id; const price = parseInt(e.target.dataset.price);
                         if (state.userStats.coins >= price) {
-                            state.userStats.coins -= price;
-                            state.userStats.purchasedTrails.push(id);
-                            state.userStats.equippedTrail = id;
-                            updateHeaderCoins();
-                            applyEquippedTrail();
-                            renderShop();
-                            showToast("Item Unlocked!", "success");
-                            try { await setDoc(doc(db, 'users', state.userId), { coins: state.userStats.coins, purchasedTrails: state.userStats.purchasedTrails, equippedTrail: state.userStats.equippedTrail }, { merge: true }); } catch(err){ console.error(err); }
-                        } else { showToast("Not enough coins", "error"); }
+                            state.userStats.coins -= price; state.userStats.purchasedTrails.push(id); state.userStats.equippedTrail = id; updateHeaderCoins(); applyEquippedTrail(); renderShop(); window.showToast("Item Unlocked!", "success");
+                            try { await setDoc(doc(firestoreDb, 'users', state.userId), { coins: state.userStats.coins, purchasedTrails: state.userStats.purchasedTrails, equippedTrail: state.userStats.equippedTrail }, { merge: true }); } catch(err){ console.error(err); }
+                        } else { window.showToast("Not enough coins", "error"); }
                     });
                 });
-
                 document.querySelectorAll('.btn-equip').forEach(btn => {
                     btn.addEventListener('click', async (e) => {
-                        const id = e.target.dataset.id;
-                        state.userStats.equippedTrail = id;
-                        applyEquippedTrail();
-                        renderShop();
-                        try { await setDoc(doc(db, 'users', state.userId), { equippedTrail: id }, { merge: true }); } catch(err){ console.error(err); }
+                        if(!firestoreDb) return;
+                        const id = e.target.dataset.id; state.userStats.equippedTrail = id; applyEquippedTrail(); renderShop();
+                        try { await setDoc(doc(firestoreDb, 'users', state.userId), { equippedTrail: id }, { merge: true }); } catch(err){ console.error(err); }
                     });
                 });
             }
 
-            safeListen('btn-create-room', 'click', async () => {
-                if(!state.username) return;
-                state.roomId = Math.floor(10000 + Math.random() * 90000).toString();
-                state.isHost = true;
-                const btn = document.getElementById('btn-create-room');
-                let origText = '';
-                if(btn) { origText = btn.innerText; btn.innerText = "Creating..."; btn.disabled = true; }
+            const btnCreateRoom = document.getElementById('btn-create-room');
+            if(btnCreateRoom) {
+                btnCreateRoom.addEventListener('click', async () => {
+                    if(!firestoreDb) return window.showToast("Database not initialized", "error");
+                    if(!state.username) return window.showToast("Please set your name first!", "warning");
+                    state.roomId = Math.floor(10000 + Math.random() * 90000).toString(); state.isHost = true;
+                    let origText = btnCreateRoom.innerText; btnCreateRoom.innerText = "Creating..."; btnCreateRoom.disabled = true;
+                    try {
+                        let txt = generateCleanText(state.textLength); if(state.mode === 'custom') { const customInp = document.getElementById('custom-text-input'); if(customInp) { const cTxt = sanitizeText(customInp.value); if(cTxt.length >= 20) txt = cTxt; } }
+                        const roomData = { hostId: state.userId, status: "waiting", createdAt: serverTimestamp(), text: txt, players: { [state.userId]: { username: state.username, wpm: 0, progress: 0, finished: false, rp: state.userStats.rankPoints || 1000, premium: state.userStats.premium || false, lastActive: Date.now() } } };
+                        await setDoc(doc(firestoreDb, 'rooms', state.roomId), roomData, { merge: true }); state.previousPlayers = [state.userId]; enterLobby();
+                    } catch(e) { console.error("Create Room Error", e); window.showToast("Failed to create room", "error"); state.roomId = null; state.isHost = false; } finally { btnCreateRoom.innerText = origText; btnCreateRoom.disabled = false; }
+                });
+            }
 
-                try {
-                    let txt = generateCleanText(state.textLength);
-                    if(state.mode === 'custom') {
-                        const customInp = document.getElementById('custom-text-input');
-                        if(customInp) { const cTxt = sanitizeText(customInp.value); if(cTxt.length >= 20) txt = cTxt; }
-                    }
-                    
-                    const roomData = {
-                        hostId: state.userId, status: "waiting", createdAt: serverTimestamp(), text: txt,
-                        players: { [state.userId]: { username: state.username, wpm: 0, progress: 0, finished: false, rp: state.userStats.rankPoints || 1000, premium: state.userStats.premium || false, lastActive: Date.now() } }
-                    };
-                    await setDoc(doc(db, 'rooms', state.roomId), roomData, { merge: true });
-                    state.previousPlayers = [state.userId];
-                    enterLobby();
-                } catch(e) {
-                    showToast("Failed to create room", "error"); state.roomId = null; state.isHost = false;
-                } finally { if(btn) { btn.innerText = origText; btn.disabled = false; } }
-            });
-
-            safeListen('btn-join-room', 'click', async () => {
-                const codeInp = document.getElementById('inp-room-code'); if(!codeInp) return;
-                const code = codeInp.value.trim(); 
-                if(code.length !== 5) { showToast("Invalid room code", "error"); return; }
-                
-                const btn = document.getElementById('btn-join-room'); let origText = '';
-                if(btn) { origText = btn.innerText; btn.innerText = "Joining..."; btn.disabled = true; }
-
-                try {
-                    const rSnap = await getDoc(doc(db, 'rooms', code));
-                    if(!rSnap.exists()) { showToast("Room not found", "error"); return; }
-                    if(rSnap.data().status !== "waiting") { showToast("Room is currently playing", "error"); return; }
-                    
-                    const pData = { username: state.username, wpm: 0, progress: 0, finished: false, rp: state.userStats.rankPoints || 1000, premium: state.userStats.premium || false, lastActive: Date.now() };
-                    await updateDoc(doc(db, 'rooms', code), { [`players.${state.userId}`]: pData });
-                    state.roomId = code; state.isHost = false;
-                    state.previousPlayers = []; 
-                    enterLobby();
-                } catch(e) {
-                    showToast("Failed to join room", "error");
-                } finally { if(btn) { btn.innerText = origText; btn.disabled = false; } }
-            });
+            const btnJoinRoom = document.getElementById('btn-join-room');
+            if(btnJoinRoom) {
+                btnJoinRoom.addEventListener('click', async () => {
+                    if(!firestoreDb) return window.showToast("Database not initialized", "error");
+                    if(!state.username) return window.showToast("Please set your name first!", "warning");
+                    const codeInp = document.getElementById('inp-room-code'); if(!codeInp) return; const code = codeInp.value.trim(); 
+                    if(code.length !== 5) return window.showToast("Invalid room code", "error");
+                    let origText = btnJoinRoom.innerText; btnJoinRoom.innerText = "Joining..."; btnJoinRoom.disabled = true;
+                    try {
+                        const rSnap = await getDoc(doc(firestoreDb, 'rooms', code)); 
+                        if(!rSnap.exists()) { window.showToast("Room not found", "error"); btnJoinRoom.innerText = origText; btnJoinRoom.disabled = false; return; } 
+                        if(rSnap.data().status !== "waiting") { window.showToast("Room is currently playing", "error"); btnJoinRoom.innerText = origText; btnJoinRoom.disabled = false; return; }
+                        const pData = { username: state.username, wpm: 0, progress: 0, finished: false, rp: state.userStats.rankPoints || 1000, premium: state.userStats.premium || false, lastActive: Date.now() };
+                        await updateDoc(doc(firestoreDb, 'rooms', code), { [`players.${state.userId}`]: pData }); state.roomId = code; state.isHost = false; state.previousPlayers = []; enterLobby();
+                    } catch(e) { console.error("Join Room Error", e); window.showToast("Failed to join room", "error"); } finally { btnJoinRoom.innerText = origText; btnJoinRoom.disabled = false; }
+                });
+            }
 
             function enterLobby() {
-                showPanel(DOM.pLobby); 
-                const lblCode = document.getElementById('lobby-room-code');
-                if(lblCode) lblCode.innerText = state.roomId;
-
+                showPanel(DOM.pLobby); const lblCode = document.getElementById('lobby-room-code'); if(lblCode) lblCode.innerText = state.roomId;
+                if(state.roomUnsub) { state.roomUnsub(); state.roomUnsub = null; }
                 if(state.heartbeat) { clearInterval(state.heartbeat); state.heartbeat = null; }
-                state.heartbeat = setInterval(() => {
-                    if(state.roomId) updateDoc(doc(db, 'rooms', state.roomId), { [`players.${state.userId}.lastActive`]: Date.now() }).catch(e => console.error(e));
-                }, 15000);
                 
-                state.roomUnsub = onSnapshot(doc(db, 'rooms', state.roomId), (docSnap) => {
-                    if(!docSnap.exists()) { leaveRoom(); showToast("Room closed by host", "info"); return; }
+                state.heartbeat = setInterval(() => {
+                    if(state.roomId && firestoreDb) {
+                        updateDoc(doc(firestoreDb, 'rooms', state.roomId), { [`players.${state.userId}.lastActive`]: Date.now() }).catch(e => {});
+                        if (state.isHost && state.roomData && state.roomData.players) {
+                            const now = Date.now();
+                            Object.entries(state.roomData.players).forEach(([uid, p]) => { if (uid !== state.userId && p.lastActive && (now - p.lastActive > 20000)) window.kickPlayer(uid); });
+                        }
+                    }
+                }, 10000);
+                
+                state.roomUnsub = onSnapshot(doc(firestoreDb, 'rooms', state.roomId), (docSnap) => {
+                    if(!docSnap.exists()) { leaveRoom(); window.showToast("Room closed by host", "info"); return; }
                     const data = docSnap.data(); state.roomData = data; state.text = data.text;
-                    
-                    if(!data.players || !data.players[state.userId]) { leaveRoom(); showToast("You were disconnected", "info"); return; }
-                    if(data.hostId === state.userId && !state.isHost) { state.isHost = true; showToast("You are now the host", "warning"); }
+                    if(!data.players || !data.players[state.userId]) { leaveRoom(); window.showToast("You were disconnected", "info"); return; }
+                    if(data.hostId === state.userId && !state.isHost) { state.isHost = true; window.showToast("You are now the host", "warning"); }
 
                     const currentPlayers = Object.keys(data.players || {});
-                    if (state.previousPlayers.length > 0) {
-                        currentPlayers.forEach(uid => {
-                            if (!state.previousPlayers.includes(uid)) {
-                                const p = data.players[uid];
-                                if (p.premium && uid !== state.userId) showToast(`👑 ${escapeHTML(p.username)} (PRO) joined the room!`, "warning");
-                            }
-                        });
+                    if (state.previousPlayers.length > 0) { 
+                        currentPlayers.forEach(uid => { 
+                            if (!state.previousPlayers.includes(uid)) { 
+                                const p = data.players[uid]; 
+                                if (p.premium && uid !== state.userId) { window.showPremiumEntry(p.username); } 
+                                else if (!p.premium && uid !== state.userId) { window.showToast(`${escapeHTML(p.username)} joined the room`, "info"); } 
+                            } 
+                        }); 
                     }
                     state.previousPlayers = currentPlayers;
 
-                    const btnStartR = document.getElementById('btn-start-room'); 
-                    if(btnStartR) { if (state.isHost) btnStartR.classList.remove('hidden'); else btnStartR.classList.add('hidden'); }
-                    
-                    const hostCont = document.getElementById('host-controls'); 
-                    if(hostCont) { if (state.isHost) hostCont.classList.remove('hidden'); else hostCont.classList.add('hidden'); }
-
+                    const btnStartR = document.getElementById('btn-start-room'); if(btnStartR) { if (state.isHost) btnStartR.classList.remove('hidden'); else btnStartR.classList.add('hidden'); }
+                    const hostCont = document.getElementById('host-controls'); if(hostCont) { if (state.isHost) hostCont.classList.remove('hidden'); else hostCont.classList.add('hidden'); }
                     const pListEl = document.getElementById('lobby-players-list'); 
                     if(pListEl) {
                         pListEl.innerHTML = '';
                         Object.entries(data.players).forEach(([uid, p]) => {
-                            const rd = getRankInfo(p.rp || 1000);
-                            let kickStr = '';
-                            if (state.isHost && uid !== state.userId) kickStr = `<button class="btn-danger p-2" onclick="kickPlayer('${uid}')">Kick</button>`;
-                            
-                            let crownStr = uid === data.hostId ? '👑' : '';
-                            let premClass = p.premium ? 'pro-name' : '';
-                            let premBadge = p.premium ? '<span class="pro-badge">PRO</span>' : '';
-
-                            pListEl.innerHTML += `<li class="p-3 flex justify-between items-center" style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-md);">
-                                <span class="font-bold text-xl ${premClass}">${escapeHTML(p.username)} ${premBadge} <span class="text-muted" style="font-size:0.85rem; font-weight:normal; background: var(--bg); padding: 0.2rem 0.5rem; border-radius: 4px; margin-left: 0.5rem; -webkit-text-fill-color: initial;">${rd.name}</span> ${crownStr}</span>
-                                ${kickStr}
-                            </li>`;
+                            const rd = getRankInfo(p.rp || 1000); let kickStr = ''; 
+                            if (state.isHost && uid !== state.userId) {
+                                kickStr = `<button class="btn-danger p-2" onclick="window.kickPlayer('${uid}')">Kick</button>`;
+                            }
+                            let crownStr = uid === data.hostId ? '👑' : ''; let premClass = p.premium ? 'pro-name' : ''; let premBadge = p.premium ? '<span class="pro-badge">PRO</span>' : '';
+                            pListEl.innerHTML += `<li class="p-3 flex justify-between items-center" style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-md);"><span class="font-bold text-xl ${premClass}">${escapeHTML(p.username)} ${premBadge} <span class="text-muted" style="font-size:0.85rem; font-weight:normal; background: var(--bg); padding: 0.2rem 0.5rem; border-radius: 4px; margin-left: 0.5rem; -webkit-text-fill-color: initial;">${rd.name}</span> ${crownStr}</span>${kickStr}</li>`;
                         });
                     }
 
                     if(data.status === "countdown" && DOM.pType && DOM.pType.classList.contains('hidden')) {
-                        buildWordDisplay();
-                        showPanel(DOM.pType); 
-                        if(DOM.statusOverlay) DOM.statusOverlay.classList.remove('hidden'); 
-                        if(DOM.mpProgCont) DOM.mpProgCont.classList.remove('hidden'); 
-
-                        state.isCountdown = true;
-                        if(DOM.hInp) { DOM.hInp.disabled = false; DOM.hInp.value = ''; }
-                        
-                        let count = 3; 
-                        if(DOM.statusText) DOM.statusText.innerText = count;
-                        
-                        const cdInt = setInterval(() => {
-                            count--;
-                            if(count > 0) {
-                                if(DOM.statusText) DOM.statusText.innerText = count;
-                            } else if(count === 0) {
-                                if(DOM.statusText) DOM.statusText.innerText = "GO!";
-                            } else { 
-                                clearInterval(cdInt); 
-                                if(DOM.statusOverlay) DOM.statusOverlay.classList.add('hidden'); 
-                                if(state.isHost) { updateDoc(doc(db, 'rooms', state.roomId), { status: "playing" }).catch(e=>{}); }
-                                startRealMatch(true); 
-                            }
-                        }, 1000);
+                        buildWordDisplay(); showPanel(DOM.pType); if(DOM.statusOverlay) DOM.statusOverlay.classList.remove('hidden'); if(DOM.mpProgCont) DOM.mpProgCont.classList.remove('hidden'); 
+                        state.isCountdown = true; if(DOM.hInp) { DOM.hInp.disabled = false; DOM.hInp.value = ''; } let count = 3; if(DOM.statusText) DOM.statusText.innerText = count;
+                        const cdInt = setInterval(() => { count--; if(count > 0) { if(DOM.statusText) DOM.statusText.innerText = count; } else if(count === 0) { if(DOM.statusText) DOM.statusText.innerText = "GO!"; } else { clearInterval(cdInt); if(DOM.statusOverlay) DOM.statusOverlay.classList.add('hidden'); if(state.isHost && firestoreDb) { updateDoc(doc(firestoreDb, 'rooms', state.roomId), { status: "playing" }).catch(e=>{}); } startRealMatch(true); } }, 1000);
                     }
 
                     if(data.status === "playing" || data.status === "finished") {
                         if(DOM.mpProgCont) {
-                            DOM.mpProgCont.innerHTML = '';
+                            const fragment = document.createDocumentFragment();
                             Object.values(data.players).forEach(p => {
-                                let pClass = p.premium ? 'pro-name' : '';
-                                DOM.mpProgCont.innerHTML += `<div class="flex justify-between mb-1 text-muted font-bold" style="font-size:0.9rem;">
-                                    <span class="${pClass}">${escapeHTML(p.username)}</span> <span class="text-primary">${p.wpm} WPM</span>
-                                </div>
-                                <div class="mp-bar-bg"><div class="mp-bar-fill ${p.finished ? 'mp-bar-finished' : ''}" style="width: ${p.progress}%;"></div></div>`;
+                                let pClass = p.premium ? 'pro-name' : ''; const playerDiv = document.createElement('div'); playerDiv.style.width = '100%';
+                                playerDiv.innerHTML = `<div class="flex justify-between mb-1 text-muted font-bold" style="font-size:0.9rem;"><span class="${pClass}">${escapeHTML(p.username)}</span> <span class="text-primary">${p.wpm} WPM</span></div><div class="mp-bar-bg"><div class="mp-bar-fill ${p.finished ? 'mp-bar-finished' : ''}" style="width: ${p.progress}%;"></div></div>`;
+                                fragment.appendChild(playerDiv);
                             });
+                            DOM.mpProgCont.innerHTML = ''; DOM.mpProgCont.appendChild(fragment);
                         }
                     }
                     if(data.status === "finished" && DOM.pRes && DOM.pRes.classList.contains('hidden')) showWinnerScreen(data.players);
                 });
             }
 
-            window.kickPlayer = async (uid) => { 
-                if(!state.roomId) return; 
-                try { await updateDoc(doc(db, 'rooms', state.roomId), { [`players.${uid}`]: deleteField() }); showToast("Player kicked", "info"); } catch(e) {} 
-            };
+            window.kickPlayer = async (uid) => { if(!state.roomId || !firestoreDb) return; try { await updateDoc(doc(firestoreDb, 'rooms', state.roomId), { [`players.${uid}`]: deleteField() }); window.showToast("Player kicked", "info"); } catch(e) {} };
             
-            safeListen('btn-host-sync-custom', 'click', () => {
-                if(!state.roomId) return;
-                const cTxtInp = document.getElementById('custom-text-input'); if(!cTxtInp) return;
-                const cTxt = sanitizeText(cTxtInp.value);
-                if(cTxt.length >= 20) { try { updateDoc(doc(db, 'rooms', state.roomId), { text: cTxt }); showToast("Custom text synced", "success"); } catch(e){ console.error(e); showToast("Sync failed", "error"); } 
-                } else { showToast("Text too short to sync", "error"); }
-            });
-            
-            safeListen('btn-host-sync-random', 'click', () => {
-                if(!state.roomId) return;
-                try { updateDoc(doc(db, 'rooms', state.roomId), { text: generateCleanText(state.textLength) }); showToast("Random text synced", "success"); } catch(e){ console.error(e); showToast("Sync failed", "error"); }
-            });
-            
-            safeListen('btn-start-room', 'click', () => { 
-                if(!state.roomId) return;
-                try { updateDoc(doc(db, 'rooms', state.roomId), { status: "countdown" }); } catch(e){ console.error(e); showToast("Failed to start", "error"); } 
-            });
-            
+            safeListen('btn-host-sync-custom', 'click', () => { if(!state.roomId || !firestoreDb) return; const cTxtInp = document.getElementById('custom-text-input'); if(!cTxtInp) return; const cTxt = sanitizeText(cTxtInp.value); if(cTxt.length >= 20) { try { updateDoc(doc(firestoreDb, 'rooms', state.roomId), { text: cTxt }); window.showToast("Custom text synced", "success"); } catch(e){ console.error(e); window.showToast("Sync failed", "error"); } } else { window.showToast("Text too short to sync", "error"); } });
+            safeListen('btn-host-sync-random', 'click', () => { if(!state.roomId || !firestoreDb) return; try { updateDoc(doc(firestoreDb, 'rooms', state.roomId), { text: generateCleanText(state.textLength) }); window.showToast("Random text synced", "success"); } catch(e){ console.error(e); window.showToast("Sync failed", "error"); } });
+            safeListen('btn-start-room', 'click', () => { if(!state.roomId || !firestoreDb) return; try { updateDoc(doc(firestoreDb, 'rooms', state.roomId), { status: "countdown" }); } catch(e){ console.error(e); window.showToast("Failed to start", "error"); } });
             safeListen('btn-leave-room', 'click', leaveRoom);
 
             window.addEventListener("beforeunload", () => {
-                if (state.roomId && state.isHost) { deleteDoc(doc(db, 'rooms', state.roomId)).catch(e=>{}); }
+                if (state.roomId && firestoreDb) {
+                    if (state.isHost) { deleteDoc(doc(firestoreDb, 'rooms', state.roomId)).catch(e=>{}); }
+                    else { updateDoc(doc(firestoreDb, 'rooms', state.roomId), { [`players.${state.userId}`]: deleteField() }).catch(e=>{}); }
+                }
             });
             
             async function leaveRoom() {
                 const cId = state.roomId; const isH = state.isHost; const uId = state.userId;
-                if(state.roomUnsub) state.roomUnsub(); 
+                if(state.roomUnsub) { state.roomUnsub(); state.roomUnsub = null; }
                 if(state.heartbeat) { clearInterval(state.heartbeat); state.heartbeat = null; }
-                
-                state.roomId = null; state.isHost = false; state.previousPlayers = [];
-                if(DOM.mpProgCont) DOM.mpProgCont.classList.add('hidden'); 
-                showPanel(DOM.pSet);
-
-                if(!cId) return;
+                state.roomId = null; state.isHost = false; state.previousPlayers = []; if(DOM.mpProgCont) DOM.mpProgCont.classList.add('hidden'); showPanel(DOM.pSet);
+                if(!cId || !firestoreDb) return;
                 try {
-                    const rSnap = await getDoc(doc(db, 'rooms', cId));
+                    const rSnap = await getDoc(doc(firestoreDb, 'rooms', cId));
                     if (rSnap.exists()) {
                         const rD = rSnap.data(); const pList = Object.keys(rD.players || {}).filter(id => id !== uId);
-                        if (pList.length === 0) await deleteDoc(doc(db, 'rooms', cId));
-                        else {
-                            const upd = { [`players.${uId}`]: deleteField() };
-                            if (isH && pList.length > 0) upd.hostId = pList[0];
-                            await updateDoc(doc(db, 'rooms', cId), upd);
-                        }
+                        if (pList.length === 0) await deleteDoc(doc(firestoreDb, 'rooms', cId));
+                        else { const upd = { [`players.${uId}`]: deleteField() }; if (isH && pList.length > 0) upd.hostId = pList[0]; await updateDoc(doc(firestoreDb, 'rooms', cId), upd); }
                     }
                 } catch(e) {}
             }
 
             function buildWordDisplay() {
-                if(!DOM.tDisp) return;
-                DOM.tDisp.innerHTML = '';
-                DOM.tDisp.scrollTop = 0; 
-                state.spans = [];
-                const wordsArray = state.text.split(' ');
-                
+                if(!DOM.tDisp) return; DOM.tDisp.innerHTML = ''; DOM.tDisp.scrollTop = 0; state.spans = []; lastOffsetTop = 0; const wordsArray = state.text.split(' ');
+                const pLayer = document.getElementById('particle-layer'); if (pLayer) pLayer.innerHTML = '';
                 wordsArray.forEach((word, wordIndex) => {
-                    const wordSpan = document.createElement('span');
-                    wordSpan.className = 'word';
-                    
-                    for(let i=0; i<word.length; i++) {
-                        const charSpan = document.createElement('span');
-                        charSpan.textContent = word[i];
-                        wordSpan.appendChild(charSpan);
-                        state.spans.push(charSpan);
-                    }
+                    const wordSpan = document.createElement('span'); wordSpan.className = 'word';
+                    for(let i=0; i<word.length; i++) { const charSpan = document.createElement('span'); charSpan.textContent = word[i]; wordSpan.appendChild(charSpan); state.spans.push(charSpan); }
                     DOM.tDisp.appendChild(wordSpan);
-
-                    if(wordIndex < wordsArray.length - 1) {
-                        const spaceWrapper = document.createElement('span');
-                        spaceWrapper.className = 'space';
-                        const spaceChar = document.createElement('span');
-                        spaceChar.textContent = ' ';
-                        spaceWrapper.appendChild(spaceChar);
-                        state.spans.push(spaceChar);
-                        DOM.tDisp.appendChild(spaceWrapper);
-                    }
+                    if(wordIndex < wordsArray.length - 1) { const spaceWrapper = document.createElement('span'); spaceWrapper.className = 'space'; const spaceChar = document.createElement('span'); spaceChar.textContent = ' '; spaceWrapper.appendChild(spaceChar); state.spans.push(spaceChar); DOM.tDisp.appendChild(spaceWrapper); }
                 });
-                
                 if(state.spans.length > 0) state.spans[0].classList.add('active');
             }
 
             function startMatch(isMP = false) {
-                state.timeSecs = 0; state.isTyping = false; state.errors = 0; state.currentErrors = 0; state.totalTyped = 0; state.maxIdx = 0;
-                state.testEnded = false; state.isCountdown = false; state.wpmHistory = []; state.progressHistory = []; state.lastProgressChar = 0; state.lastRenderedLen = 0;
+                state.timeSecs = 0; state.isTyping = false; state.errors = 0; state.currentErrors = 0; state.totalTyped = 0; state.maxIdx = 0; state.testEnded = false; state.isCountdown = false; state.wpmHistory = []; state.progressHistory = []; state.lastProgressChar = 0; state.lastRenderedLen = 0;
                 resetTimers();
-
-                if(!isMP) {
-                    if(state.mode === 'custom') {
-                        const cTxtInp = document.getElementById('custom-text-input');
-                        if(cTxtInp) { const cTxt = sanitizeText(cTxtInp.value); state.text = cTxt.length >= 20 ? cTxt : generateCleanText(state.textLength); }
-                    } else state.text = generateCleanText(state.textLength);
-                    if(DOM.mpProgCont) DOM.mpProgCont.classList.add('hidden');
-                }
-
-                if(DOM.hInp) { DOM.hInp.value = ''; DOM.hInp.disabled = false; }
-                buildWordDisplay();
-                
-                if(DOM.sTime) DOM.sTime.innerText = "0:00";
-                if(DOM.sWpm) DOM.sWpm.innerText = "0 WPM";
-
-                showPanel(DOM.pType); 
-                if(!isMP && DOM.focusOverlay) {
-                    const fText = DOM.focusOverlay.querySelector('.overlay-text');
-                    if(fText) fText.innerText = "Tap to Initialize";
-                    DOM.focusOverlay.classList.remove('hidden');
-                }
+                if(!isMP) { if(state.mode === 'custom') { const cTxtInp = document.getElementById('custom-text-input'); if(cTxtInp) { const cTxt = sanitizeText(cTxtInp.value); state.text = cTxt.length >= 20 ? cTxt : generateCleanText(state.textLength); } } else state.text = generateCleanText(state.textLength); if(DOM.mpProgCont) DOM.mpProgCont.classList.add('hidden'); }
+                if(DOM.hInp) { DOM.hInp.value = ''; DOM.hInp.disabled = false; } buildWordDisplay();
+                if(DOM.sTime) DOM.sTime.innerText = "0:00"; if(DOM.sWpm) DOM.sWpm.innerText = "0 WPM";
+                showPanel(DOM.pType); if(!isMP && DOM.focusOverlay) { const fText = DOM.focusOverlay.querySelector('.overlay-text'); if(fText) fText.innerText = "Tap to focus"; DOM.focusOverlay.classList.remove('hidden'); }
             }
 
             function startRealMatch(isMP) {
-                state.isCountdown = false; state.timeSecs = 0; state.isTyping = false; state.errors = 0; state.currentErrors = 0; state.totalTyped = 0; state.maxIdx = 0; state.lastRenderedLen = 0;
-                state.wpmHistory = []; state.progressHistory = []; state.lastProgressChar = 0;
+                state.isCountdown = false; state.timeSecs = 0; state.isTyping = false; state.errors = 0; state.currentErrors = 0; state.totalTyped = 0; state.maxIdx = 0; state.lastRenderedLen = 0; state.wpmHistory = []; state.progressHistory = []; state.lastProgressChar = 0;
                 resetTimers();
-                
-                if(DOM.hInp) { 
-                    DOM.hInp.value = ''; 
-                    DOM.hInp.disabled = false; 
-                    DOM.hInp.focus({ preventScroll: true }); 
-                }
+                if(DOM.hInp) { DOM.hInp.value = ''; DOM.hInp.disabled = false; DOM.hInp.focus({ preventScroll: true }); }
                 buildWordDisplay();
             }
 
-            safeListen('focus-overlay', 'click', () => { 
-                if(DOM.focusOverlay) DOM.focusOverlay.classList.add('hidden'); 
-                if(DOM.hInp) DOM.hInp.focus({ preventScroll: true }); 
-            });
-            
-            safeListen('type-cont', 'mousedown', (e) => { 
-                e.preventDefault(); 
-                if(DOM.focusOverlay) DOM.focusOverlay.classList.add('hidden'); 
-                if(DOM.hInp) { DOM.hInp.focus({ preventScroll: true }); } 
-            });
+            safeListen('focus-overlay', 'click', () => { if(DOM.focusOverlay) DOM.focusOverlay.classList.add('hidden'); if(DOM.hInp) DOM.hInp.focus({ preventScroll: true }); });
+            safeListen('type-cont', 'mousedown', (e) => { e.preventDefault(); if(DOM.focusOverlay) DOM.focusOverlay.classList.add('hidden'); if(DOM.hInp) { DOM.hInp.focus({ preventScroll: true }); } });
 
             if(DOM.hInp) {
-                DOM.hInp.addEventListener("input", (e) => { e.preventDefault(); });
-                DOM.hInp.addEventListener('paste', e => { e.preventDefault(); showToast("Pasting is disabled.", "error"); });
+                DOM.hInp.addEventListener('paste', e => { e.preventDefault(); window.showToast("Pasting is disabled.", "error"); });
                 DOM.hInp.addEventListener('drop', e => e.preventDefault());
 
                 DOM.hInp.addEventListener('blur', () => {
-                    if (state.isTyping && !state.testEnded) {
-                        if (DOM.focusOverlay) {
-                            const fText = DOM.focusOverlay.querySelector('.overlay-text');
-                            if(fText) fText.innerText = "Paused";
-                            DOM.focusOverlay.classList.remove("hidden");
+                    setTimeout(() => {
+                        if (state.isTyping && !state.testEnded && document.activeElement !== DOM.hInp) {
+                            if (DOM.focusOverlay) { const fText = DOM.focusOverlay.querySelector('.overlay-text'); if(fText) fText.innerText = "Paused"; DOM.focusOverlay.classList.remove("hidden"); }
                         }
-                    }
+                    }, 100);
                 });
 
                 DOM.hInp.addEventListener('input', () => {
                     if(state.testEnded) return;
                     if(state.isCountdown) { DOM.hInp.value = ''; return; }
-
-                    if(!state.isTyping) { 
-                        state.isTyping = true; 
-                        resetTimers();
-                        state.timer = setInterval(runTimer, 1000); 
-                    }
+                    if(!state.isTyping) { state.isTyping = true; resetTimers(); state.timer = setInterval(runTimer, 1000); }
                     
-                    const tpd = DOM.hInp.value; 
-                    const newLen = tpd.length;
-                    const oldLen = state.lastRenderedLen;
+                    const tpd = DOM.hInp.value; const newLen = tpd.length; const oldLen = state.lastRenderedLen;
                     
-                    if (newLen > oldLen) {
-                        for (let i = oldLen; i < newLen; i++) {
-                            if (!state.spans[i]) continue;
-                            const isCorrect = (tpd[i] === state.text[i]);
-                            state.spans[i].className = isCorrect ? 'correct' : 'incorrect';
-                            if (!isCorrect) state.currentErrors++;
-                        }
-                    } else if (newLen < oldLen) {
-                        for (let i = newLen; i < oldLen; i++) {
-                            if (!state.spans[i]) continue;
-                            if (state.spans[i].classList.contains('incorrect')) state.currentErrors--;
-                            state.spans[i].className = '';
-                        }
-                    }
+                    if (newLen > oldLen) { 
+                        for (let i = oldLen; i < newLen; i++) { 
+                            if (!state.spans[i]) continue; 
+                            const isCorrect = (tpd[i] === state.text[i]); 
+                            state.spans[i].className = isCorrect ? 'correct' : 'incorrect'; 
+                            if (!isCorrect) state.currentErrors++; 
+                            if (isCorrect) window.spawnParticle(state.spans[i], state.userStats.equippedTrail, false);
+                        } 
+                    } 
+                    else if (newLen < oldLen) { for (let i = newLen; i < oldLen; i++) { if (!state.spans[i]) continue; if (state.spans[i].classList.contains('incorrect')) { state.currentErrors = Math.max(0, state.currentErrors - 1); } state.spans[i].className = ''; } }
 
                     if (state.spans[oldLen]) state.spans[oldLen].classList.remove('active');
                     if (state.spans[newLen]) state.spans[newLen].classList.add('active');
 
                     state.lastRenderedLen = newLen;
+                    if(newLen > state.maxIdx) { state.totalTyped++; if(tpd[newLen-1] !== state.text[newLen-1]) { state.errors++; } state.maxIdx = newLen; }
 
-                    if(newLen > state.maxIdx) { 
-                        state.totalTyped++; 
-                        if(tpd[newLen-1] !== state.text[newLen-1]) { state.errors++; }
-                        state.maxIdx = newLen; 
-                    }
-
-                    // 🔥 HARD LOCK SCROLL CONTROL
                     const act = state.spans[newLen];
                     if (act && DOM.tDisp) {
-                        requestAnimationFrame(() => {
-                            const container = DOM.tDisp;
-                            const targetScroll = act.offsetTop - (container.clientHeight * 0.4);
-                            container.scrollTop = targetScroll;
-                        });
+                        if (act.offsetTop !== lastOffsetTop) {
+                            lastOffsetTop = act.offsetTop;
+                            requestAnimationFrame(() => { const container = DOM.tDisp; container.scrollTop = act.offsetTop - (container.clientHeight * 0.4); });
+                        }
                     }
 
                     const wpm = getWPM(newLen, state.currentErrors, state.timeSecs);
                     if(DOM.sWpm) DOM.sWpm.innerText = `${wpm} WPM`;
 
-                    if(state.roomId) {
-                        const now = Date.now();
+                    if(state.roomId && firestoreDb) {
                         const progress = Math.round((newLen/state.text.length)*100);
-                        if(now - state.lastSyncTime > state.syncThrottleMs || progress === 100) {
-                            state.lastSyncTime = now;
-                            updateDoc(doc(db, 'rooms', state.roomId), { [`players.${state.userId}.wpm`]: wpm, [`players.${state.userId}.progress`]: progress, [`players.${state.userId}.lastActive`]: now }).catch(e=>{});
-                        }
+                        syncPlayerProgress(firestoreDb, state.roomId, state.userId, wpm, progress);
                     }
-
                     if(newLen >= state.text.length) endTest(state.currentErrors, newLen);
                 });
             }
@@ -1244,236 +1100,108 @@
             function runTimer() {
                 if(state.testEnded || state.isCountdown) return;
                 state.timeSecs++;
-                
-                const charsThisSec = state.totalTyped - state.lastProgressChar;
-                state.progressHistory.push(charsThisSec);
-                state.lastProgressChar = state.totalTyped;
-
-                const currentValLength = DOM.hInp ? DOM.hInp.value.length : 0;
-                const curWpm = getWPM(currentValLength, state.currentErrors, state.timeSecs);
-                state.wpmHistory.push(curWpm);
-
+                const charsThisSec = state.totalTyped - state.lastProgressChar; state.progressHistory.push(charsThisSec); state.lastProgressChar = state.totalTyped;
+                const currentValLength = DOM.hInp ? DOM.hInp.value.length : 0; const curWpm = getWPM(currentValLength, state.currentErrors, state.timeSecs); state.wpmHistory.push(curWpm);
                 if(DOM.sTime) DOM.sTime.innerText = window.formatT(state.timeSecs);
-
-                if (state.roomId) {
-                    if (state.isHost && state.roomData && state.roomData.status === "playing") {
-                        Object.entries(state.roomData.players || {}).forEach(([uid, p]) => {
-                            if (p.lastActive && (Date.now() - p.lastActive > 60000) && !p.finished) window.kickPlayer(uid);
-                        });
-                    }
-                }
             }
 
             async function endTest(scrErrs, len) {
-                if(state.testEnded) return;
-                state.testEnded = true;
-                resetTimers();
-                if(DOM.hInp) { DOM.hInp.disabled = true; DOM.hInp.blur(); }
-
-                const wpm = getWPM(len, scrErrs, state.timeSecs);
-                const acc = state.totalTyped > 0 ? Math.max(0, Math.round(((state.totalTyped - state.errors)/state.totalTyped)*100)) : 100;
+                if(state.testEnded) return; state.testEnded = true; resetTimers(); if(DOM.hInp) { DOM.hInp.disabled = true; DOM.hInp.blur(); }
+                const wpm = getWPM(len, scrErrs, state.timeSecs); const acc = state.totalTyped > 0 ? Math.max(0, Math.round(((state.totalTyped - state.errors)/state.totalTyped)*100)) : 100;
 
                 let maxBurst = Math.max(...(state.progressHistory.length ? state.progressHistory : [0]));
-                if (maxBurst > 30) { showToast("Suspicious typing speed detected.", "error"); showPanel(DOM.pSet); return; }
-                if(wpm > 180 || state.timeSecs < 2) { showToast("Speed limit exceeded.", "error"); showPanel(DOM.pSet); return; }
+                if (maxBurst > 30) { window.showToast("Suspicious typing speed detected.", "error"); showPanel(DOM.pSet); return; }
+                if(wpm > 180 || state.timeSecs < 2) { window.showToast("Speed limit exceeded.", "error"); showPanel(DOM.pSet); return; }
 
                 let accLabel = "Rough"; let accColor = "var(--incorrect)";
-                if(acc === 100) { accLabel = "Perfect"; accColor = "var(--correct)"; }
-                else if(acc >= 95) { accLabel = "Sharp"; accColor = "var(--primary)"; }
-                else if(acc >= 90) { accLabel = "Clean"; accColor = "var(--warning)"; }
+                if(acc === 100) { accLabel = "Perfect"; accColor = "var(--correct)"; } else if(acc >= 95) { accLabel = "Sharp"; accColor = "var(--primary)"; } else if(acc >= 90) { accLabel = "Clean"; accColor = "var(--warning)"; }
 
-                let variance = 0;
-                if(state.wpmHistory.length > 2) {
-                    const avg = state.wpmHistory.reduce((a,b)=>a+b,0)/state.wpmHistory.length;
-                    variance = state.wpmHistory.reduce((a,b)=>a+Math.pow(b-avg,2),0)/state.wpmHistory.length;
-                }
+                let variance = 0; if(state.wpmHistory.length > 2) { const avg = state.wpmHistory.reduce((a,b)=>a+b,0)/state.wpmHistory.length; variance = state.wpmHistory.reduce((a,b)=>a+Math.pow(b-avg,2),0)/state.wpmHistory.length; }
                 const consistency = Math.max(0, 100 - Math.sqrt(variance)*2);
 
                 const elWpm = document.getElementById('res-wpm'); if(elWpm) elWpm.innerText = wpm;
                 const elAcc = document.getElementById('res-acc'); if(elAcc) elAcc.innerText = `${acc}%`;
-                const elAccLbl = document.getElementById('res-acc-label'); 
-                if(elAccLbl) { elAccLbl.innerText = accLabel; elAccLbl.style.color = accColor; }
-                const elCons = document.getElementById('res-consistency'); 
-                if(elCons) elCons.innerText = `${consistency.toFixed(0)}% Consistency`;
-                const elTime = document.getElementById('res-time'); 
-                if(elTime) elTime.innerText = `${state.timeSecs}s`;
+                const elAccLbl = document.getElementById('res-acc-label'); if(elAccLbl) { elAccLbl.innerText = accLabel; elAccLbl.style.color = accColor; }
+                const elCons = document.getElementById('res-consistency'); if(elCons) elCons.innerText = `${consistency.toFixed(0)}% Consistency`;
+                const elTime = document.getElementById('res-time'); if(elTime) elTime.innerText = `${state.timeSecs}s`;
 
-                let rpChange = Math.round(wpm / 10);
-                if (acc >= 95) rpChange += 5;
-                else if (acc >= 90) rpChange += 2;
-
+                let rpChange = Math.round(wpm / 10); if (acc >= 95) rpChange += 5; else if (acc >= 90) rpChange += 2;
                 let coinsEarned = Math.floor(wpm / 10) + (acc >= 95 ? 5 : 0);
 
                 if(state.roomId && state.roomData && state.roomData.players) {
-                    const players = state.roomData.players;
-                    const N = Object.keys(players).length;
-                    
+                    const players = state.roomData.players; const N = Object.keys(players).length;
                     if (N > 1) {
-                        let sortedPlayers = [];
-                        for (let uid in players) {
-                            let pWpm = uid === state.userId ? wpm : (players[uid].wpm || 0);
-                            sortedPlayers.push({ uid: uid, wpm: pWpm });
-                        }
-                        sortedPlayers.sort((a, b) => b.wpm - a.wpm);
-                        let pos = sortedPlayers.findIndex(p => p.uid === state.userId);
-                        
-                        if (pos === 0) { 
-                            rpChange += 10;
-                            coinsEarned += 10;
-                        } else { 
-                            rpChange = -2;
-                        }
+                        let sortedPlayers = []; for (let uid in players) { let pWpm = uid === state.userId ? wpm : (players[uid].wpm || 0); sortedPlayers.push({ uid: uid, wpm: pWpm }); }
+                        sortedPlayers.sort((a, b) => b.wpm - a.wpm); let pos = sortedPlayers.findIndex(p => p.uid === state.userId);
+                        if (pos === 0) { rpChange += 10; coinsEarned += 10; } else { rpChange = -2; }
                     }
                 }
 
-                if (state.userStats.premium === true) {
-                    rpChange += Math.floor(Math.random() * 4) + 2; 
-                    coinsEarned = Math.floor(coinsEarned * 1.5) + 5; 
-                }
+                if (state.userStats.premium === true) { rpChange += Math.floor(Math.random() * 4) + 2; coinsEarned = Math.floor(coinsEarned * 1.5) + 5; }
 
-                const elCoins = document.getElementById('res-coins');
-                if(elCoins) elCoins.innerText = `+${coinsEarned}`;
-
-                let oldRp = state.userStats.rankPoints || 1000;
-                let newRp = Math.max(0, oldRp + rpChange);
-                state.userStats.rankPoints = newRp;
+                const elCoins = document.getElementById('res-coins'); if(elCoins) elCoins.innerText = `+${coinsEarned}`;
+                let oldRp = state.userStats.rankPoints || 1000; let newRp = Math.max(0, oldRp + rpChange); state.userStats.rankPoints = newRp; state.userStats.coins = (state.userStats.coins || 0) + coinsEarned; updateHeaderCoins();
+                let newAvg = Math.round(((state.userStats.averageWPM * state.userStats.totalGames) + wpm) / (state.userStats.totalGames + 1)); state.userStats.bestWPM = Math.max(state.userStats.bestWPM || 0, wpm); state.userStats.averageWPM = newAvg || wpm; state.userStats.totalGames = (state.userStats.totalGames || 0) + 1;
                 
-                state.userStats.coins = (state.userStats.coins || 0) + coinsEarned;
-                updateHeaderCoins();
-
-                let newAvg = Math.round(((state.userStats.averageWPM * state.userStats.totalGames) + wpm) / (state.userStats.totalGames + 1));
-                state.userStats.bestWPM = Math.max(state.userStats.bestWPM || 0, wpm);
-                state.userStats.averageWPM = newAvg || wpm;
-                state.userStats.totalGames = (state.userStats.totalGames || 0) + 1;
-                
-                try { await setDoc(doc(db, 'users', state.userId), state.userStats, { merge: true }); } catch(e) {}
+                if(firestoreDb) { try { await setDoc(doc(firestoreDb, 'users', state.userId), state.userStats, { merge: true }); } catch(e) {} }
 
                 if(!state.roomId) {
-                    const rpDisp = document.getElementById('rank-update-display');
-                    if(rpDisp) {
-                        rpDisp.innerText = Math.round(oldRp);
-                        rpDisp.className = "rank-anim-text";
-                        animateValue(rpDisp, oldRp, newRp, 1500);
-                    }
-                    updateRankProgressUI(newRp, 'res-rank-bar', 'res-rank-current', 'res-rank-next');
-                    
-                    showPanel(DOM.pRes); 
-                    if(DOM.mpPodium) DOM.mpPodium.classList.add('hidden');
-                    
-                    try {
-                        if(typeof newRp === 'number' && !isNaN(newRp)) {
-                            const displaySuffix = state.userId.slice(-4).toUpperCase();
-                            const uniqueUsername = `${state.username}#${displaySuffix}`;
-                            await setDoc(doc(db, 'leaderboard', state.userId), { 
-                                username: uniqueUsername, 
-                                rp: newRp, wpm: state.userStats.bestWPM, 
-                                premium: state.userStats.premium || false, 
-                                timestamp: serverTimestamp() 
-                            });
-                        }
-                    } catch(e){}
+                    const rpDisp = document.getElementById('rank-update-display'); if(rpDisp) { rpDisp.innerText = Math.round(oldRp); rpDisp.className = "rank-anim-text"; animateValue(rpDisp, oldRp, newRp, 1500); }
+                    updateRankProgressUI(newRp, 'res-rank-bar', 'res-rank-current', 'res-rank-next'); showPanel(DOM.pRes); if(DOM.mpPodium) DOM.mpPodium.classList.add('hidden');
+                    if(firestoreDb) { try { if(typeof newRp === 'number' && !isNaN(newRp)) { await setDoc(doc(firestoreDb, 'leaderboard', state.userId), { username: state.username, username_lowercase: state.username.toLowerCase(), rp: newRp, wpm: state.userStats.bestWPM, premium: state.userStats.premium || false, timestamp: serverTimestamp() }); } } catch(e){} }
                 } else {
-                    try {
-                        await updateDoc(doc(db, 'rooms', state.roomId), { [`players.${state.userId}.wpm`]: wpm, [`players.${state.userId}.progress`]: 100, [`players.${state.userId}.finished`]: true, [`players.${state.userId}.rp`]: newRp, [`players.${state.userId}.oldRp`]: oldRp });
-                        if(state.isHost) {
-                            const rSnap = await getDoc(doc(db, 'rooms', state.roomId));
-                            if(rSnap.exists() && Object.values(rSnap.data().players || {}).every(p => p.finished)) {
-                                updateDoc(doc(db, 'rooms', state.roomId), { status: "finished" }).catch(e=>{});
-                            }
-                        }
-                    } catch(e){}
+                    if(firestoreDb) { try {
+                        await updateDoc(doc(firestoreDb, 'rooms', state.roomId), { [`players.${state.userId}.wpm`]: wpm, [`players.${state.userId}.progress`]: 100, [`players.${state.userId}.finished`]: true, [`players.${state.userId}.rp`]: newRp, [`players.${state.userId}.oldRp`]: oldRp });
+                        if(state.isHost) { const rSnap = await getDoc(doc(firestoreDb, 'rooms', state.roomId)); if(rSnap.exists() && Object.values(rSnap.data().players || {}).every(p => p.finished)) { updateDoc(doc(firestoreDb, 'rooms', state.roomId), { status: "finished" }).catch(e=>{}); } }
+                    } catch(e){} }
                 }
             }
 
             function showWinnerScreen(playersObj) {
-                if(!playersObj) playersObj = {};
-                const btnNewT = document.getElementById('btn-new-test'); 
-                if(btnNewT) btnNewT.classList.add('hidden');
-                
-                const btnHRest = document.getElementById('btn-host-rematch'); 
-                if(btnHRest) {
-                    if (state.isHost) btnHRest.classList.remove('hidden');
-                    else btnHRest.classList.add('hidden');
-                }
-                
+                if(!playersObj) playersObj = {}; const btnNewT = document.getElementById('btn-new-test'); if(btnNewT) btnNewT.classList.add('hidden');
+                const btnHRest = document.getElementById('btn-host-rematch'); if(btnHRest) { if (state.isHost) btnHRest.classList.remove('hidden'); else btnHRest.classList.add('hidden'); }
                 let arr = Object.values(playersObj).sort((a,b) => b.wpm - a.wpm);
-                
                 if(DOM.mpPodium) {
                     DOM.mpPodium.innerHTML = '';
                     arr.forEach((p, idx) => {
-                        let rIcon = ''; let bg = 'var(--surface)'; let border = 'var(--border)';
-                        if(idx===0){ rIcon='🥇 1ST'; border='var(--rank-gold)'; } 
-                        else if(idx===1){ rIcon='🥈 2ND'; border='var(--rank-silver)'; } 
-                        else if(idx===2){ rIcon='🥉 3RD'; border='var(--rank-bronze)'; }
-                        
-                        let premClass = p.premium ? 'pro-name' : '';
-                        let premBadge = p.premium ? '<span class="pro-badge">PRO</span>' : '';
-
-                        DOM.mpPodium.innerHTML += `<div class="flex justify-between p-3" style="border-radius:var(--radius-md); background:${bg}; border:1px solid ${border}; font-weight:700; font-size: 1.1rem; box-shadow: var(--shadow-sm);">
-                            <span class="${premClass}">${rIcon} ${escapeHTML(p.username)} ${premBadge}</span> <span class="text-primary">${p.wpm} WPM</span></div>`;
+                        let rIcon = ''; let bg = 'var(--surface)'; let border = 'var(--border)'; if(idx===0){ rIcon='🥇 1ST'; border='var(--rank-gold)'; } else if(idx===1){ rIcon='🥈 2ND'; border='var(--rank-silver)'; } else if(idx===2){ rIcon='🥉 3RD'; border='var(--rank-bronze)'; }
+                        let premClass = p.premium ? 'pro-name' : ''; let premBadge = p.premium ? '<span class="pro-badge">PRO</span>' : '';
+                        DOM.mpPodium.innerHTML += `<div class="flex justify-between p-3" style="border-radius:var(--radius-md); background:${bg}; border:1px solid ${border}; font-weight:700; font-size: 1.1rem; box-shadow: var(--shadow-sm);"><span class="${premClass}">${rIcon} ${escapeHTML(p.username)} ${premBadge}</span> <span class="text-primary">${p.wpm} WPM</span></div>`;
                     });
                     DOM.mpPodium.classList.remove('hidden'); 
                 }
-                
-                const rpDisp = document.getElementById('rank-update-display');
-                if(rpDisp && playersObj[state.userId]) {
-                    const myOldRp = playersObj[state.userId].oldRp || state.userStats.rankPoints;
-                    rpDisp.innerText = Math.round(myOldRp);
-                    rpDisp.className = "rank-anim-text";
-                    animateValue(rpDisp, myOldRp, state.userStats.rankPoints, 1500);
-                }
-                updateRankProgressUI(state.userStats.rankPoints, 'res-rank-bar', 'res-rank-current', 'res-rank-next');
-
-                showPanel(DOM.pRes);
+                const rpDisp = document.getElementById('rank-update-display'); if(rpDisp && playersObj[state.userId]) { const myOldRp = playersObj[state.userId].oldRp || state.userStats.rankPoints; rpDisp.innerText = Math.round(myOldRp); rpDisp.className = "rank-anim-text"; animateValue(rpDisp, myOldRp, state.userStats.rankPoints, 1500); }
+                updateRankProgressUI(state.userStats.rankPoints, 'res-rank-bar', 'res-rank-current', 'res-rank-next'); showPanel(DOM.pRes);
             }
 
             safeListen('btn-host-rematch', 'click', () => {
-                if(state.isHost && state.roomId && state.roomData) {
-                    let updates = { status: "waiting" };
-                    Object.keys(state.roomData.players || {}).forEach(uid => { 
-                        updates[`players.${uid}.progress`] = 0; updates[`players.${uid}.wpm`] = 0; updates[`players.${uid}.finished`] = false; 
-                    });
-                    try { updateDoc(doc(db, 'rooms', state.roomId), updates).then(() => showPanel(DOM.pLobby)); } catch(e){}
+                if(state.isHost && state.roomId && state.roomData && firestoreDb) {
+                    let updates = { status: "waiting" }; Object.keys(state.roomData.players || {}).forEach(uid => { updates[`players.${uid}.progress`] = 0; updates[`players.${uid}.wpm`] = 0; updates[`players.${uid}.finished`] = false; });
+                    try { updateDoc(doc(firestoreDb, 'rooms', state.roomId), updates).then(() => showPanel(DOM.pLobby)); } catch(e){}
                 }
             });
 
             function renderLeaderboard() {
-                const tbody = document.getElementById('lb-body');
-                if(tbody) tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted p-4">Syncing secure data...</td></tr>`;
+                const tbody = document.getElementById('lb-body'); if(tbody) tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted p-4">Syncing secure data...</td></tr>`;
+                if(!firestoreDb) { if(tbody) tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted p-4">Database not connected</td></tr>`; return; }
                 try {
-                    getDocs(query(collection(db, 'leaderboard'), orderBy('rp', 'desc'), limit(50)))
-                    .then(snap => {
+                    getDocs(query(collection(firestoreDb, 'leaderboard'), orderBy('rp', 'desc'), limit(50))).then(snap => {
                         if(tbody) {
-                            tbody.innerHTML = '';
-                            let i = 1;
-                            const fragment = document.createDocumentFragment();
+                            tbody.innerHTML = ''; let i = 1; const fragment = document.createDocumentFragment();
                             snap.forEach((d) => {
-                                const row = d.data();
-                                const rd = getRankInfo(row.rp || 1000);
-                                const tr = document.createElement('tr');
-                                
-                                let premClass = row.premium ? 'pro-name' : '';
-                                let premBadge = row.premium ? '<span class="pro-badge">PRO</span>' : '';
-
-                                tr.innerHTML = `
-                                    <td><span class="font-bold ${premClass}">${i}. ${escapeHTML(row.username)} ${premBadge}</span></td>
-                                    <td><span class="rank-badge ${rd.class}" style="font-size:0.75rem; padding:0.3rem 0.8rem; -webkit-text-fill-color: initial;">${rd.name}</span></td>
-                                    <td class="text-primary font-extrabold">${Math.round(row.rp||1000)}</td>
-                                    <td class="font-bold">${row.wpm} WPM</td>
-                                `;
-                                fragment.appendChild(tr);
-                                i++;
+                                const row = d.data(); const rd = getRankInfo(row.rp || 1000); const tr = document.createElement('tr');
+                                let premClass = row.premium ? 'pro-name' : ''; let premBadge = row.premium ? '<span class="pro-badge">PRO</span>' : '';
+                                tr.innerHTML = `<td><span class="font-bold ${premClass}">${i}. ${escapeHTML(row.username)} ${premBadge}</span></td><td><span class="rank-badge ${rd.class}" style="font-size:0.75rem; padding:0.3rem 0.8rem; -webkit-text-fill-color: initial;">${rd.name}</span></td><td class="text-primary font-extrabold">${Math.round(row.rp||1000)}</td><td class="font-bold">${row.wpm} WPM</td>`;
+                                fragment.appendChild(tr); i++;
                             });
-                            if (snap.empty) { tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted p-4">No ranked players found.</td></tr>`; }
-                            else { tbody.appendChild(fragment); }
+                            if (snap.empty) { tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted p-4">No ranked players found.</td></tr>`; } else { tbody.appendChild(fragment); }
                         }
                     }).catch(e => {});
                 } catch(e) {}
             }
             
             function escapeHTML(str) { return str ? str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag])) : ''; }
-
         });
     </script>
 </body>
-    </html>
+</html>
