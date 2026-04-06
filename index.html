@@ -1079,21 +1079,10 @@
                     state.lastRenderedLen = newLen;
                     if(newLen > state.maxIdx) { state.totalTyped++; if(tpd[newLen-1] !== state.text[newLen-1]) { state.errors++; } state.maxIdx = newLen; }
 
-                    /* === 🔥 SAFE CONDITIONAL SCROLL FIX === */
+                    /* === 🔥 NATIVE SCROLL FIX === */
                     const act = state.spans[newLen];
-                    if (act && DOM.tDisp) {
-                        const container = DOM.tDisp;
-                        const actBottom = act.offsetTop + act.offsetHeight;
-                        const viewBottom = container.scrollTop + container.clientHeight;
-                        
-                        // Scroll down ONLY if character goes below view (with 10px buffer)
-                        if (actBottom > viewBottom - 10) { 
-                            container.scrollTop = actBottom - container.clientHeight + 40; 
-                        } 
-                        // Scroll up ONLY if character goes above view
-                        else if (act.offsetTop < container.scrollTop) {
-                            container.scrollTop = act.offsetTop - 20;
-                        }
+                    if (act) {
+                        act.scrollIntoView({ block: "nearest", inline: "nearest" });
                     }
 
                     const wpm = getWPM(newLen, state.currentErrors, state.timeSecs);
@@ -1218,4 +1207,4 @@
         });
     </script>
 </body>
-</html>
+            </html>
