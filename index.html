@@ -516,6 +516,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getFirestore, collection, doc, getDoc, setDoc, updateDoc, deleteDoc, deleteField, serverTimestamp, onSnapshot, query, orderBy, limit, getDocs, where } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
+        // Must define globals to use inside inline handlers or standard DOM listeners securely
         window.showToast = function(message, type = 'info') {
             const container = document.getElementById('toast-container');
             if(!container) return;
@@ -557,33 +558,44 @@
             setTimeout(() => { overlay.classList.remove('show'); if(container) container.classList.remove('shake-active'); }, 3000);
         };
 
+        // 🔥 FIXED: Pure CSS Physical Particles in Independent Absolute Layer
         window.spawnParticle = function(span, trailId, isShopPreview = false) {
             if (!span || trailId === 'default') return;
             const layer = document.getElementById(isShopPreview ? 'shop-particle-layer' : 'particle-layer');
             if (!layer) return;
-            if (layer.childElementCount > 60) return; 
+
+            if (layer.childElementCount > 60) return; // Prevent performance lag
 
             const p = document.createElement('span');
             p.className = `typing-particle particle-${trailId}`;
+            
+            // Calculate absolute position relative to the layer
             const rect = span.getBoundingClientRect();
             const layerRect = layer.getBoundingClientRect();
+            
             const startX = rect.left - layerRect.left + (rect.width / 2);
             const startY = rect.top - layerRect.top + (rect.height / 2);
+            
             p.style.left = startX + 'px';
             p.style.top = startY + 'px';
+            
+            // Generate physics variables
             const tx = (Math.random() - 0.5) * 50; 
             const ty = (Math.random() - 1) * 50;   
             const scale = Math.random() * 1.5 + 0.5; 
-            const duration = Math.random() * 400 + 400; 
+            const duration = Math.random() * 400 + 400; // 400ms - 800ms
+            
             p.style.setProperty('--tx', `${tx}px`);
             p.style.setProperty('--ty', `${ty}px`);
             p.style.setProperty('--scale', scale);
             p.style.animationDuration = `${duration}ms`;
+            
             if(trailId === 'rainbow') {
                 const colors = ['#ff0000', '#ff7f00', '#ffff00', '#00ff00', '#0000ff', '#4b0082', '#8b00ff'];
                 p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
                 p.style.boxShadow = `0 0 8px ${p.style.backgroundColor}`;
             }
+
             layer.appendChild(p);
             setTimeout(() => { if(p.parentNode) p.remove(); }, duration);
         };
@@ -657,7 +669,10 @@
         document.addEventListener("DOMContentLoaded", () => {
             const firebaseConfig = { apiKey: "AIzaSyCziskazrd-3vFia04uvkqWF8bFVGeqXPk", authDomain: "fast-typing-app-aecdc.firebaseapp.com", projectId: "fast-typing-app-aecdc" };
             let app, firestoreDb;
-            try { app = initializeApp(firebaseConfig); firestoreDb = getFirestore(app); } catch(e) { console.error("Firebase init error", e); window.showToast("Database connection failed", "error"); }
+            try {
+                app = initializeApp(firebaseConfig);
+                firestoreDb = getFirestore(app);
+            } catch(e) { console.error("Firebase init error", e); window.showToast("Database connection failed", "error"); }
 
             const wordPoolStr = "the,be,to,of,and,a,in,that,have,it,for,not,on,with,he,as,you,do,at,this,but,his,by,from,they,we,say,her,she,or,an,will,my,one,all,would,there,their,what,so,up,out,if,about,who,get,which,go,me,when,make,can,like,time,no,just,him,know,take,people,into,year,your,good,some,could,them,see,other,than,then,now,look,only,come,its,over,think,also,back,after,use,two,how,our,work,first,well,way,even,new,want,because,any,these,give,day,most,us,is,are,was,were,been,being,has,had,having,does,did,doing,a,an,the,and,but,if,or,because,as,until,while,of,at,by,for,with,about,against,between,into,through,during,before,after,above,below,to,from,up,down,in,out,on,off,over,under,again,further,then,once,here,there,when,where,why,how,all,any,both,each,few,more,most,other,some,such,no,nor,not,only,own,same,so,than,too,very,s,t,can,will,just,don,should,now,system,software,hardware,program,function,variable,constant,database,server,client,network,protocol,security,encryption,algorithm,logic,module,interface,class,object,method,property,event,listener,callback,promise,async,await,thread,process,memory,storage,cache,pointer,reference,value,type,string,number,boolean,array,list,map,dictionary,set,tree,graph,node,edge,vertex,path,cycle,loop,condition,statement,expression,operator,operand,argument,parameter,return,yield,break,continue,switch,case,default,throw,catch,finally,try,except,raise,import,export,require,include,module,package,library,framework,application,service,api,endpoint,request,response,header,body,payload,status,code,error,exception,bug,fix,patch,update,upgrade,version,release,build,deploy,test,debug,trace,log,monitor,metric,alert,dashboard,report,analytics,data,information,knowledge,insight,action,result,outcome,goal,objective,strategy,plan,task,project,team,user,customer,client,partner,vendor,supplier,contract,agreement,license,policy,rule,regulation,law,compliance,audit,review,inspection,check,validate,verify,approve,reject,cancel,suspend,resume,start,stop,pause,play,record,save,load,read,write,delete,remove,add,insert,update,modify,change,edit,format,style,design,layout,theme,color,font,size,weight,align,justify,center,left,right,top,bottom,margin,padding,border,radius,shadow,opacity,visible,hidden,display,block,inline,flex,grid,position,absolute,relative,fixed,sticky,z-index,float,clear,overflow,scroll,auto,clip,transform,translate,scale,rotate,skew,matrix,transition,animation,keyframes,duration,delay,timing,function,iteration,count,direction,fill,mode,play,state,media,query,breakpoint,responsive,mobile,tablet,desktop,screen,print,speech,hover,active,focus,visited,link,target,before,after,first,last,child,type,nth,only,empty,not,has,is,where,root,scope,host,shadow,part,slotted,dir,lang,theme";
             const wordPool = wordPoolStr.split(",");
@@ -669,11 +684,10 @@
             function animateValue(obj, start, end, duration) { if(!obj) return; let startTimestamp = null; const step = (timestamp) => { if (!startTimestamp) startTimestamp = timestamp; const progress = Math.min((timestamp - startTimestamp) / duration, 1); obj.innerHTML = Math.floor(progress * (end - start) + start); if (progress < 1) window.requestAnimationFrame(step); else { obj.innerHTML = end; obj.classList.remove('rank-up', 'rank-down'); if (end > start) obj.classList.add('rank-up'); else if (end < start) obj.classList.add('rank-down'); } }; window.requestAnimationFrame(step); }
             function getWPM(typedLen, errs, timeSecs) { if (timeSecs <= 0) return 0; const netChars = typedLen - errs; const wpm = (netChars / 5) / (timeSecs / 60); return Math.max(0, Math.round(wpm)); }
 
-            /* === 🌟 SHOP CONFIGURATION (FIXED: 2 FREE PARTICLE TRAILS) === */
             const shopItems = [
                 { id: 'default', name: 'Standard Line', price: 0, class: 'trail-default' }, 
-                { id: 'basic_glow', name: 'Basic Glow', price: 0, class: 'trail-basic_glow' }, /* FREE PARTICLE TRAIL 1 */
-                { id: 'pulse', name: 'Pulse Cursor', price: 0, class: 'trail-pulse' },       /* FREE PARTICLE TRAIL 2 */
+                { id: 'basic_glow', name: 'Basic Glow', price: 100, class: 'trail-basic_glow' }, 
+                { id: 'pulse', name: 'Pulse Cursor', price: 250, class: 'trail-pulse' },
                 { id: 'neon', name: 'Neon Trail', price: 400, class: 'trail-neon' }, 
                 { id: 'fire', name: 'Fire Trail', price: 600, class: 'trail-fire' }, 
                 { id: 'electric', name: 'Electric Surge', price: 800, class: 'trail-electric' },
@@ -747,12 +761,6 @@
                         state.userStats = { ...state.userStats, ...d, premium: d.premium || false };
                         if(!state.userStats.rankPoints) state.userStats.rankPoints = 1000; if(!state.userStats.coins) state.userStats.coins = 0;
                         if(!state.userStats.purchasedTrails) state.userStats.purchasedTrails = ['default']; if(!state.userStats.equippedTrail) state.userStats.equippedTrail = 'default';
-                        
-                        /* Automatically add Free items to inventory */
-                        shopItems.filter(i => i.price === 0).forEach(i => {
-                            if(!state.userStats.purchasedTrails.includes(i.id)) state.userStats.purchasedTrails.push(i.id);
-                        });
-
                         if (state.userStats.premium && state.userStats.equippedTrail === 'default' && !wasPremium) { state.userStats.equippedTrail = 'gold'; setDoc(doc(firestoreDb, 'users', state.userId), { equippedTrail: 'gold' }, { merge: true }); }
                         updateHeaderCoins(); applyEquippedTrail(); updatePremiumUI(state.userStats.premium);
                         if (DOM.pShop && !DOM.pShop.classList.contains('hidden')) renderShop();
@@ -919,6 +927,7 @@
                     const data = docSnap.data(); state.roomData = data; state.text = data.text;
                     if(!data.players || !data.players[state.userId]) { leaveRoom(); window.showToast("You were disconnected", "info"); return; }
                     if(data.hostId === state.userId && !state.isHost) { state.isHost = true; window.showToast("You are now the host", "warning"); }
+
                     const currentPlayers = Object.keys(data.players || {});
                     if (state.previousPlayers.length > 0) { 
                         currentPlayers.forEach(uid => { 
@@ -930,6 +939,7 @@
                         }); 
                     }
                     state.previousPlayers = currentPlayers;
+
                     const btnStartR = document.getElementById('btn-start-room'); if(btnStartR) { if (state.isHost) btnStartR.classList.remove('hidden'); else btnStartR.classList.add('hidden'); }
                     const hostCont = document.getElementById('host-controls'); if(hostCont) { if (state.isHost) hostCont.classList.remove('hidden'); else hostCont.classList.add('hidden'); }
                     const pListEl = document.getElementById('lobby-players-list'); 
@@ -937,16 +947,20 @@
                         pListEl.innerHTML = '';
                         Object.entries(data.players).forEach(([uid, p]) => {
                             const rd = getRankInfo(p.rp || 1000); let kickStr = ''; 
-                            if (state.isHost && uid !== state.userId) { kickStr = `<button class="btn-danger p-2" onclick="window.kickPlayer('${uid}')">Kick</button>`; }
+                            if (state.isHost && uid !== state.userId) {
+                                kickStr = `<button class="btn-danger p-2" onclick="window.kickPlayer('${uid}')">Kick</button>`;
+                            }
                             let crownStr = uid === data.hostId ? '👑' : ''; let premClass = p.premium ? 'pro-name' : ''; let premBadge = p.premium ? '<span class="pro-badge">PRO</span>' : '';
                             pListEl.innerHTML += `<li class="p-3 flex justify-between items-center" style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-md);"><span class="font-bold text-xl ${premClass}">${escapeHTML(p.username)} ${premBadge} <span class="text-muted" style="font-size:0.85rem; font-weight:normal; background: var(--bg); padding: 0.2rem 0.5rem; border-radius: 4px; margin-left: 0.5rem; -webkit-text-fill-color: initial;">${rd.name}</span> ${crownStr}</span>${kickStr}</li>`;
                         });
                     }
+
                     if(data.status === "countdown" && DOM.pType && DOM.pType.classList.contains('hidden')) {
                         buildWordDisplay(); showPanel(DOM.pType); if(DOM.statusOverlay) DOM.statusOverlay.classList.remove('hidden'); if(DOM.mpProgCont) DOM.mpProgCont.classList.remove('hidden'); 
                         state.isCountdown = true; if(DOM.hInp) { DOM.hInp.disabled = false; DOM.hInp.value = ''; } let count = 3; if(DOM.statusText) DOM.statusText.innerText = count;
                         const cdInt = setInterval(() => { count--; if(count > 0) { if(DOM.statusText) DOM.statusText.innerText = count; } else if(count === 0) { if(DOM.statusText) DOM.statusText.innerText = "GO!"; } else { clearInterval(cdInt); if(DOM.statusOverlay) DOM.statusOverlay.classList.add('hidden'); if(state.isHost && firestoreDb) { updateDoc(doc(firestoreDb, 'rooms', state.roomId), { status: "playing" }).catch(e=>{}); } startRealMatch(true); } }, 1000);
                     }
+
                     if(data.status === "playing" || data.status === "finished") {
                         if(DOM.mpProgCont) {
                             const fragment = document.createDocumentFragment();
@@ -1026,28 +1040,48 @@
             if(DOM.hInp) {
                 DOM.hInp.addEventListener('paste', e => { e.preventDefault(); window.showToast("Pasting is disabled.", "error"); });
                 DOM.hInp.addEventListener('drop', e => e.preventDefault());
-                DOM.hInp.addEventListener('blur', () => { setTimeout(() => { if (state.isTyping && !state.testEnded && document.activeElement !== DOM.hInp) { if (DOM.focusOverlay) { const fText = DOM.focusOverlay.querySelector('.overlay-text'); if(fText) fText.innerText = "Paused"; DOM.focusOverlay.classList.remove("hidden"); } } }, 100); });
+
+                DOM.hInp.addEventListener('blur', () => {
+                    setTimeout(() => {
+                        if (state.isTyping && !state.testEnded && document.activeElement !== DOM.hInp) {
+                            if (DOM.focusOverlay) { const fText = DOM.focusOverlay.querySelector('.overlay-text'); if(fText) fText.innerText = "Paused"; DOM.focusOverlay.classList.remove("hidden"); }
+                        }
+                    }, 100);
+                });
 
                 DOM.hInp.addEventListener('input', () => {
                     if(state.testEnded) return;
                     if(state.isCountdown) { DOM.hInp.value = ''; return; }
                     if(!state.isTyping) { state.isTyping = true; resetTimers(); state.timer = setInterval(runTimer, 1000); }
+                    
                     const tpd = DOM.hInp.value; const newLen = tpd.length; const oldLen = state.lastRenderedLen;
-                    if (newLen > oldLen) { for (let i = oldLen; i < newLen; i++) { if (!state.spans[i]) continue; const isCorrect = (tpd[i] === state.text[i]); state.spans[i].className = isCorrect ? 'correct' : 'incorrect'; if (!isCorrect) state.currentErrors++; if (isCorrect) window.spawnParticle(state.spans[i], state.userStats.equippedTrail, false); } } 
+                    
+                    if (newLen > oldLen) { 
+                        for (let i = oldLen; i < newLen; i++) { 
+                            if (!state.spans[i]) continue; 
+                            const isCorrect = (tpd[i] === state.text[i]); 
+                            state.spans[i].className = isCorrect ? 'correct' : 'incorrect'; 
+                            if (!isCorrect) state.currentErrors++; 
+                            if (isCorrect) window.spawnParticle(state.spans[i], state.userStats.equippedTrail, false);
+                        } 
+                    } 
                     else if (newLen < oldLen) { for (let i = newLen; i < oldLen; i++) { if (!state.spans[i]) continue; if (state.spans[i].classList.contains('incorrect')) { state.currentErrors = Math.max(0, state.currentErrors - 1); } state.spans[i].className = ''; } }
+
                     if (state.spans[oldLen]) state.spans[oldLen].classList.remove('active');
                     if (state.spans[newLen]) state.spans[newLen].classList.add('active');
+
                     state.lastRenderedLen = newLen;
                     if(newLen > state.maxIdx) { state.totalTyped++; if(tpd[newLen-1] !== state.text[newLen-1]) { state.errors++; } state.maxIdx = newLen; }
 
-                    /* === 🔥 DYNAMIC SCROLL FIX: SAFE CONDITIONAL SCROLL === */
+                    /* === 🔥 SAFE CONDITIONAL SCROLL FIX === */
                     const act = state.spans[newLen];
                     if (act && DOM.tDisp) {
+                        // Only trigger logic if line actually changes
                         if (act.offsetTop !== lastOffsetTop) {
                             lastOffsetTop = act.offsetTop;
                             requestAnimationFrame(() => { 
                                 const container = DOM.tDisp;
-                                // Smoothly center the line at 40% height of the container
+                                // Smoothly center line at ~40% of the view height
                                 container.scrollTop = act.offsetTop - (container.clientHeight * 0.4); 
                             });
                         }
@@ -1055,7 +1089,11 @@
 
                     const wpm = getWPM(newLen, state.currentErrors, state.timeSecs);
                     if(DOM.sWpm) DOM.sWpm.innerText = `${wpm} WPM`;
-                    if(state.roomId && firestoreDb) { const progress = Math.round((newLen/state.text.length)*100); syncPlayerProgress(firestoreDb, state.roomId, state.userId, wpm, progress); }
+
+                    if(state.roomId && firestoreDb) {
+                        const progress = Math.round((newLen/state.text.length)*100);
+                        syncPlayerProgress(firestoreDb, state.roomId, state.userId, wpm, progress);
+                    }
                     if(newLen >= state.text.length) endTest(state.currentErrors, newLen);
                 });
             }
@@ -1071,20 +1109,26 @@
             async function endTest(scrErrs, len) {
                 if(state.testEnded) return; state.testEnded = true; resetTimers(); if(DOM.hInp) { DOM.hInp.disabled = true; DOM.hInp.blur(); }
                 const wpm = getWPM(len, scrErrs, state.timeSecs); const acc = state.totalTyped > 0 ? Math.max(0, Math.round(((state.totalTyped - state.errors)/state.totalTyped)*100)) : 100;
+
                 let maxBurst = Math.max(...(state.progressHistory.length ? state.progressHistory : [0]));
-                if (maxBurst > 30) { window.showToast("Suspicious speed.", "error"); showPanel(DOM.pSet); return; }
+                if (maxBurst > 30) { window.showToast("Suspicious typing speed detected.", "error"); showPanel(DOM.pSet); return; }
                 if(wpm > 180 || state.timeSecs < 2) { window.showToast("Speed limit exceeded.", "error"); showPanel(DOM.pSet); return; }
+
                 let accLabel = "Rough"; let accColor = "var(--incorrect)";
                 if(acc === 100) { accLabel = "Perfect"; accColor = "var(--correct)"; } else if(acc >= 95) { accLabel = "Sharp"; accColor = "var(--primary)"; } else if(acc >= 90) { accLabel = "Clean"; accColor = "var(--warning)"; }
+
                 let variance = 0; if(state.wpmHistory.length > 2) { const avg = state.wpmHistory.reduce((a,b)=>a+b,0)/state.wpmHistory.length; variance = state.wpmHistory.reduce((a,b)=>a+Math.pow(b-avg,2),0)/state.wpmHistory.length; }
                 const consistency = Math.max(0, 100 - Math.sqrt(variance)*2);
+
                 const elWpm = document.getElementById('res-wpm'); if(elWpm) elWpm.innerText = wpm;
                 const elAcc = document.getElementById('res-acc'); if(elAcc) elAcc.innerText = `${acc}%`;
                 const elAccLbl = document.getElementById('res-acc-label'); if(elAccLbl) { elAccLbl.innerText = accLabel; elAccLbl.style.color = accColor; }
                 const elCons = document.getElementById('res-consistency'); if(elCons) elCons.innerText = `${consistency.toFixed(0)}% Consistency`;
                 const elTime = document.getElementById('res-time'); if(elTime) elTime.innerText = `${state.timeSecs}s`;
+
                 let rpChange = Math.round(wpm / 10); if (acc >= 95) rpChange += 5; else if (acc >= 90) rpChange += 2;
                 let coinsEarned = Math.floor(wpm / 10) + (acc >= 95 ? 5 : 0);
+
                 if(state.roomId && state.roomData && state.roomData.players) {
                     const players = state.roomData.players; const N = Object.keys(players).length;
                     if (N > 1) {
@@ -1093,15 +1137,23 @@
                         if (pos === 0) { rpChange += 10; coinsEarned += 10; } else { rpChange = -2; }
                     }
                 }
+
                 if (state.userStats.premium === true) { rpChange += Math.floor(Math.random() * 4) + 2; coinsEarned = Math.floor(coinsEarned * 1.5) + 5; }
+
                 const elCoins = document.getElementById('res-coins'); if(elCoins) elCoins.innerText = `+${coinsEarned}`;
                 let oldRp = state.userStats.rankPoints || 1000; let newRp = Math.max(0, oldRp + rpChange); state.userStats.rankPoints = newRp; state.userStats.coins = (state.userStats.coins || 0) + coinsEarned; updateHeaderCoins();
                 let newAvg = Math.round(((state.userStats.averageWPM * state.userStats.totalGames) + wpm) / (state.userStats.totalGames + 1)); state.userStats.bestWPM = Math.max(state.userStats.bestWPM || 0, wpm); state.userStats.averageWPM = newAvg || wpm; state.userStats.totalGames = (state.userStats.totalGames || 0) + 1;
+                
                 if(firestoreDb) { try { await setDoc(doc(firestoreDb, 'users', state.userId), state.userStats, { merge: true }); } catch(e) {} }
+
                 if(!state.roomId) {
                     const rpDisp = document.getElementById('rank-update-display'); if(rpDisp) { rpDisp.innerText = Math.round(oldRp); rpDisp.className = "rank-anim-text"; animateValue(rpDisp, oldRp, newRp, 1500); }
                     updateRankProgressUI(newRp, 'res-rank-bar', 'res-rank-current', 'res-rank-next'); showPanel(DOM.pRes); if(DOM.mpPodium) DOM.mpPodium.classList.add('hidden');
-                    if(firestoreDb) { try { if(typeof newRp === 'number' && !isNaN(newRp)) { await setDoc(doc(firestoreDb, 'leaderboard', state.userId), { username: state.username, username_lowercase: state.username.toLowerCase(), rp: newRp, wpm: state.userStats.bestWPM, premium: state.userStats.premium || false, timestamp: serverTimestamp() }); } } catch(e){} }
+                    if(firestoreDb) { try { if(typeof newRp === 'number' && !isNaN(newRp)) { 
+                        await setDoc(doc(firestoreDb, 'leaderboard', state.userId), { 
+                            username: state.username, username_lowercase: state.username.toLowerCase(), rp: newRp, wpm: state.userStats.bestWPM, premium: state.userStats.premium || false, timestamp: serverTimestamp() 
+                        }); 
+                    } } catch(e){} }
                 } else {
                     if(firestoreDb) { try {
                         await updateDoc(doc(firestoreDb, 'rooms', state.roomId), { [`players.${state.userId}.wpm`]: wpm, [`players.${state.userId}.progress`]: 100, [`players.${state.userId}.finished`]: true, [`players.${state.userId}.rp`]: newRp, [`players.${state.userId}.oldRp`]: oldRp });
@@ -1127,7 +1179,12 @@
                 updateRankProgressUI(state.userStats.rankPoints, 'res-rank-bar', 'res-rank-current', 'res-rank-next'); showPanel(DOM.pRes);
             }
 
-            safeListen('btn-host-rematch', 'click', () => { if(state.isHost && state.roomId && state.roomData && firestoreDb) { let updates = { status: "waiting" }; Object.keys(state.roomData.players || {}).forEach(uid => { updates[`players.${uid}.progress`] = 0; updates[`players.${uid}.wpm`] = 0; updates[`players.${uid}.finished`] = false; }); try { updateDoc(doc(firestoreDb, 'rooms', state.roomId), updates).then(() => showPanel(DOM.pLobby)); } catch(e){} } });
+            safeListen('btn-host-rematch', 'click', () => {
+                if(state.isHost && state.roomId && state.roomData && firestoreDb) {
+                    let updates = { status: "waiting" }; Object.keys(state.roomData.players || {}).forEach(uid => { updates[`players.${uid}.progress`] = 0; updates[`players.${uid}.wpm`] = 0; updates[`players.${uid}.finished`] = false; });
+                    try { updateDoc(doc(firestoreDb, 'rooms', state.roomId), updates).then(() => showPanel(DOM.pLobby)); } catch(e){}
+                }
+            });
 
             function renderLeaderboard() {
                 const tbody = document.getElementById('lb-body'); if(tbody) tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted p-4">Syncing secure data...</td></tr>`;
@@ -1147,8 +1204,9 @@
                     }).catch(e => {});
                 } catch(e) {}
             }
+            
             function escapeHTML(str) { return str ? str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag])) : ''; }
         });
     </script>
 </body>
-                    </html>
+</html>
