@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TYPR07-V4 - Competitive Multiplayer Typing</title>
+    <title>TYPR07 V4.3 - Competitive Multiplayer Typing</title>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         /* === 🔥 ENGINE LEVEL FIX: Disable scroll anchoring globally === */
@@ -227,13 +227,13 @@
         .particle-galaxy { width: 5px; height: 5px; background: #8a2be2; box-shadow: 0 0 12px #e0b0ff; filter: blur(1px); }
         .particle-smoke { width: 12px; height: 12px; background: rgba(150, 150, 150, 0.4); box-shadow: 0 0 10px rgba(100, 100, 100, 0.3); filter: blur(3px); }
         .particle-fireflies { width: 3px; height: 3px; background: #adff2f; box-shadow: 0 0 8px #adff2f, 0 0 15px #7fff00; }
-        .particle-ice { width: 4px; height: 4px; background: #e0ffff; box-shadow: 0 0 8px #00ffff; border-radius: 0; transform: rotate(45deg); }
+        .particle-ice { width: 4px; height: 4px; background: #e0ffff; box-shadow: 0 0 15px #00ffff; width: 3px; }
         .particle-cosmic_swirl { width: 5px; height: 5px; background: #ff00ff; box-shadow: 0 0 10px #8a2be2; }
         .particle-energy_wave { width: 8px; height: 8px; border: 2px solid #00ffff; border-radius: 50%; background: transparent; box-shadow: 0 0 8px #00ffff; }
         .particle-flame_aura { width: 7px; height: 7px; background: radial-gradient(circle, #fff, #ff4500); box-shadow: 0 0 12px #ff8c00; filter: blur(1px); }
-        .particle-diamond_sparkle { width: 4px; height: 4px; background: #fff; box-shadow: 0 0 10px #e0ffff; transform: rotate(45deg); border-radius: 0; }
-        .particle-shadow_trail { width: 8px; height: 8px; background: #222; box-shadow: 0 0 10px #000; filter: blur(2px); }
-        .particle-neon_dots { width: 5px; height: 5px; background: #ff00ff; box-shadow: 0 0 10px #ff1493; }
+        .particle-diamond_sparkle { width: 4px; height: 4px; background: #fff; box-shadow: 0 0 20px #e0ffff; width: 2px; }
+        .particle-shadow_trail { width: 8px; height: 8px; background: #222; box-shadow: 0 0 15px #000; width: 4px; }
+        .particle-neon_dots { width: 5px; height: 5px; background: #ff00ff; box-shadow: 0 0 20px #ff1493; width: 4px; border-radius: 50%; height: 8px; top: 20%; }
 
         #username-modal { position: fixed; inset: 0; background: rgba(15,23,42,0.95); display: flex; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(8px); }
         .modal-box { background: var(--surface); padding: 3rem; border-radius: var(--radius-lg); width: 90%; max-width: 420px; text-align: center; border: 1px solid var(--border); box-shadow: var(--shadow-lg); animation: fadeIn 0.3s ease; }
@@ -326,7 +326,7 @@
 
     <div id="username-modal" class="hidden">
         <div class="modal-box">
-            <h2 class="font-extrabold text-3xl text-primary mb-1">TYPR07-V4.</h2>
+            <h2 class="font-extrabold text-3xl text-primary mb-1">TYPR07 V4.3</h2>
             <p class="text-muted mb-4 text-xl">Enter your name</p>
             <input type="text" id="inp-username" class="modal-input" placeholder="Username" maxlength="15" autocomplete="off" spellcheck="false">
             <button class="btn-primary" id="btn-save-user">Continue</button>
@@ -335,7 +335,7 @@
 
     <div class="container" id="main-container">
         <header>
-            <h1><span class="brand" id="main-brand">TYPR07-V4.</span></h1>
+            <h1><span class="brand" id="main-brand">TYPR07 V4.3</span></h1>
             <div class="header-stats">
                 <button class="btn-icon" id="btn-shop">🛒 Shop <span class="coin-display" style="margin-left:4px;" id="head-coins">0</span></button>
                 <button class="btn-icon" id="btn-profile">👤 Profile</button>
@@ -614,7 +614,6 @@
         let shopPreviewTimer = null;
         let shopPreviewIndex = 0;
         const shopPreviewString = "preview effect";
-        let lastOffsetTop = 0;
 
         let state = {
             userId: localStorage.getItem('typr_userId') || ('user_' + Math.random().toString(36).substr(2, 9)),
@@ -684,10 +683,11 @@
             function animateValue(obj, start, end, duration) { if(!obj) return; let startTimestamp = null; const step = (timestamp) => { if (!startTimestamp) startTimestamp = timestamp; const progress = Math.min((timestamp - startTimestamp) / duration, 1); obj.innerHTML = Math.floor(progress * (end - start) + start); if (progress < 1) window.requestAnimationFrame(step); else { obj.innerHTML = end; obj.classList.remove('rank-up', 'rank-down'); if (end > start) obj.classList.add('rank-up'); else if (end < start) obj.classList.add('rank-down'); } }; window.requestAnimationFrame(step); }
             function getWPM(typedLen, errs, timeSecs) { if (timeSecs <= 0) return 0; const netChars = typedLen - errs; const wpm = (netChars / 5) / (timeSecs / 60); return Math.max(0, Math.round(wpm)); }
 
+            /* === 🌟 SHOP CONFIGURATION === */
             const shopItems = [
                 { id: 'default', name: 'Standard Line', price: 0, class: 'trail-default' }, 
-                { id: 'basic_glow', name: 'Basic Glow', price: 100, class: 'trail-basic_glow' }, 
-                { id: 'pulse', name: 'Pulse Cursor', price: 250, class: 'trail-pulse' },
+                { id: 'basic_glow', name: 'Basic Glow', price: 0, class: 'trail-basic_glow' }, /* FREE PARTICLE TRAIL 1 */
+                { id: 'pulse', name: 'Pulse Cursor', price: 0, class: 'trail-pulse' },       /* FREE PARTICLE TRAIL 2 */
                 { id: 'neon', name: 'Neon Trail', price: 400, class: 'trail-neon' }, 
                 { id: 'fire', name: 'Fire Trail', price: 600, class: 'trail-fire' }, 
                 { id: 'electric', name: 'Electric Surge', price: 800, class: 'trail-electric' },
@@ -745,9 +745,9 @@
                 const brandEl = document.getElementById('main-brand');
                 if (brandEl) {
                     if (isPremium) {
-                        if (!document.getElementById('header-pro-badge')) brandEl.innerHTML = `TYPR07-V4. <span id="header-pro-badge" class="pro-badge">PRO</span>`;
+                        if (!document.getElementById('header-pro-badge')) brandEl.innerHTML = `TYPR07 V4.3 <span id="header-pro-badge" class="pro-badge">PRO</span>`;
                         if(DOM.tDisp) DOM.tDisp.classList.add('pro-active'); 
-                    } else { brandEl.innerHTML = `TYPR07-V4.`; if(DOM.tDisp) DOM.tDisp.classList.remove('pro-active'); }
+                    } else { brandEl.innerHTML = `TYPR07 V4.3`; if(DOM.tDisp) DOM.tDisp.classList.remove('pro-active'); }
                 }
             }
 
@@ -761,6 +761,12 @@
                         state.userStats = { ...state.userStats, ...d, premium: d.premium || false };
                         if(!state.userStats.rankPoints) state.userStats.rankPoints = 1000; if(!state.userStats.coins) state.userStats.coins = 0;
                         if(!state.userStats.purchasedTrails) state.userStats.purchasedTrails = ['default']; if(!state.userStats.equippedTrail) state.userStats.equippedTrail = 'default';
+                        
+                        /* Automatically add Free items to inventory */
+                        shopItems.filter(i => i.price === 0).forEach(i => {
+                            if(!state.userStats.purchasedTrails.includes(i.id)) state.userStats.purchasedTrails.push(i.id);
+                        });
+
                         if (state.userStats.premium && state.userStats.equippedTrail === 'default' && !wasPremium) { state.userStats.equippedTrail = 'gold'; setDoc(doc(firestoreDb, 'users', state.userId), { equippedTrail: 'gold' }, { merge: true }); }
                         updateHeaderCoins(); applyEquippedTrail(); updatePremiumUI(state.userStats.premium);
                         if (DOM.pShop && !DOM.pShop.classList.contains('hidden')) renderShop();
@@ -1007,7 +1013,7 @@
             }
 
             function buildWordDisplay() {
-                if(!DOM.tDisp) return; DOM.tDisp.innerHTML = ''; DOM.tDisp.scrollTop = 0; state.spans = []; lastOffsetTop = 0; const wordsArray = state.text.split(' ');
+                if(!DOM.tDisp) return; DOM.tDisp.innerHTML = ''; DOM.tDisp.scrollTop = 0; state.spans = []; const wordsArray = state.text.split(' ');
                 const pLayer = document.getElementById('particle-layer'); if (pLayer) pLayer.innerHTML = '';
                 wordsArray.forEach((word, wordIndex) => {
                     const wordSpan = document.createElement('span'); wordSpan.className = 'word';
@@ -1076,14 +1082,17 @@
                     /* === 🔥 SAFE CONDITIONAL SCROLL FIX === */
                     const act = state.spans[newLen];
                     if (act && DOM.tDisp) {
-                        // Only trigger logic if line actually changes
-                        if (act.offsetTop !== lastOffsetTop) {
-                            lastOffsetTop = act.offsetTop;
-                            requestAnimationFrame(() => { 
-                                const container = DOM.tDisp;
-                                // Smoothly center line at ~40% of the view height
-                                container.scrollTop = act.offsetTop - (container.clientHeight * 0.4); 
-                            });
+                        const container = DOM.tDisp;
+                        const actBottom = act.offsetTop + act.offsetHeight;
+                        const viewBottom = container.scrollTop + container.clientHeight;
+                        
+                        // Scroll down ONLY if character goes below view (with 10px buffer)
+                        if (actBottom > viewBottom - 10) { 
+                            container.scrollTop = actBottom - container.clientHeight + 40; 
+                        } 
+                        // Scroll up ONLY if character goes above view
+                        else if (act.offsetTop < container.scrollTop) {
+                            container.scrollTop = act.offsetTop - 20;
                         }
                     }
 
