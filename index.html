@@ -46,7 +46,6 @@
         .text-xl { font-size: 1.25rem; } .text-2xl { font-size: 1.5rem; } .text-3xl { font-size: 2rem; }
         .uppercase { text-transform: uppercase; letter-spacing: 1px; }
 
-        /* === 👑 FOMO PRO STYLING === */
         .pro-name { background: linear-gradient(135deg, #ffd700, #ffaa00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900 !important; text-shadow: 0 0 12px rgba(255, 215, 0, 0.4); }
         .pro-badge { display: inline-flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #ffd700, #ffaa00); color: #000; font-size: 0.65rem; font-weight: 900; padding: 0.15rem 0.5rem; border-radius: 4px; margin-left: 0.5rem; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 0 8px rgba(255,215,0,0.6); vertical-align: middle; }
         #text-display.pro-active span.active::before { box-shadow: 0 0 10px var(--primary), 0 0 20px var(--accent); animation: proCursorBlink 0.6s ease-in-out infinite alternate !important; background: #fff; width: 3px; will-change: opacity, transform; }
@@ -55,7 +54,6 @@
         .locked-overlay { position: absolute; inset: 0; background: rgba(15, 23, 42, 0.75); display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: var(--radius-md); backdrop-filter: blur(3px); z-index: 10; }
         .locked-overlay span { font-size: 2.5rem; margin-bottom: 0.5rem; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5)); }
 
-        /* === 🎬 CINEMATIC PREMIUM ENTRY ANIMATION === */
         #premium-entry-overlay { position: fixed; inset: 0; z-index: 10000; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.4s ease-out; }
         #premium-entry-overlay.show { opacity: 1; pointer-events: auto; }
         .premium-entry-content { text-align: center; transform: scale(0.5) translateY(50px); opacity: 0; }
@@ -126,11 +124,12 @@
         }
         
         .word, .space { display: inline-block; white-space: pre; margin-bottom: 0.4rem; position: relative; }
-        #text-display span:not(.word):not(.space) { position: relative; border-radius: 4px; padding: 0 1px; }
+        
+        /* 🔥 FIXED: Include #shop-master-text span to ensure the shop cursor aligns correctly */
+        #text-display span:not(.word):not(.space), #shop-master-text span { position: relative; border-radius: 4px; padding: 0 1px; display: inline-block; }
         #text-display span.correct { color: var(--text-main); }
         #text-display span.incorrect { color: var(--incorrect); background: var(--incorrect-bg); }
         
-        /* === 🔥 ENGINE LEVEL FIX: Isolated 1x1 input to kill vertical caret shifts === */
         #hidden-input { 
             position: fixed; top: 0; left: 0; width: 1px; height: 1px; padding: 0; margin: 0; opacity: 0; pointer-events: none;
             border: none; outline: none; resize: none; color: transparent; background: transparent; 
@@ -199,7 +198,7 @@
         .trail-neon_dots span.active::before { background: #ff00ff; box-shadow: 0 0 20px #ff1493; width: 4px; border-radius: 50%; height: 8px; top: 20%; }
 
         /* === 🌟 REALISTIC PURE CSS PARTICLE SYSTEM === */
-        #particle-layer { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 15; }
+        #particle-layer, #shop-particle-layer { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 15; }
         .typing-particle { 
             position: absolute; pointer-events: none; z-index: 10; 
             animation: physicalParticle ease-out forwards; 
@@ -509,7 +508,7 @@
             <div class="shop-master-preview" id="shop-master-preview" style="background: var(--surface);">
                 <div class="typing-wrapper flex items-center justify-center" style="height: 90px; min-height: 90px; border: none; background: transparent; overflow: hidden; position: relative;">
                     <div id="shop-master-text" class="trail-default" style="padding: 0; font-size: 2rem; z-index: 2;"></div>
-                    <div id="shop-particle-layer" style="position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 15;"></div>
+                    <div id="shop-particle-layer"></div>
                 </div>
             </div>
 
@@ -564,7 +563,7 @@
             setTimeout(() => { overlay.classList.remove('show'); if(container) container.classList.remove('shake-active'); }, 3000);
         };
 
-        // 🔥 FIXED: Spawn Particles safely in absolute layer (Main Typing + Shop Preview)
+        // 🔥 FIXED: Pure CSS Physical Particles in Independent Absolute Layer
         window.spawnParticle = function(span, trailId, isShopPreview = false) {
             if (!span || trailId === 'default') return;
             const layer = document.getElementById(isShopPreview ? 'shop-particle-layer' : 'particle-layer');
@@ -575,6 +574,7 @@
             const p = document.createElement('span');
             p.className = `typing-particle particle-${trailId}`;
             
+            // Calculate absolute position relative to the layer
             const rect = span.getBoundingClientRect();
             const layerRect = layer.getBoundingClientRect();
             
@@ -584,11 +584,11 @@
             p.style.left = startX + 'px';
             p.style.top = startY + 'px';
             
-            // Generate physics calculations
-            const tx = (Math.random() - 0.5) * 40; 
-            const ty = (Math.random() - 1) * 40;   
+            // Generate physics variables
+            const tx = (Math.random() - 0.5) * 50; 
+            const ty = (Math.random() - 1) * 50;   
             const scale = Math.random() * 1.5 + 0.5; 
-            const duration = Math.random() * 400 + 400;
+            const duration = Math.random() * 400 + 400; // 400ms - 800ms
             
             p.style.setProperty('--tx', `${tx}px`);
             p.style.setProperty('--ty', `${ty}px`);
@@ -883,7 +883,7 @@
             if(btnCreateRoom) {
                 btnCreateRoom.addEventListener('click', async () => {
                     if(!firestoreDb) return window.showToast("Database not initialized", "error");
-                    if(!state.username) return window.showToast("Please set your name first!", "warning");
+                    if(!state.username) return window.showToast("Please set your username first!", "warning");
                     state.roomId = Math.floor(10000 + Math.random() * 90000).toString(); state.isHost = true;
                     let origText = btnCreateRoom.innerText; btnCreateRoom.innerText = "Creating..."; btnCreateRoom.disabled = true;
                     try {
@@ -898,7 +898,7 @@
             if(btnJoinRoom) {
                 btnJoinRoom.addEventListener('click', async () => {
                     if(!firestoreDb) return window.showToast("Database not initialized", "error");
-                    if(!state.username) return window.showToast("Please set your name first!", "warning");
+                    if(!state.username) return window.showToast("Please set your username first!", "warning");
                     const codeInp = document.getElementById('inp-room-code'); if(!codeInp) return; const code = codeInp.value.trim(); 
                     if(code.length !== 5) return window.showToast("Invalid room code", "error");
                     let origText = btnJoinRoom.innerText; btnJoinRoom.innerText = "Joining..."; btnJoinRoom.disabled = true;
@@ -1148,7 +1148,11 @@
                 if(!state.roomId) {
                     const rpDisp = document.getElementById('rank-update-display'); if(rpDisp) { rpDisp.innerText = Math.round(oldRp); rpDisp.className = "rank-anim-text"; animateValue(rpDisp, oldRp, newRp, 1500); }
                     updateRankProgressUI(newRp, 'res-rank-bar', 'res-rank-current', 'res-rank-next'); showPanel(DOM.pRes); if(DOM.mpPodium) DOM.mpPodium.classList.add('hidden');
-                    if(firestoreDb) { try { if(typeof newRp === 'number' && !isNaN(newRp)) { await setDoc(doc(firestoreDb, 'leaderboard', state.userId), { username: state.username, username_lowercase: state.username.toLowerCase(), rp: newRp, wpm: state.userStats.bestWPM, premium: state.userStats.premium || false, timestamp: serverTimestamp() }); } } catch(e){} }
+                    if(firestoreDb) { try { if(typeof newRp === 'number' && !isNaN(newRp)) { 
+                        await setDoc(doc(firestoreDb, 'leaderboard', state.userId), { 
+                            username: state.username, username_lowercase: state.username.toLowerCase(), rp: newRp, wpm: state.userStats.bestWPM, premium: state.userStats.premium || false, timestamp: serverTimestamp() 
+                        }); 
+                    } } catch(e){} }
                 } else {
                     if(firestoreDb) { try {
                         await updateDoc(doc(firestoreDb, 'rooms', state.roomId), { [`players.${state.userId}.wpm`]: wpm, [`players.${state.userId}.progress`]: 100, [`players.${state.userId}.finished`]: true, [`players.${state.userId}.rp`]: newRp, [`players.${state.userId}.oldRp`]: oldRp });
@@ -1204,4 +1208,4 @@
         });
     </script>
 </body>
-</html>
+    </html>
