@@ -66,6 +66,36 @@
         @keyframes screenShake { 0%, 100% { transform: translateX(0); } 10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); } 20%, 40%, 60%, 80% { transform: translateX(4px); } }
         .shake-active { animation: screenShake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both; }
         
+        /* === 🔒 NEW LAYOUT STRATEGY: PAGE SCROLL LOCK === */
+        body.typing-mode-active {
+            overflow: hidden !important; /* Lock body */
+            height: 100dvh !important;
+            touch-action: none !important; /* Prevent bounce scrolling */
+        }
+        body.typing-mode-active .container {
+            height: 100dvh;
+            max-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            padding-bottom: 1rem;
+        }
+        body.typing-mode-active #panel-typing {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* Prevent panel overflow */
+        }
+        body.typing-mode-active .typing-wrapper {
+            flex-grow: 1;
+            height: auto;
+            min-height: 0; /* Critical for flex shrinking */
+            overflow: hidden;
+            border-color: var(--primary); /* UI Focus highlight */
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.15);
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
         .container { width: 100%; max-width: 1000px; padding: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem; flex: 1; }
         .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2.5rem; box-shadow: var(--shadow-md); animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
@@ -120,7 +150,8 @@
             flex-grow: 1; padding: 2rem; font-size: 1.6rem; line-height: 1.8; 
             overflow-y: auto; height: 100%; color: var(--text-muted); 
             position: relative; z-index: 2; font-family: 'Fira Code', monospace; 
-            scroll-behavior: auto; overflow-anchor: none;
+            scroll-behavior: smooth; /* Smooth isolated scrolling */
+            overflow-anchor: none;
         }
         
         .word, .space { display: inline-block; white-space: pre; margin-bottom: 0.4rem; position: relative; }
@@ -777,11 +808,21 @@
 
             function updateHeaderCoins() { const hd = document.getElementById('head-coins'); if(hd) hd.innerText = state.userStats.coins || 0; }
             function applyEquippedTrail() { if(DOM.tDisp) { shopItems.forEach(i => DOM.tDisp.classList.remove(i.class)); const equipped = shopItems.find(i => i.id === state.userStats.equippedTrail) || shopItems[0]; DOM.tDisp.classList.add(equipped.class); } }
+            
             function showPanel(p) {
                 if(!p) return; if(p === DOM.pShop) initShopPreview(); else window.stopShopPreview();
                 if(p !== DOM.pType) { if(state.timer) { clearInterval(state.timer); state.timer = null; } }
+                
+                // === 🔒 PAGE SCROLL LOCK SYSTEM ===
+                if (p === DOM.pType) {
+                    document.body.classList.add('typing-mode-active');
+                } else {
+                    document.body.classList.remove('typing-mode-active');
+                }
+
                 [DOM.pSet, DOM.pType, DOM.pRes, DOM.pLb, DOM.pLobby, DOM.pProf, DOM.pShop].forEach(el => { if(el) el.classList.add('hidden'); });
-                p.classList.remove('hidden'); window.scrollTo(0,0);
+                p.classList.remove('hidden'); 
+                if (p !== DOM.pType) window.scrollTo(0,0);
             }
 
             document.querySelectorAll('.custom-select').forEach(sel => {
@@ -1079,10 +1120,23 @@
                     state.lastRenderedLen = newLen;
                     if(newLen > state.maxIdx) { state.totalTyped++; if(tpd[newLen-1] !== state.text[newLen-1]) { state.errors++; } state.maxIdx = newLen; }
 
-                    /* === 🔥 NATIVE SCROLL FIX === */
+                    // === 🔒 SAFE ISOLATED CONTAINER SCROLL ===
                     const act = state.spans[newLen];
-                    if (act) {
-                        act.scrollIntoView({ block: "nearest", inline: "nearest" });
+                    if (act && DOM.tDisp) {
+                        const container = DOM.tDisp;
+                        const actTop = act.offsetTop;
+                        const actBottom = actTop + act.offsetHeight;
+                        const viewTop = container.scrollTop;
+                        const viewBottom = viewTop + container.clientHeight;
+                        
+                        const buffer = 40; // Maintain padding from edges
+
+                        // Only adjust scroll if active character falls outside visible area
+                        if (actBottom > viewBottom - buffer) { 
+                            container.scrollTop = actBottom - container.clientHeight + (buffer * 2); 
+                        } else if (actTop < viewTop + buffer) {
+                            container.scrollTop = actTop - buffer;
+                        }
                     }
 
                     const wpm = getWPM(newLen, state.currentErrors, state.timeSecs);
@@ -1207,4 +1261,4 @@
         });
     </script>
 </body>
-            </html>
+</html>
