@@ -221,7 +221,7 @@
         .trail-ice span.active::before { background: #e0ffff; box-shadow: 0 0 15px #00ffff; width: 3px; }
         .trail-cosmic_swirl span.active::before { background: #ff00ff; box-shadow: 0 0 15px #8a2be2; width: 4px; border-radius: 2px; }
         .trail-energy_wave span.active::before { background: #00ffff; box-shadow: 0 0 20px #00bfff; width: 3px; }
-        .trail-flame_aura span.active::before { background: radial-gradient(circle, #fff, #ff4500); box-shadow: 0 0 15px #ff8c00; width: 4px; border-radius: 2px; }
+        .trail-flame_aura span.active::before { background: radial-gradient(circle, #fff, #ff4500); box-shadow: 0 0 12px #ff8c00; filter: blur(1px); }
         .trail-diamond_sparkle span.active::before { background: #fff; box-shadow: 0 0 20px #e0ffff; width: 2px; }
         .trail-shadow_trail span.active::before { background: #222; box-shadow: 0 0 15px #000; width: 4px; }
         .trail-neon_dots span.active::before { background: #ff00ff; box-shadow: 0 0 20px #ff1493; width: 4px; border-radius: 50%; height: 8px; top: 20%; }
@@ -1130,25 +1130,6 @@
                     state.lastRenderedLen = newLen;
                     if(newLen > state.maxIdx) { state.totalTyped++; if(tpd[newLen-1] !== state.text[newLen-1]) { state.errors++; } state.maxIdx = newLen; }
 
-                    // === 🔒 SAFE ISOLATED CONTAINER SCROLL ===
-                    const act = state.spans[newLen];
-                    if (act && DOM.tDisp) {
-                        const container = DOM.tDisp;
-                        const actTop = act.offsetTop;
-                        const actBottom = actTop + act.offsetHeight;
-                        const viewTop = container.scrollTop;
-                        const viewBottom = viewTop + container.clientHeight;
-                        
-                        const buffer = 40; // Maintain padding from edges
-
-                        // Only adjust scroll if active character falls outside visible area
-                        if (actBottom > viewBottom - buffer) { 
-                            container.scrollTop = actBottom - container.clientHeight + (buffer * 2); 
-                        } else if (actTop < viewTop + buffer) {
-                            container.scrollTop = actTop - buffer;
-                        }
-                    }
-
                     const wpm = getWPM(newLen, state.currentErrors, state.timeSecs);
                     if(DOM.sWpm) DOM.sWpm.innerText = `${wpm} WPM`;
 
@@ -1271,4 +1252,4 @@
         });
     </script>
 </body>
-    </html>
+                        </html>
