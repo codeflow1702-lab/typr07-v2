@@ -1,9 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4654617835609645"
+     crossorigin="anonymous"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TYPR07 V4.3 - Competitive Multiplayer Typing</title>
+    <meta name="description" content="typr07 is a competitive multiplayer typing game to improve your speed and accuracy. Compete in multiplayer matches, practice custom text, and climb the leaderboard.">
+    <meta name="robots" content="index, follow">
+    <title>typr07 - Typing Game</title>
+    
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXX" crossorigin="anonymous"></script>
+
+    <script>
+        function fixViewport() {
+            document.documentElement.style.setProperty('--vh', window.innerHeight * 0.01 + 'px');
+        }
+        window.addEventListener('resize', fixViewport);
+        fixViewport();
+    </script>
+
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         /* === 🔥 ENGINE LEVEL FIX: Disable scroll anchoring globally === */
@@ -26,7 +41,9 @@
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background: var(--bg); color: var(--text-main); min-height: 100dvh; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; scroll-behavior: auto; }
+        
+        /* 🔥 MOBILE KEYBOARD FIX: Use dynamic viewport height var(--vh) instead of fixed 100dvh */
+        body { background: var(--bg); color: var(--text-main); min-height: 100vh; min-height: calc(var(--vh, 1vh) * 100); display: flex; flex-direction: column; align-items: center; overflow-x: hidden; scroll-behavior: auto; }
         .hidden { display: none !important; }
 
         ::-webkit-scrollbar { width: 8px; }
@@ -69,12 +86,15 @@
         /* === 🔒 LAYOUT STRATEGY: PAGE SCROLL LOCK === */
         body.typing-mode-active {
             overflow: hidden !important; 
-            height: 100dvh !important;
             touch-action: none !important; 
         }
+        
+        body.typing-mode-active #about-section,
+        body.typing-mode-active footer {
+            display: none !important;
+        }
+
         body.typing-mode-active .container {
-            height: 100dvh;
-            max-height: 100dvh;
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -259,7 +279,7 @@
         .particle-smoke { width: 12px; height: 12px; background: rgba(150, 150, 150, 0.4); box-shadow: 0 0 10px rgba(100, 100, 100, 0.3); filter: blur(3px); }
         .particle-fireflies { width: 3px; height: 3px; background: #adff2f; box-shadow: 0 0 8px #adff2f, 0 0 15px #7fff00; }
         .particle-ice { width: 4px; height: 4px; background: #e0ffff; box-shadow: 0 0 15px #00ffff; width: 3px; }
-        .particle-cosmic_swirl { width: 5px; height: 5px; background: #ff00ff; box-shadow: 0 0 10px #8a2be2; }
+        .particle-cosmic_swirl { width: 5px; height: 5px; background: #ff00ff; box-shadow: 0 0 15px #8a2be2; width: 4px; border-radius: 2px; }
         .particle-energy_wave { width: 8px; height: 8px; border: 2px solid #00ffff; border-radius: 50%; background: transparent; box-shadow: 0 0 8px #00ffff; }
         .particle-flame_aura { width: 7px; height: 7px; background: radial-gradient(circle, #fff, #ff4500); box-shadow: 0 0 12px #ff8c00; filter: blur(1px); }
         .particle-diamond_sparkle { width: 4px; height: 4px; background: #fff; box-shadow: 0 0 20px #e0ffff; width: 2px; }
@@ -367,6 +387,7 @@
     <div class="container" id="main-container">
         <header>
             <h1><span class="brand" id="main-brand">TYPR07 V4.3</span></h1>
+            <h1 style="display:none;">typr07 typing game</h1>
             <div class="header-stats" id="header-stats">
                 <button class="btn-icon" id="btn-shop">🛒 Shop <span class="coin-display" style="margin-left:4px;" id="head-coins">0</span></button>
                 <button class="btn-icon" id="btn-profile">👤 Profile</button>
@@ -541,6 +562,50 @@
             <button class="btn-restart mt-3" id="btn-shop-back">Return to Base</button>
         </main>
     </div>
+
+    <div id="about-section" style="width: 100%; max-width: 1000px; margin: 2rem auto; padding: 1.5rem; text-align: left; color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md);">
+        <h3 style="color: var(--text-main); font-size: 1.2rem; margin-bottom: 0.5rem; font-weight: 800;">About typr07</h3>
+        <p style="margin-bottom: 1rem;">typr07 is a fast-paced typing game designed to help players improve their typing speed and precision. Compete against others in real-time multiplayer matches, practice with custom text data, and climb the global leaderboard to reach the Legend rank.</p>
+        
+        <h4 style="color: var(--text-main); font-size: 1.05rem; margin-bottom: 0.5rem; font-weight: 700;">How to Play</h4>
+        <p style="margin-bottom: 1rem;">Simply select your preferred text length or enter custom text, start the match, and type the highlighted words as quickly and accurately as possible. The faster you type without errors, the higher your WPM (Words Per Minute).</p>
+        
+        <h4 style="color: var(--text-main); font-size: 1.05rem; margin-bottom: 0.5rem; font-weight: 700;">Features</h4>
+        <ul style="padding-left: 1.5rem; margin-bottom: 0;">
+            <li>Real-time multiplayer lobbies</li>
+            <li>Global ranked matchmaking and leaderboards</li>
+            <li>Customizable particle trails and aesthetics</li>
+            <li>Detailed post-match statistics</li>
+        </ul>
+    </div>
+
+    <footer style="width: 100%; text-align: center; padding: 1.5rem; font-size: 0.85rem; color: var(--text-faint); margin-top: auto;">
+        © typr07 | Contact: codeflow1702@gmail.com
+    </footer>
+
+    <button onclick="openPolicy()" style="position: fixed; bottom: 20px; right: 20px; z-index: 9998; padding: 8px 14px; background: var(--surface); color: var(--text-muted); border: 1px solid var(--border); border-radius: var(--radius-md); font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 600; cursor: pointer; box-shadow: var(--shadow-sm); transition: all 0.2s;">Privacy & Contact</button>
+
+    <div id="privacyPopup" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(4px); z-index: 10005; justify-content: center; align-items: center; font-family: 'Inter', sans-serif;">
+        <div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2rem; max-width: 400px; width: 90%; color: var(--text-main); text-align: left; position: relative; box-shadow: var(--shadow-lg);">
+            <button onclick="closePolicy()" style="position: absolute; top: 15px; right: 15px; background: transparent; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer;">&times;</button>
+            <h3 style="margin-top: 0; color: var(--primary); font-size: 1.5rem; font-weight: 800; margin-bottom: 1rem;">Privacy Policy & Contact</h3>
+            <p style="font-size: 0.95rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1rem;">
+                This site uses local storage and cookies to securely save your game progress. We use Firebase to sync basic multiplayer data and maintain global leaderboards.
+            </p>
+            <p style="font-size: 0.95rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1rem;">
+                We respect user privacy and do not collect sensitive personal information.
+            </p>
+            <p style="font-size: 0.95rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1.5rem;">
+                We do not sell personal data. Third-party vendors, including Google, use cookies to serve ads based on prior visits.
+            </p>
+            <p style="font-size: 0.95rem; color: var(--text-muted); margin-bottom: 0;"><strong>Contact:</strong> codeflow1702@gmail.com</p>
+        </div>
+    </div>
+
+    <script>
+        function openPolicy() { document.getElementById('privacyPopup').style.display = 'flex'; }
+        function closePolicy() { document.getElementById('privacyPopup').style.display = 'none'; }
+    </script>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
@@ -1192,6 +1257,7 @@
                 if(!state.roomId) {
                     const rpDisp = document.getElementById('rank-update-display'); if(rpDisp) { rpDisp.innerText = Math.round(oldRp); rpDisp.className = "rank-anim-text"; animateValue(rpDisp, oldRp, newRp, 1500); }
                     updateRankProgressUI(newRp, 'res-rank-bar', 'res-rank-current', 'res-rank-next'); showPanel(DOM.pRes); if(DOM.mpPodium) DOM.mpPodium.classList.add('hidden');
+                    
                     if(firestoreDb) { try { if(typeof newRp === 'number' && !isNaN(newRp)) { 
                         await setDoc(doc(firestoreDb, 'leaderboard', state.userId), { 
                             username: state.username, username_lowercase: state.username.toLowerCase(), rp: newRp, wpm: state.userStats.bestWPM, premium: state.userStats.premium || false, timestamp: serverTimestamp() 
@@ -1252,4 +1318,4 @@
         });
     </script>
 </body>
-                        </html>
+                </html>
